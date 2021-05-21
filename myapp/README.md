@@ -1,4 +1,8 @@
 ## webpackのインストール
+参考URL
+`https://itsakura.com/js-webpack-install`
+
+
 `npm init -y`
    - package.jsonがインストールされる
 - npm install コマンドを入力します
@@ -15,6 +19,20 @@
   },
 ```
   - `npm run test`で実行可能になる
+
+- npm-watchの install
+`npm install npm-watch`
+- package.jsonにwatchの追加
+```
+  "scripts": {
+    "test": "webpack",
+	"watch": "webpack --watch"
+  },
+
+```
+- watchコマンド実行
+`npm run watch`
+
 
 
 

@@ -1,0 +1,21 @@
+{
+  "name": "myapp",
+  "version": "1.0.0",
+  "description": "参考URL `https://itsakura.com/js-webpack-install`",
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "webpack",
+    "watch": "webpack --watch"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "npm-watch": "0.0.0",
+    "webpack": "^5.37.1",
+    "webpack-cli": "^4.7.0"
+  }
+}
