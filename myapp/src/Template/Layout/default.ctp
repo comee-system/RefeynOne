@@ -1,57 +1,49 @@
-<?php
-/**
- * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
- *
- * Licensed under The MIT License
- * For full copyright and license information, please see the LICENSE.txt
- * Redistributions of files must retain the above copyright notice.
- *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
- * @link          https://cakephp.org CakePHP(tm) Project
- * @since         0.10.0
- * @license       https://opensource.org/licenses/mit-license.php MIT License
- */
 
-$cakeDescription = 'CakePHP: the rapid development php framework';
-?>
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <?= $this->Html->charset() ?>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>
-        <?= $cakeDescription ?>:
-        <?= $this->fetch('title') ?>
-    </title>
-    <?= $this->Html->meta('icon') ?>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AdminLTE 3 | Lockscreen</title>
 
-    <?= $this->Html->css('base.css') ?>
-    <?= $this->Html->css('style.css') ?>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+    <?= $this->Html->css('/plugins/fontawesome-free/css/all.min.css') ?>
+    <?= $this->Html->css('/plugins/icheck-bootstrap/icheck-bootstrap.min.css') ?>
+
+    <?= $this->Html->css('/plugins/adminLTE/css/adminlte.css') ?>
+    <?= $this->Html->script('/plugins/adminLTE/js/adminlte.js') ?>
+
+    <?= $this->Html->css('/css/basic.css') ?>
+
 
     <?= $this->fetch('meta') ?>
     <?= $this->fetch('css') ?>
     <?= $this->fetch('script') ?>
+
 </head>
-<body>
-    <nav class="top-bar expanded" data-topbar role="navigation">
-        <ul class="title-area large-3 medium-4 columns">
-            <li class="name">
-                <h1><a href=""><?= $this->fetch('title') ?></a></h1>
-            </li>
-        </ul>
-        <div class="top-bar-section">
-            <ul class="right">
-                <li><a target="_blank" href="https://book.cakephp.org/3.0/">Documentation</a></li>
-                <li><a target="_blank" href="https://api.cakephp.org/3.0/">API</a></li>
-            </ul>
-        </div>
-    </nav>
+<body class="hold-transition lockscreen sidebar-collapse">
+
+<div class="wrapper">
+    <?= $this->element('nav'); ?>
     <?= $this->Flash->render() ?>
-    <div class="container clearfix">
-        <?= $this->fetch('content') ?>
-    </div>
-    <footer>
+
+    <?= $this->fetch('content') ?>
+
+    <footer class="fixed-bottom p-2 text-center">
+        <?=$this->Html->image("lss-logo_2.png",[
+            'dev'=>false,
+            'class'=>'__logo',
+            'alt'=>'ライフサイエンスソリューション株式会社'
+        ],
+        ); ?>
     </footer>
+</div>
+<!-- jQuery -->
+<?= $this->Html->script('/plugins/jquery/jquery.min.js') ?>
+<!-- Bootstrap 4 -->
+<?= $this->Html->script('/plugins/bootstrap/js/bootstrap.bundle.min.js') ?>
+<!-- AdminLTE App -->
+<?= $this->Html->script('/plugins/adminLTE/js/adminlte.min.js') ?>
+
 </body>
 </html>

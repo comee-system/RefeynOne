@@ -15,6 +15,7 @@
 namespace App\Controller;
 
 use Cake\Core\Configure;
+use Cake\Event\Event;
 use Cake\Http\Exception\ForbiddenException;
 use Cake\Http\Exception\NotFoundException;
 use Cake\View\Exception\MissingTemplateException;
@@ -28,7 +29,11 @@ use Cake\View\Exception\MissingTemplateException;
  */
 class PagesController extends AppController
 {
-
+    public function beforeFilter(Event $event)
+    {
+        $this->set("user",[]);
+        $this->Auth->allow(['display']);
+    }
     /**
      * Displays a view
      *
@@ -40,6 +45,9 @@ class PagesController extends AppController
      */
     public function display(...$path)
     {
+
+
+        /*
         $count = count($path);
         if (!$count) {
             return $this->redirect('/');
@@ -65,5 +73,6 @@ class PagesController extends AppController
             }
             throw new NotFoundException();
         }
+        */
     }
 }
