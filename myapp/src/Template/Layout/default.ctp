@@ -44,6 +44,7 @@
 <?= $this->Html->script('/plugins/bootstrap/js/bootstrap.bundle.min.js') ?>
 <!-- AdminLTE App -->
 <?= $this->Html->script('/plugins/adminLTE/js/adminlte.min.js') ?>
+<?= $this->Html->script('/dists/bundle.js') ?>
 
 </body>
 </html>

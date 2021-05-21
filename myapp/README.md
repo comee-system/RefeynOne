@@ -1,6 +1,9 @@
 ## webpackのインストール
 参考URL
 `https://itsakura.com/js-webpack-install`
+- さくらさーばーにnpmがはいってないことを忘れていましたのでローカルで作成してjsを上げます
+
+
 
 
 `npm init -y`

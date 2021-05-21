@@ -1,7 +1,7 @@
 {
   "name": "myapp",
   "version": "1.0.0",
-  "description": "参考URL `https://itsakura.com/js-webpack-install`",
+  "description": "",
   "main": "index.js",
   "directories": {
     "test": "tests"
