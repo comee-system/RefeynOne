@@ -1,3 +1,24 @@
+## webpackのインストール
+`npm init -y`
+   - package.jsonがインストールされる
+- npm install コマンドを入力します
+`npm install webpack webpack-cli --save-dev`
+   - インストールが完了するとnode_modulesというフォルダが作成されます
+- webpackを実行してjsを生成します
+`.\node_modules\.bin\webpack`
+
+- 入力するコマンドを短縮する
+   - package.jsonを変更
+```
+ "scripts": {
+    "test": "webpack"
+  },
+```
+  - `npm run test`で実行可能になる
+
+
+
+
 # CakePHP Application Skeleton
 
 [![Build Status](https://img.shields.io/travis/cakephp/app/master.svg?style=flat-square)](https://travis-ci.org/cakephp/app)
