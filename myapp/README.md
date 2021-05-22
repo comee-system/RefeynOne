@@ -38,6 +38,10 @@
 
 
 
+### scssの実行
+
+- 例) C:\xampp3\htdocs\bridge\bridge\cakeapp\webroot\sass_folder> sass --watch base.scss:../css/base.css
+
 
 
 # CakePHP Application Skeleton

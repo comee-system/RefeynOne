@@ -37,24 +37,95 @@ $cakeDescription = 'CakePHP: the rapid development php framework';
     <?= $this->Html->css('/plugins/adminLTE/css/adminlte.css') ?>
     <?= $this->Html->script('/plugins/adminLTE/js/adminlte.js') ?>
 
+    <?= $this->Html->css('/css/basic.css') ?>
+
+
     <?= $this->fetch('meta') ?>
     <?= $this->fetch('css') ?>
     <?= $this->fetch('script') ?>
 </head>
-<body class="hold-transition login-page ">
+<body class="hold-transition sidebar-mini ">
 
-    <?= $this->Flash->render() ?>
+<div class="wrapper">
+  <!-- Navbar -->
+  <nav class="main-header navbar navbar-expand navbar-white navbar-light">
+    <!-- Left navbar links -->
+    <ul class="navbar-nav">
+      <li class="nav-item">
+        <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
+      </li>
+
+    </ul>
+  </nav>
+  <!-- /.navbar -->
+
+  <!-- Main Sidebar Container -->
+  <aside class="main-sidebar sidebar-dark-primary elevation-4">
+    <!-- Brand Logo -->
+    <span class="brand-text font-weight-light text-white"></span>
+    <!-- Sidebar -->
+    <div class="sidebar">
+
+      <!-- Sidebar Menu -->
+      <nav class="mt-2">
+        <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+          <!-- Add icons to the links using the .nav-icon class
+               with font-awesome or any other icon font library -->
+          <li class="nav-item">
+            <?php
+                $url = $this->Url->build([
+                    "controller" => "users",
+                    "action" => "index",
+                ]);?>
+            <a href="<?= h($url) ?>" class="nav-link">
+              <i class="nav-icon fas fa-tachometer-alt"></i>
+              <p>会員一覧</p>
+            </a>
+          </li>
+
+        </ul>
+      </nav>
+      <!-- /.sidebar-menu -->
+    </div>
+    <!-- /.sidebar -->
+  </aside>
+
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper bg-white">
+        <!-- Content Header (Page header) -->
+
+
+        <?= $this->Flash->render() ?>
         <?= $this->fetch('content') ?>
 
-    <footer>
-    </footer>
+
+
+
+    <!-- /.content -->
+    </div>
+  <!-- /.content-wrapper -->
+  <footer class="main-footer mt-5">
+    <div class="float-right d-none d-sm-block">
+      <b>Version</b> 1.0.0
+    </div>
+    <strong>RefeynOneソフトウエア</strong> All rights reserved.
+  </footer>
+
+  <!-- /.control-sidebar -->
+</div>
 
 <!-- jQuery -->
 <?= $this->Html->script('/plugins/jquery/jquery.min.js') ?>
 <!-- Bootstrap 4 -->
 <?= $this->Html->script('/plugins/bootstrap/js/bootstrap.bundle.min.js') ?>
+<?= $this->Html->script('/plugins/bootstrap4-duallistbox/jquery.bootstrap-duallistbox.min.js') ?>
+
+<?= $this->Html->script('/plugins/chart.js/Chart.min.js') ?>
+
 <!-- AdminLTE App -->
 <?= $this->Html->script('/plugins/adminLTE/js/adminlte.min.js') ?>
+<?= $this->Html->script('/dists/bundle.js') ?>
+
 
 </body>
 </html>

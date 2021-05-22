@@ -31,7 +31,9 @@ class PagesController extends AppController
 {
     public function beforeFilter(Event $event)
     {
-        $this->set("user",[]);
+
+        $uAuth = $this->Auth->user();
+        $this->set("uAuth",$uAuth);
         $this->Auth->allow(['display']);
     }
     /**

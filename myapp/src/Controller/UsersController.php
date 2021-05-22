@@ -3,7 +3,7 @@ namespace App\Controller;
 
 
 use Cake\Event\Event;
-
+use Cake\Datasource\ConnectionManager;
 /**
  * Users Controller
  *
@@ -16,9 +16,11 @@ class UsersController extends AppController
     public function beforeFilter(Event $event)
     {
         parent::beforeFilter($event);
+        $this->connection = ConnectionManager::get('default');
+        $this->mailsend = $this->loadComponent('MailSend');
         $this->Auth->allow(['add', 'hoge']);
-        $user = $this->Auth->user();
-        $this->set("user",$user);
+        $this->uAuth = $this->Auth->user();
+        $this->set("uAuth",$this->uAuth);
     }
 
     /**
@@ -27,7 +29,10 @@ class UsersController extends AppController
      */
     public function login()
     {
-      if ($this->request->is('post')) {
+        if(!is_null($this->uAuth)){
+            return $this->redirect("/");
+        }
+        if ($this->request->is('post')) {
         $user = $this->Auth->identify();
         if ($user) {
           $this->Auth->setUser($user);
@@ -79,19 +84,38 @@ class UsersController extends AppController
      *
      * @return \Cake\Http\Response|null Redirects on successful add, renders view otherwise.
      */
-    public function add()
+    public function add($id = "")
     {
+        $type = "";
+        $error = [];
         $user = $this->Users->newEntity();
         if ($this->request->is('post')) {
             $user = $this->Users->patchEntity($user, $this->request->getData());
-            if ($this->Users->save($user)) {
-                $this->Flash->success(__('The user has been saved.'));
-
-                return $this->redirect(['action' => 'index']);
+            $error = $user->getErrors();
+            if($this->request->getData("conf")){
+                if(!$user->hasErrors()){
+                    $type = "conf";
+                }
             }
-            $this->Flash->error(__('The user could not be saved. Please, try again.'));
+
+            if($this->request->getData("regist")){
+                $user->role = 0; //一般
+                $user->last_login_at = 0;
+                $this->connection->begin();
+                if ($userdata = $this->Users->save($user)) {
+                    $this->mailsend->userRegistSends($userdata);
+                    $this->Flash->success(__('会員登録が完了しました。'));
+                    $this->connection->commit();
+                    return $this->redirect(['controller'=>'users','action' => 'login']);
+                }
+                $this->connection->rollback();
+            }
         }
         $this->set(compact('user'));
+        $this->set("type",$type);
+        $this->set("id",$id);
+        $this->set("error",$error);
+
     }
 
     /**

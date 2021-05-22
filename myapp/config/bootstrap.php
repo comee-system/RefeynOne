@@ -201,3 +201,14 @@ Type::build('timestamp')
 //Inflector::rules('irregular', ['red' => 'redlings']);
 //Inflector::rules('uninflected', ['dontinflectme']);
 //Inflector::rules('transliteration', ['/å/' => 'aa']);
+define("D_SIGN","【発行元】
+ライフサイエンスソリューションズ株式会社
+お問い合わせ：https://ls-solutions.co.jp/contact/");
+
+define("D_URL_HOME","https://www.will-wave.jp/");
+define("D_ADMIN_MAIL","chiba@se-sendai.co.jp");
+
+Configure::write("array_role", [
+    0=>"一般会員",
+    1=>"管理者",
+]);

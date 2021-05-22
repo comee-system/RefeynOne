@@ -19,7 +19,7 @@
       <a href="/" class="h1"><b>LOGIN</b></a>
     </div>
     <div class="card-body">
-      <p class="login-box-msg">Sign in to start your session</p>
+      <p class="login-box-msg"><?= __("ユーザー名とパスワードを入力") ?></p>
 
       <?= $this->Form->create() ?>
         <div class="input-group mb-3">
@@ -52,14 +52,7 @@
           </div>
         </div>
         <div class="row">
-          <div class="col-8">
-            <div class="icheck-primary">
-              <input type="checkbox" id="remember">
-              <label for="remember">
-                Remember Me
-              </label>
-            </div>
-          </div>
+          <div class="col-8"></div>
           <!-- /.col -->
           <div class="col-4">
             <?= $this->Form->button(__('Login'),[
@@ -73,12 +66,10 @@
 
 
       <!-- /.social-auth-links -->
-
-      <p class="mb-1">
-        <a href="forgot-password.html">I forgot my password</a>
-      </p>
       <p class="mb-0">
-        <a href="register.html" class="text-center">Register a new membership</a>
+        <?= $this->Html->link("会員登録","/users/add/",[
+            "class"=>"text-center"
+        ]) ?>
       </p>
     </div>
     <!-- /.card-body -->

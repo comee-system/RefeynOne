@@ -82,6 +82,11 @@ class AppController extends Controller
     // 認証を通さないアクションがある場合のみ
     public function beforeFilter(Event $event)
     {
+        $user = $this->Auth->user();
+        if($user && $user[ 'role' ] != 1){
+            $this->Flash->error(__('ログインに失敗しました'));
+            $this->Auth->logout();
+        }
         //$this->Auth->allow(['add']);
     }
 }

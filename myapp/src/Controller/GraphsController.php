@@ -16,17 +16,32 @@ class GraphsController extends AppController
     public function beforeFilter(Event $event)
     {
         parent::beforeFilter($event);
-        $user = $this->Auth->user();
-        $this->set("user",$user);
+        $uAuth = $this->Auth->user();
+        $this->set("uAuth",$uAuth);
     }
 
     public function index(){
 
+    }
+    public function step2(){
 
 
     }
+    public function step3(){
 
 
+    }
+    public function step4(){
 
+
+    }
+    public function step5(){
+
+
+    }
+    public function step6(){
+
+
+    }
 
 }

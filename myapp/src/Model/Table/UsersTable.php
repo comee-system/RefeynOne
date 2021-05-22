@@ -28,6 +28,7 @@ class UsersTable extends Table
      * @param array $config The configuration for the Table.
      * @return void
      */
+    public $type = "";
     public function initialize(array $config)
     {
         parent::initialize($config);
@@ -39,6 +40,10 @@ class UsersTable extends Table
         $this->addBehavior('Timestamp');
     }
 
+    public function validationuserEdit(Validator $validator){
+        $this->type = "edit";
+        return $this->validationDefault($validator);
+    }
     /**
      * Default validation rules.
      *
@@ -47,37 +52,92 @@ class UsersTable extends Table
      */
     public function validationDefault(Validator $validator)
     {
+        // プロバイダを追加
+        $validator->provider('custom', Validation\CustomValidation::class);
+
         $validator
             ->integer('id')
             ->allowEmptyString('id', null, 'create');
 
         $validator
             ->scalar('username')
-            ->maxLength('username', 255)
+            ->maxLength('username', 255,__("入力文字が多すぎます。"))
+            ->minLength('username',5,__("5文字以上で入力してください。"))
             ->requirePresence('username', 'create')
-            ->notEmptyString('username');
+            ->notEmptyString('username',__("ユーザ名を入力してください。"));
+        $validator
+            ->scalar('campany')
+            ->maxLength('campany', 255,__("入力文字が多すぎます。"))
+            ->notEmptyString('campany',__("企業名を入力してください。"));
 
         $validator
-            ->scalar('password')
-            ->maxLength('password', 255)
-            ->requirePresence('password', 'create')
-            ->notEmptyString('password');
+            ->scalar('sei')
+            ->maxLength('sei', 255,__("氏名(姓)入力文字が多すぎます。"))
+            ->notEmptyString('sei',__("氏名(姓)を入力してください。"));
+        $validator
+            ->scalar('mei')
+            ->maxLength('mei', 255,__("氏名(名)入力文字が多すぎます。"))
+            ->notEmptyString('mei',__("氏名(名)を入力してください。"));
 
         $validator
-            ->email('email')
-            ->requirePresence('email', 'create')
-            ->notEmptyString('email')
-            ->add('email', 'unique', ['rule' => 'validateUnique', 'provider' => 'table']);
+            ->scalar('sei_kana')
+            ->maxLength('sei_kana', 255,__("ふりがな(姓)入力文字が多すぎます。"))
+            ->notEmptyString('sei_kana',__("ふりがな(姓)を入力してください。"));
+        $validator
+            ->scalar('mei_kana')
+            ->maxLength('mei_kana', 255,__("ふりがな(名)入力文字が多すぎます。"))
+            ->notEmptyString('mei_kana',__("ふりがな(名)を入力してください。"));
+
 
         $validator
-            ->integer('role')
-            ->requirePresence('role', 'create')
-            ->notEmptyString('role');
+            ->scalar('mei_kana')
+            ->maxLength('mei_kana', 255,__("ふりがな(名)入力文字が多すぎます。"))
+            ->notEmptyString('mei_kana',__("ふりがな(名)を入力してください。"));
 
+        if($this->type == "edit"){
+            $validator
+                ->scalar('password')
+                ->maxLength('password', 255,__("入力文字が多すぎます。"))
+                ->minLength('password',8,__("8文字以上で入力してください。"))
+                ->requirePresence('password', 'create')
+                ->allowEmptyString('password');
+        }else{
+            $validator
+                ->scalar('password')
+                ->maxLength('password', 255,__("入力文字が多すぎます。"))
+                ->minLength('password',8,__("8文字以上で入力してください。"))
+                ->requirePresence('password', 'create')
+                ->notEmptyString('password',__("パスワードを入力してください。"));
+        }
+        if($this->type != "edit"){
+            $validator
+                ->email('email',__("メールアドレスに誤りがあります。"))
+                ->requirePresence('email', 'create')
+                ->notEmptyString('email',__("メールアドレスを入力してください。"))
+                ->add('email', 'unique', [
+                    'rule' => 'validateUnique',
+                    'provider' => 'table',
+                    'message'=>__("既に登録されているメールアドレスです。")
+                    ]);
+        }
         $validator
-            ->dateTime('last_login_at')
-            ->requirePresence('last_login_at', 'create')
-            ->notEmptyDateTime('last_login_at');
+        ->notEmptyString('startdate',__("開始日を入力してください。"))
+        ->add("startdate", [
+            'date' => [
+                'rule' => function($value,$val){
+                    $ex = explode("-",$value);
+                    if(!checkdate($ex[1], $ex[2], $ex[0])){
+                        return false;
+                    }
+                    if($val[ 'data' ]['startdate'] > $val[ 'data' ][ 'enddate']){
+                        return false;
+                    }
+                    return true;
+                },
+                'message' => '日付に誤りがあります。',
+            ],
+        ]);
+
 
         return $validator;
     }
@@ -91,7 +151,7 @@ class UsersTable extends Table
      */
     public function buildRules(RulesChecker $rules)
     {
-        $rules->add($rules->isUnique(['username']));
+       // $rules->add($rules->isUnique(['username']));
         $rules->add($rules->isUnique(['email']));
 
         return $rules;
