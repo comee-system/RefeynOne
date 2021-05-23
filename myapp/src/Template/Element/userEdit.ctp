@@ -6,7 +6,7 @@
 ?>
 <?= $this->Form->create($user,[])?>
 <?php
-    $col = 6;
+    $col = 10;
     if($mode == "admin") $col = 12;
 ?>
 <div class="col-<?=$col?> mt-5 mx-auto">
@@ -143,9 +143,10 @@
                                 <?php
                                     if($this->request->getData('start')){
                                         $start = $this->request->getData('start');
+                                        $end = $this->request->getData('end');
                                     }else{
-                                        $ex  = explode("-",$user[ 'startdate' ]);
-                                        $ex2 = explode("-",$user[ 'enddate'   ]);
+                                        $ex  = explode("-",date("Y-m-d",strtotime($user[ 'startdate' ])));
+                                        $ex2 = explode("-",date("Y-m-d",strtotime($user[ 'enddate' ])));
                                         $start[ 'year'  ] = sprintf("%d",(isset($ex[0]))?$ex[0]:0);
                                         $start[ 'month' ] = sprintf("%d",(isset($ex[1]))?$ex[1]:0);
                                         $start[ 'day'   ] = sprintf("%d",(isset($ex[2]))?$ex[2]:0);
@@ -153,7 +154,6 @@
                                         $end[ 'month'   ] = sprintf("%d",(isset($ex2[1]))?$ex2[1]:0);
                                         $end[ 'day'     ] = sprintf("%d",(isset($ex2[2]))?$ex2[2]:0);
                                     }
-                                    $end = $this->request->getData('end');
                                 ?>
                                 <select name="start[year]" class="form-control <?=$type?>">
                                 <?php for($i=date('Y');$i<=date('Y')+3;$i++):

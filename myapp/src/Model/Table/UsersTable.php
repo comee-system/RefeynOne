@@ -5,7 +5,7 @@ use Cake\ORM\Query;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
-
+use Cake\ORM\TableRegistry;
 /**
  * Users Model
  *
@@ -64,7 +64,14 @@ class UsersTable extends Table
             ->maxLength('username', 255,__("入力文字が多すぎます。"))
             ->minLength('username',5,__("5文字以上で入力してください。"))
             ->requirePresence('username', 'create')
-            ->notEmptyString('username',__("ユーザ名を入力してください。"));
+            ->notEmptyString('username',__("ユーザIDを入力してください。"));
+
+        $validator
+            ->add('username','custom',[
+                'rule'=>[$this,'sameUsernameCheck'],
+                'message'=>'同じユーザIDが既に登録されています',
+            ]);
+
         $validator
             ->scalar('campany')
             ->maxLength('campany', 255,__("入力文字が多すぎます。"))
@@ -151,9 +158,28 @@ class UsersTable extends Table
      */
     public function buildRules(RulesChecker $rules)
     {
-       // $rules->add($rules->isUnique(['username']));
+        $rules->add($rules->isUnique(['username']));
         $rules->add($rules->isUnique(['email']));
 
         return $rules;
     }
+
+    public function sameUsernameCheck($value, $context) {
+
+        $table = TableRegistry::get($this->_registryAlias);
+
+        if ($context['newRecord']) {
+            $where = [
+                'username'=>$value,
+            ];
+        } else {
+            $where = [
+                'id !='=>$context['data']['id'],
+                'username'=>$value,
+            ];
+        }
+        $query = $table->find()->select(['id'])->where($where)->first();
+        return empty($query) ? true : false;
+    }
+
 }

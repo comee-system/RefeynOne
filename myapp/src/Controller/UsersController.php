@@ -102,6 +102,18 @@ class UsersController extends AppController
                 $user->role = 0; //一般
                 $user->last_login_at = 0;
                 $this->connection->begin();
+
+                $user->startdate = sprintf("%04d-%02d-%02d"
+                                        ,$this->request->getData("start")[ 'year' ]
+                                        ,$this->request->getData("start")[ 'month' ]
+                                        ,$this->request->getData("start")[ 'day' ]
+                                        );
+                $user->enddate = sprintf("%04d-%02d-%02d"
+                                        ,$this->request->getData("end")[ 'year' ]
+                                        ,$this->request->getData("end")[ 'month' ]
+                                        ,$this->request->getData("end")[ 'day' ]
+                                        );
+
                 if ($userdata = $this->Users->save($user)) {
                     $this->mailsend->userRegistSends($userdata);
                     $this->Flash->success(__('会員登録が完了しました。'));
