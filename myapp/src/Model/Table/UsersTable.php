@@ -53,7 +53,7 @@ class UsersTable extends Table
     public function validationDefault(Validator $validator)
     {
         // プロバイダを追加
-        $validator->provider('custom', Validation\CustomValidation::class);
+       // $validator->provider('custom', Validation\CustomValidation::class);
 
         $validator
             ->integer('id')
