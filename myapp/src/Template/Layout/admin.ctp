@@ -72,17 +72,46 @@ $cakeDescription = 'CakePHP: the rapid development php framework';
           <!-- Add icons to the links using the .nav-icon class
                with font-awesome or any other icon font library -->
           <li class="nav-item">
-            <?php
-                $url = $this->Url->build([
-                    "controller" => "users",
-                    "action" => "index",
-                ]);?>
-            <a href="<?= h($url) ?>" class="nav-link">
+            <a href="#" class="nav-link">
               <i class="nav-icon fas fa-tachometer-alt"></i>
-              <p>会員一覧</p>
+              <p>会員情報</p>
             </a>
+            <ul class="nav nav-treeview" style="display:block;">
+                <li class="nav-item">
+                    <?php
+                        $url = $this->Url->build([
+                            "controller" => "users",
+                            "action" => "index",
+                        ]);?>
+                    <a href="<?= h($url) ?>" class="nav-link">
+                    <i class="nav-icon fas fa-circle nav-icon"></i>
+                    <p>会員一覧</p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <?php
+                        $url = $this->Url->build([
+                            "controller" => "users",
+                            "action" => "edit",
+                        ]);?>
+                    <a href="<?= h($url) ?>" class="nav-link">
+                    <i class="nav-icon fas fa-circle nav-icon"></i>
+                    <p>会員登録</p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <?php
+                        $url = $this->Url->build([
+                            "controller" => "users",
+                            "action" => "admin",
+                        ]);?>
+                    <a href="<?= h($url) ?>" class="nav-link">
+                    <i class="nav-icon fas fa-circle nav-icon"></i>
+                    <p>管理者更新</p>
+                    </a>
+                </li>
+            </ul>
           </li>
-
         </ul>
       </nav>
       <!-- /.sidebar-menu -->
@@ -116,6 +145,7 @@ $cakeDescription = 'CakePHP: the rapid development php framework';
 
 <!-- jQuery -->
 <?= $this->Html->script('/plugins/jquery/jquery.min.js') ?>
+
 <!-- Bootstrap 4 -->
 <?= $this->Html->script('/plugins/bootstrap/js/bootstrap.bundle.min.js') ?>
 <?= $this->Html->script('/plugins/bootstrap4-duallistbox/jquery.bootstrap-duallistbox.min.js') ?>

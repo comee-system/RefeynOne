@@ -63,14 +63,6 @@
         </div>
         <?= $this->Form->end() ?>
 
-
-
-      <!-- /.social-auth-links -->
-      <p class="mb-0">
-        <?= $this->Html->link("会員登録","/users/add/",[
-            "class"=>"text-center"
-        ]) ?>
-      </p>
     </div>
     <!-- /.card-body -->
   </div>

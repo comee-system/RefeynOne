@@ -19,7 +19,7 @@ class UsersController extends AppController
         $this->pan = [];
         $this->pan[0]['title'] = "Home";
         $this->pan[0]['link' ] = Router::url(['controller' => '/'], true);
-
+        $this->mailsend = $this->loadComponent('MailSend');
         parent::beforeFilter($event);
         $this->Auth->allow(['add', 'hoge']);
         $this->set("pan",$this->pan);
@@ -63,8 +63,8 @@ class UsersController extends AppController
         $title = "会員一覧";
         $this->pan[1]['title'] = $title;
         $this->pan[1]['link' ] = "";
-
-        $users = $this->paginate($this->Users);
+        $user = $this->Users->find()->where(['role'=>0]);
+        $users = $this->paginate($user);
 
         $this->set(compact('users'));
         $this->set("title",$title);
@@ -107,6 +107,31 @@ class UsersController extends AppController
         }
         $this->set(compact('user'));
     }
+    public function admin()
+    {
+        $user = $this->Users->find()->select(['id'])->where([
+            'role'=>1
+        ])->first();
+
+        //管理者情報取得
+        $user = $this->Users->get($user->id, [
+            'contain' => [],
+        ]);
+        if ($this->request->is('put')) {
+            $user = $this->Users->patchEntity($user, $this->request->getData(),['validate'=>false]);
+
+            if(!$this->request->getData('password')){
+                unset($user[ 'password' ]);
+            }
+            if ($this->Users->save($user)) {
+                $this->Flash->success(__('管理者情報の更新を行いました。'));
+
+                return $this->redirect(['controller'=>'users','action' => 'admin']);
+            }
+            $this->Flash->error(__('管理者情報の更新に失敗しました。'));
+        }
+        $this->set(compact('user'));
+    }
 
     /**
      * Edit method
@@ -119,9 +144,13 @@ class UsersController extends AppController
     {
 
         $type = "";
-        $user = $this->Users->get($id, [
-            'contain' => [],
-        ]);
+        if($id > 0 ){
+            $user = $this->Users->get($id, [
+                'contain' => [],
+            ]);
+        }else{
+            $user = $this->Users->newEntity();
+        }
         $error = [];
         if ($this->request->is(['patch', 'post', 'put'])) {
             $request = $this->request->getData();
@@ -135,8 +164,11 @@ class UsersController extends AppController
                                         ,$this->request->getData("end")[ 'month' ]
                                         ,$this->request->getData("end")[ 'day' ]
                                         );
-
-            $user = $this->Users->patchEntity($user, $request,['validate'=>"userEdit"]);
+            if($id > 0){
+                $user = $this->Users->patchEntity($user, $request,['validate'=>"userEdit"]);
+            }else{
+                $user = $this->Users->patchEntity($user, $request);
+            }
 
             if($this->request->getData("conf")){
                 $error = $user->getErrors();
@@ -148,11 +180,13 @@ class UsersController extends AppController
                 if(!$this->request->getData("password")){
                     unset($user->password);
                 }
-                $user['startdate'] = $request[ 'startdate' ];
-                $user['enddate'] = $request[ 'enddate' ];
-
-                if ($this->Users->save($user)) {
-                    $this->Flash->success(__('The user has been saved.'));
+                $user[ 'startdate' ] = $request[ 'startdate' ];
+                $user[ 'enddate'   ] = $request[ 'enddate' ];
+                $user[ 'role'      ] = 0;
+                $user[ 'last_login_at' ] = date('Y-m-d');
+                if ($userdata = $this->Users->save($user)) {
+                    $this->mailsend->userRegistSends($userdata);
+                    $this->Flash->success(__('会員登録が完了しました。'));
 
                     return $this->redirect(['action' => 'index']);
                 }

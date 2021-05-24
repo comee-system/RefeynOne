@@ -31,17 +31,14 @@ class GraphsController extends AppController
 
 
     }
+    public function step3Graph(){
+
+
+    }
     public function step4(){
 
 
     }
-    public function step5(){
 
-
-    }
-    public function step6(){
-
-
-    }
 
 }

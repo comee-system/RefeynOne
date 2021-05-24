@@ -7,159 +7,139 @@
             'enctype' => 'multipart/form-data',
             'url'=>'/graphs/step4'
             ]); ?>
-        <div class="row">
-            <div class="col-md-12 mt-3">
-                <div class="card ">
-                    <div class="card-header bg-primary">
-                        <?= __("以前のSOPファイル取込") ?>
-                        <i class="fas fa-question-circle yubi" data-toggle="modal" data-target="#modal-default" ></i>
-                    </div>
-                    <div class="card-body">
-
-                        <div id="upFileWrap">
-                            <div id="inputFile">
-                                <!-- ドラッグ&ドロップエリア -->
-                                <p id="dropArea">ここにファイルをドロップしてください<br>または</p>
-
-                                <!-- 通常のinput[type=file] -->
-                                <div id="inputFileWrap">
-                                    <input type="file" name="uploadFile" id="uploadFile">
-                                    <div id="btnInputFile"><span>ファイルを選択する</span></div>
-                                    <div id="btnChangeFile"><span>ファイルを変更する</span></div>
-                                </div>
-                                <div id="filename">-</div>
+            <div class="row mt-3">
+                <div class="col-md-10">
+                    <!-- LINE CHART -->
+                    <div class="card card-info">
+                        <div class="card-body">
+                            <div class="chart">
+                                <canvas id="lineChart" style="height: 700px;max-width: 100%;"></canvas>
                             </div>
+                        </div>
+                        <!-- /.card-body -->
+                    </div>
+                    <a href="" class="btn btn-outline-info w-100">SOPエリアの設定</a>
+                    <!-- /.card -->
+                </div>
+                <div class="col-md-2">
+                    <div class="ml-2">
+                        <div class="row">
+                            <?= $this->Form->button("png<br />Export",[
+                                "class"=>"btn btn-warning w-100 text-white",
+                                "type"=>"button",
+                                "id"=>"pngExport"
+                            ])?>
+                        </div>
+                        <div class="row mt-3">
+                            <?= $this->Form->button("CSV<br />Export",[
+                                "class"=>"btn btn-warning w-100 text-white",
+                                "type"=>"button"
+                            ])?>
+                        </div>
+                        <div class="row mt-3">
+                            <?= $this->Html->link("グラフ<br />表示変更",$this->request->getParam('controller')."/step3_graph/",[
+                                'escape'=>false,
+                                'class'=>'btn btn-warning w-100 text-white text-center'
+                            ])?>
                         </div>
 
 
-                    </div>
-                </div>
-
-            </div>
-
-        </div>
-        <div class="row">
-            <div class="col-md-12 mt-3">
-                <div class="card ">
-                    <div class="card-header bg-primary">
-                        <?= __("SOP（初期設定）") ?>
-                    </div>
-                    <div class="card-body">
-                        <table class="table table-bordered">
-                            <thead class="bg-info text-center">
-                                <tr>
-                                <th>&nbsp;</th>
-                                <th><?= __("Mw") ?></th>
-                                </tr>
-                            </thead>
-                            <tbody class="bg-white">
-                                <tr>
-                                    <td><?= __("グラフの初期値") ?></td>
-                                    <td><input type="number" value="" class="form-control" /></td>
-                                </tr>
-                                <tr>
-                                    <td><?= __("表示範囲(最大値)") ?></td>
-                                    <td><input type="number" value="" class="form-control" /></td>
-                                </tr>
-                                <tr>
-                                    <td><?= __("Binサイズ(間隔)") ?></td>
-                                    <td><input type="number" value="" class="form-control" /></td>
-                                </tr>
-                                <tr>
-                                    <td><?= __("スムージング") ?></td>
-                                    <td><input type="number" value="" class="form-control" /></td>
-                                </tr>
-
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="row mt-3">
-            <div class="col-md-12 mt-3">
-                <div class="card ">
-                    <div class="card-header bg-primary">
-                        <?= __("エリア設定") ?>
-                        <small>※エリア設定は解析時に入力可能です。</small>
-                    </div>
-                    <div class="card-body">
-
-                        <table class="table table-bordered">
-                            <thead class="bg-info text-center">
-                                <tr>
-
-                                <th></th>
-                                <th><?= __("エリア下限")?></th>
-                                <th><?= __("≦X＜")?></th>
-                                <th><?=__("エリア上限")?></th>
-                                </tr>
-                            </thead>
-                            <tbody class="bg-white text-center no-boarder">
-                                <tr>
-                                    <td>エリア1</td>
-                                    <td>2,000</td>
-                                    <td ></td>
-                                    <td>3,000</td>
-                                </tr>
-                                <tr>
-                                    <td>エリア2</td>
-                                    <td>2,000</td>
-                                    <td></td>
-                                    <td>3,000</td>
-                                </tr>
-                                <tr>
-                                    <td>エリア3</td>
-                                    <td>2,000</td>
-                                    <td></td>
-                                    <td>3,000</td>
-                                </tr>
-
-
-                            </tbody>
-                        </table>
-
+                        <div class="row mt-3">
+                            <div class="col-12">
+                                <div class="card card-info">
+                                    <div class="card-header">解析基準</div>
+                                    <div class="card-body">
+                                        <div class="custom-control custom-radio">
+                                            <input class="custom-control-input" type="radio" id="analyticsBasic1" name="analyticsBasic">
+                                            <label for="analyticsBasic1" class="custom-control-label">Number</label>
+                                        </div>
+                                        <div class="custom-control custom-radio">
+                                            <input class="custom-control-input" type="radio" id="analyticsBasic2" name="analyticsBasic" checked>
+                                            <label for="analyticsBasic2" class="custom-control-label">Mass</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mt-3">
+                            <div class="col-12">
+                                <div class="card card-info">
+                                    <div class="card-header"><?= __("データ表示") ?></div>
+                                    <div class="card-body">
+                                        <div class="custom-control custom-radio">
+                                            <input class="custom-control-input" type="radio" id="dataDisplay1" name="dataDisplay">
+                                            <label for="dataDisplay1" class="custom-control-label">Count</label>
+                                        </div>
+                                        <div class="custom-control custom-radio">
+                                            <input class="custom-control-input" type="radio" id="dataDisplay2" name="dataDisplay" checked>
+                                            <label for="dataDisplay2" class="custom-control-label">Normalized</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mt-3">
+                            <div class="col-12">
+                                <div class="card card-info">
+                                    <div class="card-header"><?= __("データ範囲") ?></div>
+                                    <div class="card-body p-1">
+                                        <div class="row">
+                                            <div class="col-2 text-center"><small class="text-muted f6 text-nowrap"><?= __("範囲") ?></small></div>
+                                            <div class="col-5 text-center"><small class="text-muted f6"><?= __("下限") ?></small></div>
+                                            <div class="col-5 text-center"><small class="text-muted f6"><?= __("上限") ?></small></div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-2 text-center"><small class="text-muted"><?= __("X") ?></small></div>
+                                            <div class="col-5">
+                                                <input type="text" name="" value=""  class="form-control-sm w-100" />
+                                            </div>
+                                            <div class="col-5">
+                                                <input type="text" name="" value=""  class="form-control-sm w-100" />
+                                            </div>
+                                        </div>
+                                        <div class="row mt-1">
+                                            <div class="col-2 text-center"><small class="text-muted"><?= __("Y")?></small></div>
+                                            <div class="col-5">
+                                                <input type="text" name="" value=""  class="form-control-sm w-100" />
+                                            </div>
+                                            <div class="col-5">
+                                                <input type="text" name="" value=""  class="form-control-sm w-100" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mt-3">
+                            <div class="col-12">
+                                <div class="card card-info">
+                                    <div class="card-header"><?= __("スムージング")?></div>
+                                    <div class="card-body">
+                                        <input type="text" name="" value=""  class="form-control-sm w-100" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
 
                     </div>
                 </div>
-
             </div>
 
-        </div>
-
-        <div class="row m-3">
-            <div class="col-md-6 text-center">
-                <?= $this->Html->link("戻る","/graphs/step2",[
-                    "class"=>"btn btn-secondary w-75",
-                ])?>
+            <div class="row mt-3">
+                <a href="" class="btn btn-outline-success w-100">エリア毎のテーブル表示</a>
             </div>
-            <div class="col-md-6 text-center">
-                <?= $this->Form->submit("データ選択",[
-                    "class"=>"btn btn-primary w-75"
-                ])?>
+            <div class="row m-3">
+                <div class="col-md-6 text-center">
+                    <?= $this->Html->link("戻る","/graphs/step2",[
+                        "class"=>"btn btn-secondary w-75",
+                    ])?>
+                </div>
+                <div class="col-md-6 text-center">
+                    <?= $this->Form->submit("解析",[
+                        "class"=>"btn btn-primary w-75"
+                    ])?>
+                </div>
             </div>
-        </div>
         <?= $this->Form->end(); ?>
-
-
     </div>
 </div>
-
-
-<!-- モーダル表示 -->
-<div class="modal fade" id="modal-default">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-body">
-                <p><?= __("「保存された各データフォルダ中の「eventsFitted.csv」というファイルをカーソルで持っていきます」") ?></p>
-            </div>
-            <div class="modal-footer justify-content-between">
-                <button type="button" class="btn btn-default" data-dismiss="modal">閉じる</button>
-            </div>
-        </div>
-    </div>
-    <!-- /.modal-content -->
-</div>
-
-

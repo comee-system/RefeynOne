@@ -39,7 +39,7 @@
             <div class="col-md-12 mt-3">
                 <div class="card ">
                     <div class="card-header bg-info">
-                        <?= __("LSSシステムからのエクスポートファイル取込") ?>
+                        <?= __("Mesurementファイル取込") ?>
                         <i class="fas fa-question-circle yubi" data-toggle="modal" data-target="#modal-default2" ></i>
                     </div>
                     <div class="card-body">
@@ -65,23 +65,13 @@
 
             </div>
         </div>
-        <div class="row m-3">
-            <div class="col-md-12 text-center">
-            <?= $this->Form->submit("取込みデータ確認",[
-                "class"=>"btn btn-primary w-100"
-
-            ])?>
-            </div>
-        </div>
-        <?= $this->Form->end(); ?>
-
-
 
         <table class="table table-bordered">
             <thead class="bg-success">
                 <tr>
                 <th style="width: 10px">#</th>
                 <th>Label</th>
+                <th>取込ファイル名</th>
                 <th>データ数</th>
                 <th>&nbsp;</th>
                 </tr>
@@ -90,6 +80,7 @@
                 <tr>
                     <td>1.</td>
                     <td><input type="text" value="update soft ware" class="form-control" /></td>
+                    <td>RefeynOne</td>
                     <td>1,000</td>
                     <td class="text-center">
                         <a href="" class="btn-sm btn-danger">削除</a>
@@ -98,6 +89,7 @@
                 <tr>
                     <td>2.</td>
                     <td><input type="text" value="update soft ware" class="form-control" /></td>
+                    <td>RefeynOne</td>
                     <td>1,000</td>
                     <td class="text-center">
                         <a href="" class="btn-sm btn-danger">削除</a>
@@ -106,6 +98,7 @@
                 <tr>
                     <td>3.</td>
                     <td><input type="text" value="update soft ware" class="form-control" /></td>
+                    <td>RefeynOne</td>
                     <td>1,000</td>
                     <td class="text-center">
                         <a href="" class="btn-sm btn-danger">削除</a>
@@ -114,6 +107,16 @@
 
             </tbody>
         </table>
+
+        <div class="row m-3">
+            <div class="col-md-12 text-center">
+            <?= $this->Form->submit("次へ(初期値設定)",[
+                "class"=>"btn btn-primary w-100"
+            ])?>
+            </div>
+        </div>
+        <?= $this->Form->end(); ?>
+
     </div>
 </div>
 

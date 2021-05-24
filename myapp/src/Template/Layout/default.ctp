@@ -43,6 +43,7 @@
 </div>
 <!-- jQuery -->
 <?= $this->Html->script('/plugins/jquery/jquery.min.js') ?>
+<?= $this->Html->script('/plugins/jquery/jquery-ui.js') ?>
 <!-- Bootstrap 4 -->
 <?= $this->Html->script('/plugins/bootstrap/js/bootstrap.bundle.min.js') ?>
 <?= $this->Html->script('/plugins/bootstrap4-duallistbox/jquery.bootstrap-duallistbox.min.js') ?>

@@ -32,7 +32,27 @@ $('.duallistbox').bootstrapDualListbox({
     selectorMinimalHeight:400
 });
 
+$("#sortable").sortable({
+    update: function(){
+        console.log($('#sortable').sortable("toArray"));
+    },
+    axis: 'y',
+});
+$(".graph_status_edit").on("click",function(){
+    console.log("click");
+});
 
+$("#pngExport").on("click",function(){
+    let canvas = document.getElementById('lineChart');
+    let png = canvas.toDataURL();
+    let link = document.createElement("a");
+    link.href = canvas.toDataURL("image/png");
+    var date = new Date() ;
+    link.download = date.getTime()+".png";
+    link.click();
+
+    return false;
+});
 //-------------
 //- LINE CHART -
 //--------------

@@ -4,6 +4,9 @@ img.__logo {
 i.yubi {
   cursor: pointer; }
 
+.f6 {
+  font-size: 6px; }
+
 input.conf {
   border: 0px none;
   pointer-events: none; }
@@ -23,6 +26,11 @@ table.table-bordered tbody.no-boarder td {
   border-right: 0px none; }
 table.table-bordered tbody.no-boarder td:first-child {
   border-right: 1px dotted #ccc; }
+table th.wmin {
+  width: 30px; }
+
+input[type=checkbox] {
+  transform: scale(1.5); }
 
 #inputFile2,
 #inputFile {

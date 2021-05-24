@@ -69,8 +69,12 @@
                     <td><?= h($user->sei) ?><?= h($user->mei) ?></td>
                     <td><?= h($user->email) ?></td>
                     <td>
-                        <?= h($user->startdate) ?>～
-                        <?= h($user->enddate) ?>
+                        <?php if($user->datestatus == 1): ?>
+                            期限なし
+                        <?php else: ?>
+                            <?= h(date("Y/m/d",strtotime($user->startdate))) ?>～
+                            <?= h(date("Y/m/d",strtotime($user->enddate))) ?>
+                        <?php endif;?>
                     </td>
 
                 </tr>
