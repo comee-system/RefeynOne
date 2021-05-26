@@ -59,6 +59,29 @@ input[type=checkbox] {
     transform: scale(1.5);
 }
 
+div{
+    &#screen{
+        display:none;
+        position:fixed;
+        height:100%;
+        width:100%;
+        background:rgba(100,100,100,0.5);
+        top:0;
+        z-index:1000;
+        text-align: center;
+        div{
+            &.m-5{
+                margin:18rem !important;
+            }
+            &.spinner-border{
+                width:6rem;
+                height:6rem;
+            }
+        }
+    }
+}
+
+
 
 //ファイルアップロード
 #inputFile2,

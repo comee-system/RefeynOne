@@ -25,10 +25,11 @@ try{
 
         // 取得したファイルをinput[type=file]へ
         fileInput.files = files;
-
-        if(typeof files[0] !== 'undefined') {
+        if(typeof files[0] !== 'undefined' && files[0].name.indexOf('.csv') !== -1 ) {
             //ファイルが正常に受け取れた際の処理
             $("#filename").text(files[0]['name']+"を選択しました。");
+            $(this).fileupload();
+
         } else {
             //ファイルが受け取れなかった際の処理
             $("#filename").text("ファイルの選択に失敗しました。");
@@ -39,10 +40,14 @@ try{
     // input[type=file]に変更があれば実行
     // もちろんドロップ以外でも発火します
     fileInput.addEventListener('change', function(e){
+
         var file = e.target.files[0];
-        if(typeof e.target.files[0] !== 'undefined') {
+        if(typeof e.target.files[0] !== 'undefined'  && file.name.indexOf('.csv') !== -1  ) {
             // ファイルが正常に受け取れた際の処理
             $("#filename").text(file['name']+"を選択しました。");
+
+            $(this).fileupload();
+
         } else {
             // ファイルが受け取れなかった際の処理
             $("#filename").text("ファイルの選択に失敗しました。");
@@ -50,6 +55,37 @@ try{
         }
     }, false);
 }catch(e){}
+
+
+$.fn.fileupload = function(){
+    $("#screen").show();
+    let _upfile = $('input[name="uploadFile"]');
+    let fd = new FormData();
+    fd.append("upfile", _upfile.prop('files')[0]);
+
+    var _id = $("#id").val();
+    $.ajax({
+        url:"/graphs/upload/"+_id,
+        type:"post",
+        data:fd,
+        processData:false,
+        contentType:false,
+        cache:false,
+    }).done(function(data){
+        if(data >= 1 ){
+            alert("ファイルのアップロードに失敗しました");
+        }else{
+            $("#screen").hide();
+            alert("ファイルのアップロードを行いました。");
+        }
+        console.log(data);
+
+    }).fail(function(){
+
+    });
+};
+
+
 
 //////////////////////////
 
@@ -84,6 +120,7 @@ try{
         if(typeof files[0] !== 'undefined') {
             //ファイルが正常に受け取れた際の処理
             $("#filename2").text(files[0]['name']+"を選択しました。");
+            $(this).fileupload2();
         } else {
             //ファイルが受け取れなかった際の処理
             $("#filename2").text("ファイルの選択に失敗しました。");
@@ -99,6 +136,7 @@ try{
         if(typeof e.target.files[0] !== 'undefined') {
             // ファイルが正常に受け取れた際の処理
             $("#filename2").text(file['name']+"を選択しました。");
+            $(this).fileupload2();
         } else {
             // ファイルが受け取れなかった際の処理
             $("#filename2").text("ファイルの選択に失敗しました。");
@@ -107,3 +145,29 @@ try{
     }, false);
 }catch(e){}
 
+$.fn.fileupload2 = function(){
+    $("#screen").show();
+    let _upfile = $('input[name="uploadFile2"]');
+    let fd = new FormData();
+    fd.append("upfile", _upfile.prop('files')[0]);
+    var _id = $("#id").val();
+    $.ajax({
+        url:"/graphs/upload/"+_id+"/on",
+        type:"post",
+        data:fd,
+        processData:false,
+        contentType:false,
+        cache:false,
+    }).done(function(data){
+        if(data >= 1 ){
+            alert("ファイルのアップロードに失敗しました");
+        }else{
+            $("#screen").hide();
+            alert("ファイルのアップロードを行いました。");
+        }
+        console.log(data);
+
+    }).fail(function(){
+
+    });
+};

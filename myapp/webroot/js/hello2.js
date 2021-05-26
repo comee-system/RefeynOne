@@ -1,7 +1,9 @@
 import {write1} from './hello1.js'
 import {write2} from './dropimage.js'
+import {write3} from './graph.js'
 
 write1();
+write3();
 
 
 
