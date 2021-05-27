@@ -153,7 +153,7 @@ $.fn.fileupload2 = function(){
     fd.append("upfile", _upfile.prop('files')[0]);
     var _id = $("#id").val();
     $.ajax({
-        url:"/graphs/upload/"+_id+"/on",
+        url:"/graphs/upload/"+_id+"/mesurement",
         type:"post",
         data:fd,
         processData:false,
@@ -168,7 +168,6 @@ $.fn.fileupload2 = function(){
             alert("ファイルのアップロードを行いました。");
             $(this).getGraphData();
         }
-        console.log(data);
 
     }).fail(function(){
 

@@ -131,7 +131,7 @@
             </div>
             <div class="row m-3">
                 <div class="col-md-6 text-center">
-                    <?= $this->Html->link("戻る","/graphs/step2",[
+                    <?= $this->Html->link("戻る","/graphs/step2/".$id,[
                         "class"=>"btn btn-secondary w-75",
                     ])?>
                 </div>

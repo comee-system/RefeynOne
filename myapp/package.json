@@ -1,7 +1,7 @@
 {
   "name": "myapp",
   "version": "1.0.0",
-  "description": "",
+  "description": "参考URL `https://itsakura.com/js-webpack-install` - さくらさーばーにnpmがはいってないことを忘れていましたのでローカルで作成してjsを上げます",
   "main": "index.js",
   "directories": {
     "test": "tests"
@@ -14,8 +14,13 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "npm-watch": "0.0.0",
+    "minimatch": "^3.0.4",
+    "npm-watch": "^0.9.0",
     "webpack": "^5.37.1",
     "webpack-cli": "^4.7.0"
+  },
+  "dependencies": {
+    "chart.js": "^3.3.0",
+    "chartjs-plugin-annotation": "^1.0.1"
   }
 }

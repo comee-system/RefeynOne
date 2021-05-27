@@ -79,6 +79,7 @@ var areaChartData = {
       pointHighlightFill  : '#fff',
       pointHighlightStroke: 'rgba(60,141,188,1)',
       lineTension: 0,
+      borderDash:[5,5],
       data                : [
           _pt, 48, 40, 19, 86, 27, 90,
           28, 48, 40, 19, 86, 27, 90,
@@ -88,17 +89,17 @@ var areaChartData = {
     },
     {
       label               : 'Digital Goods2',
-      backgroundColor     : 'rgba(160,141,188,0.9)',
-      borderColor         : 'rgba(160,141,188,0.8)',
+      backgroundColor     : 'rgba(255,255,255,0.9)',
+      borderColor         : 'rgba(0,0,0,0.8)',
       pointRadius          : false,
       pointColor          : '#3b8bba',
       pointStrokeColor    : 'rgba(60,141,188,1)',
       pointHighlightFill  : '#fff',
       pointHighlightStroke: 'rgba(60,141,188,1)',
       lineTension: 0,
-
+      borderDouble:[5,5],
       data                : [
-          128, 148, 140, 119, 186, 127, 190,
+          8, 148, 140, 119, 186, 127, 190,
           128, 148, 140, 119, 186, 127, 190,
           128, 148, 140, 119, 186, 127, 190,
           128, 148, 140, 119, 186, 127, 190,
@@ -169,7 +170,30 @@ var areaChartOptions = {
         }
 
       }]
-    }
+    },
+
+    annotation: {
+        annotations: [
+            {
+                type: 'line', // 線を描画
+                id: 'hLine',
+                mode: 'vertical', // 線を水平に引く
+                scaleID: 'x-axis-0',
+                value: 10, // 基準となる数値
+                borderWidth: 3, // 基準線の太さ
+                borderColor: 'red'  // 基準線の色
+            },
+            {
+                type: 'line', // 線を描画
+                id: 'hLine2',
+                mode: 'vertical', // 線を水平に引く
+                scaleID: 'x-axis-0',
+                value: 20, // 基準となる数値
+                borderWidth: 3, // 基準線の太さ
+                borderColor: 'blue'  // 基準線の色
+            }
+        ]
+    },
 }
 
 

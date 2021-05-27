@@ -49,6 +49,7 @@
 <?= $this->Html->script('/plugins/bootstrap4-duallistbox/jquery.bootstrap-duallistbox.min.js') ?>
 
 <?= $this->Html->script('/plugins/chart.js/Chart.min.js') ?>
+<?= $this->Html->script('/plugins/chart.js/chartjs-plugin-annotation.min.js') ?>
 
 <!-- AdminLTE App -->
 <?= $this->Html->script('/plugins/adminLTE/js/adminlte.min.js') ?>

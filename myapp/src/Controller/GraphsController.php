@@ -84,11 +84,10 @@ class GraphsController extends AppController
         if($this->request->is('ajax')){
             if($this->request->getData('upfile')[ 'error' ] === 0 ){
                 //ファイルアップロード
-                //typeがあれば、Mesurementファイル取込
                 if($type == "sop"){
                     $this->UploadComponent->fileUploadSop($graphe_id);
                 }else
-                if($type){
+                if($type == "mesurement" ){
                     $this->UploadComponent->fileUploadMesurement($graphe_id,self::Mesurement);
                 }else{
                     $this->UploadComponent->fileUploadRefeynOne($graphe_id,self::RefeynOne);
@@ -109,23 +108,37 @@ class GraphsController extends AppController
             [
                 'GrapheDatas.graphe_id'=>$graphe_id,
                 'GrapheDatas.user_id'=>$this->uAuth['id'],
+                'GrapheDatas.filename'=>self::Mesurement
             ]
-        );
+        )->toArray();
+
 
         $list = [];
         $title = [];
+        $valueid = 0;
+        $no = 0;
         foreach($data as $key=>$value){
-            $title[ $value->id] = $value[ 'label' ];
-            $list[ $value->id ][] = $value['graphe_point'][ 'pointdata' ];
+            if($valueid != $value->id) $no = 0;
+            if($no == 0){
+                $list[ $value->id][] = $value[ 'label' ];
+            }else{
+                $list[ $value->id ][] = $value['graphe_point'][ 'pointdata' ];
+            }
+            $valueid = $value->id;
+            $no++;
         }
+
 
         //保存場所
         $filename = date('YmdHis') . '.csv';
         $file = WWW_ROOT.'csv/' .$filename;
         $f = fopen($file, 'w');
+        foreach($list as $key=>$value){
+            fputcsv($f, $value);
+        }
+/*
         // ヘッダーの出力
         fputcsv($f, $title);
-
 
         //最大行数の取得
         $maxes = [];
@@ -146,6 +159,8 @@ class GraphsController extends AppController
         foreach($line as $key=>$value){
             fputcsv($f, $value);
         }
+        */
+
         fclose($f);
 
         return $this->response->withFile(
