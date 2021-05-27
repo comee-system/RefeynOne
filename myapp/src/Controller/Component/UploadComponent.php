@@ -85,7 +85,7 @@ class UploadComponent extends Component
             $sql = " INSERT INTO graphe_points (graphe_id, graphe_data_id , user_id , pointdata , created,modified ) VALUES ";
             foreach($split as $key=>$value){
            //     $packet = "SET GLOBAL max_allowed_packet = 33554423;";
-                $connection->execute($packet);
+            //    $connection->execute($packet);
                 $imp = [];
                 foreach($value as $k=>$val){
                     $imp[]= "('".$val['graphe_id']."',
@@ -194,7 +194,7 @@ class UploadComponent extends Component
             $sql = " INSERT INTO graphe_points (graphe_id, graphe_data_id , user_id , pointdata , created,modified ) VALUES ";
             foreach($split as $key=>$value){
                // $packet = "SET GLOBAL max_allowed_packet = 33554423;";
-                $connection->execute($packet);
+               // $connection->execute($packet);
                 $imp = [];
                 foreach($value as $k=>$val){
                     $imp[]= "('".$val['graphe_id']."',
