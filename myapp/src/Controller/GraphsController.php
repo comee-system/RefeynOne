@@ -136,30 +136,7 @@ class GraphsController extends AppController
         foreach($list as $key=>$value){
             fputcsv($f, $value);
         }
-/*
-        // ヘッダーの出力
-        fputcsv($f, $title);
 
-        //最大行数の取得
-        $maxes = [];
-        foreach($list as $key=>$val){
-            $maxes[] = count($val);
-        }
-        //最大行数とヘッダ数を比べて大きいほうを利用
-        $loop = (count($title) > max($maxes) )?count($title):max($maxes);
-        //下記込みように変換
-        $line = [];
-        foreach($list as $key=>$value){
-            //foreach($title as $k=>$val){
-            for($i=0;$i<=$loop;$i++){
-                $line[$i][] = (isset($value[$i]))?$value[$i]:"";
-            }
-        }
-        //var_dump($line);
-        foreach($line as $key=>$value){
-            fputcsv($f, $value);
-        }
-        */
 
         fclose($f);
 
