@@ -3,6 +3,7 @@
 
     <div class="container">
         <?= $this->element("graph_step",['step'=>3]); ?>
+        <?= $this->Form->hidden("id",['id'=>'id','value'=>h($id)])?>
         <?= $this->Form->create("", [
             'enctype' => 'multipart/form-data',
             'url'=>'/graphs/step4'

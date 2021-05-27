@@ -58,6 +58,7 @@ $("#pngExport").on("click",function(){
 //-------------
 //- LINE CHART -
 //--------------
+var _pt = 100;
 var areaChartData = {
 
     labels  : [
@@ -71,7 +72,7 @@ var areaChartData = {
 
       label               : 'Digital Goods',
       backgroundColor     : 'rgba(60,141,188,0.9)',
-      borderColor         : 'rgba(60,141,188,0.8)',
+      borderColor         : 'rgba(255,0,0,0.8)',
       pointRadius          : false,
       pointColor          : '#3b8bba',
       pointStrokeColor    : 'rgba(60,141,188,1)',
@@ -79,7 +80,7 @@ var areaChartData = {
       pointHighlightStroke: 'rgba(60,141,188,1)',
       lineTension: 0,
       data                : [
-          28, 48, 40, 19, 86, 27, 90,
+          _pt, 48, 40, 19, 86, 27, 90,
           28, 48, 40, 19, 86, 27, 90,
           28, 48, 40, 19, 86, 27, 90,
           28, 48, 40, 19, 86, 27, 90,
@@ -173,9 +174,11 @@ var areaChartOptions = {
 
 
 try{
-    var lineChartCanvas = $('#lineChart').get(0).getContext('2d')
-    var lineChartOptions = $.extend(true, {}, areaChartOptions)
-    var lineChartData = $.extend(true, {}, areaChartData)
+    var canvas = $('#lineChart').get(0);
+    var lineChartCanvas = canvas.getContext('2d');
+
+    var lineChartOptions = $.extend(true, {}, areaChartOptions);
+    var lineChartData = $.extend(true, {}, areaChartData);
     lineChartData.datasets[0].fill = false;
     lineChartData.datasets[1].fill = false;
     lineChartData.datasets[2].fill = false;
@@ -183,11 +186,13 @@ try{
     lineChartOptions.datasetFill = false;
 
 
+
     var lineChart = new Chart(lineChartCanvas, {
         type: 'line',
         data: lineChartData,
         options: lineChartOptions
     });
+
 }catch(e){
 
 }

@@ -88,10 +88,15 @@
         </table>
 
         <div class="row m-3">
-            <div class="col-md-6 mx-auto">
-            <?= $this->Html->link("次へ(初期値設定)","/graph/step2/",[
-                "class"=>"btn btn-primary w-100"
-            ])?>
+            <div class="col-md-6">
+                <?= $this->Html->link("次へ(初期値設定)","/graphs/step2/".$id,[
+                    "class"=>"btn btn-primary w-100"
+                ])?>
+            </div>
+            <div class="col-md-6 ">
+                <?= $this->Html->link("Mesurementデータ出力","/graphs/outputMesurement/".$id,[
+                    "class"=>"btn btn-warning w-100"
+                ])?>
             </div>
         </div>
 

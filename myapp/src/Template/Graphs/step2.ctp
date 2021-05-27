@@ -1,8 +1,13 @@
-
+<div id="screen">
+    <div class="spinner-border m-5" role="status">
+    <span class="sr-only">Loading...</span>
+    </div>
+</div>
 <div class="content">
 
     <div class="container">
         <?= $this->element("graph_step",['step'=>2]); ?>
+        <?= $this->Form->hidden("id",['id'=>'id','value'=>h($id)])?>
         <?= $this->Form->create("", [
             'enctype' => 'multipart/form-data',
             'url'=>'/graphs/step3'
@@ -16,18 +21,18 @@
                     </div>
                     <div class="card-body">
 
-                        <div id="upFileWrap">
-                            <div id="inputFile">
+                        <div id="upFileWrap3">
+                            <div id="inputFile3">
                                 <!-- ドラッグ&ドロップエリア -->
-                                <p id="dropArea">ここにファイルをドロップしてください<br>または</p>
+                                <p id="dropArea3">ここにファイルをドロップしてください<br>または</p>
 
                                 <!-- 通常のinput[type=file] -->
                                 <div id="inputFileWrap">
-                                    <input type="file" name="uploadFile" id="uploadFile">
-                                    <div id="btnInputFile"><span>ファイルを選択する</span></div>
-                                    <div id="btnChangeFile"><span>ファイルを変更する</span></div>
+                                    <input type="file" name="uploadFile3" id="uploadFile3">
+                                    <div id="btnInputFile3"><span>ファイルを選択する</span></div>
+                                    <div id="btnChangeFile3"><span>ファイルを変更する</span></div>
                                 </div>
-                                <div id="filename">-</div>
+                                <div id="filename3">-</div>
                             </div>
                         </div>
 
@@ -55,19 +60,47 @@
                             <tbody class="bg-white">
                                 <tr>
                                     <td><?= __("グラフの初期値") ?></td>
-                                    <td><input type="number" value="" class="form-control" /></td>
+                                    <td>
+                                        <?= $this->Form->control("defaultpoint",[
+                                            "class"=>"form-control",
+                                            "type"=>"number",
+                                            "value"=>(!empty($SopDefaults->defaultpoint))?$SopDefaults->defaultpoint:"",
+                                            "label"=>false
+                                        ]) ?>
+                                    </td>
                                 </tr>
                                 <tr>
                                     <td><?= __("表示範囲(最大値)") ?></td>
-                                    <td><input type="number" value="" class="form-control" /></td>
+                                    <td>
+                                        <?= $this->Form->control("dispareamax",[
+                                            "class"=>"form-control",
+                                            "type"=>"number",
+                                            "value"=>(!empty($SopDefaults->dispareamax))?$SopDefaults->dispareamax:"",
+                                            "label"=>false
+                                        ]) ?>
+                                    </td>
                                 </tr>
                                 <tr>
                                     <td><?= __("Binサイズ(間隔)") ?></td>
-                                    <td><input type="number" value="" class="form-control" /></td>
+                                    <td>
+                                        <?= $this->Form->control("binsize",[
+                                            "class"=>"form-control",
+                                            "type"=>"number",
+                                            "value"=>(!empty($SopDefaults->binsize))?$SopDefaults->binsize:"",
+                                            "label"=>false
+                                        ]) ?>
+                                    </td>
                                 </tr>
                                 <tr>
                                     <td><?= __("スムージング") ?></td>
-                                    <td><input type="number" value="" class="form-control" /></td>
+                                    <td>
+                                        <?= $this->Form->control("smooth",[
+                                            "class"=>"form-control",
+                                            "type"=>"number",
+                                            "value"=>(!empty($SopDefaults->smooth))?$SopDefaults->smooth:"",
+                                            "label"=>false
+                                        ]) ?>
+                                    </td>
                                 </tr>
 
                             </tbody>
@@ -97,25 +130,14 @@
                                 </tr>
                             </thead>
                             <tbody class="bg-white text-center no-boarder">
-                                <tr>
-                                    <td>エリア1</td>
-                                    <td>2,000</td>
-                                    <td ></td>
-                                    <td>3,000</td>
-                                </tr>
-                                <tr>
-                                    <td>エリア2</td>
-                                    <td>2,000</td>
-                                    <td></td>
-                                    <td>3,000</td>
-                                </tr>
-                                <tr>
-                                    <td>エリア3</td>
-                                    <td>2,000</td>
-                                    <td></td>
-                                    <td>3,000</td>
-                                </tr>
-
+                                <?php foreach( $SopAreas as $key=>$value):?>
+                                    <tr>
+                                        <td><?= h($value->name) ?></td>
+                                        <td><?= number_format($value->minpoint) ?></td>
+                                        <td ></td>
+                                        <td><?= number_format($value->maxpoint) ?></td>
+                                    </tr>
+                                <?php endforeach; ?>
 
                             </tbody>
                         </table>
@@ -130,12 +152,13 @@
 
         <div class="row m-3">
             <div class="col-md-6 text-center">
-                <?= $this->Html->link("戻る","/graphs/",[
+                <?= $this->Html->link("戻る","/graphs/index/".$id,[
                     "class"=>"btn btn-secondary w-75",
                 ])?>
+
             </div>
             <div class="col-md-6 text-center">
-                <?= $this->Form->submit("次へ(解析)",[
+                <?= $this->Html->link("次へ(解析)","/graphs/step3/".$id,[
                     "class"=>"btn btn-primary w-75"
                 ])?>
             </div>

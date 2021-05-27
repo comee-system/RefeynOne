@@ -49,6 +49,10 @@ class GrapheDatasTable extends Table
             'foreignKey' => 'graphe_id',
             'joinType' => 'INNER',
         ]);
+        $this->hasOne('GraphePoints', [
+            'foreignKey' => 'graphe_data_id',
+            'joinType' => 'LEFT',
+        ]);
     }
 
     /**

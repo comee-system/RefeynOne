@@ -84,6 +84,7 @@ div{
 
 
 //ファイルアップロード
+#inputFile3,
 #inputFile2,
 #inputFile {
     position: relative;
@@ -91,6 +92,7 @@ div{
     text-align: center;
 }
 
+#dropArea3,
 #dropArea2,
 #dropArea {
     position: absolute;
@@ -104,12 +106,14 @@ div{
     transition: all 0.25s cubic-bezier(0.21, 0.51, 0.51, 1);
 }
 
+#dropArea3.dragover,
 #dropArea2.dragover,
 #dropArea.dragover {
     border: 2px solid #16a5bf;
     background: rgba(22, 165, 191, 0.6);
 }
 
+#uploadFile3 ,
 #uploadFile2 ,
 #uploadFile {
     position: absolute;
@@ -122,12 +126,15 @@ div{
     opacity: 0;
 }
 
+#inputFileWrap3,
 #inputFileWrap2,
 #inputFileWrap {
     position: relative;
     display: inline-block;
 }
 
+#btnInputFile3,
+#btnChangeFile3,
 #btnInputFile2,
 #btnChangeFile2,
 #btnInputFile,
@@ -136,12 +143,15 @@ div{
     width: 300px;
 }
 
+#btnChangeFile3,
 #btnChangeFile2,
 #btnChangeFile {
     display: none;
 }
 
 
+#btnInputFile3 span,
+#btnChangeFile3 span,
 #btnInputFile2 span,
 #btnChangeFile2 span,
 #btnInputFile span,
@@ -162,11 +172,13 @@ div{
     vertical-align: middle;
 }
 
+#upFileWrap3.selected #btnInputFile3,
 #upFileWrap2.selected #btnInputFile2,
 #upFileWrap.selected #btnInputFile {
     display: none;
 }
 
+#upFileWrap3.selected #btnChangeFile3 ,
 #upFileWrap2.selected #btnChangeFile2 ,
 #upFileWrap.selected #btnChangeFile {
     display: table;

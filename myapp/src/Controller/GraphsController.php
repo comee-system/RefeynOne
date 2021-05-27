@@ -26,6 +26,8 @@ class GraphsController extends AppController
         $this->Graphes = $this->loadModel("Graphes");
         $this->GrapheDatas = $this->loadModel("GrapheDatas");
         $this->GraphePoints = $this->loadModel("GraphePoints");
+        $this->SopDefaults = $this->loadModel("SopDefaults");
+        $this->SopAreas = $this->loadModel("SopAreas");
         $this->UploadComponent = $this->loadComponent("Upload",$this->uAuth);
         $this->set("uAuth",$this->uAuth);
     }
@@ -38,12 +40,33 @@ class GraphsController extends AppController
         $this->set("id",$id);
 
     }
-    public function step2(){
+    public function step2($id){
 
+        $SopDefaults = $this->SopDefaults->find()->where([
+            "user_id"=>$this->uAuth[ 'id' ],
+            "graphe_id"=>$id,
+        ])->first();
+        $SopAreas = $this->SopAreas->find()->where([
+            "user_id"=>$this->uAuth[ 'id' ],
+            "graphe_id"=>$id,
+        ])->toArray();
+
+        $this->set("id",$id);
+       // $this->set("SopDefaults",$SopDefaults);
+        $this->set(compact('SopDefaults'));
+        $this->set(compact('SopAreas'));
 
     }
-    public function step3(){
-
+    public function step3($graphe_id){
+        //グラフデータ取得
+        $grahpe_point = $this->GrapheDatas->find('all',['contain'=>'GraphePoints'])
+        ->where(
+            [
+                'GrapheDatas.graphe_id'=>$graphe_id,
+                'GrapheDatas.user_id'=>$this->uAuth['id'],
+            ]
+        )->toArray();
+        $this->set("id",$graphe_id);
 
     }
     public function step3Graph(){
@@ -62,6 +85,9 @@ class GraphsController extends AppController
             if($this->request->getData('upfile')[ 'error' ] === 0 ){
                 //ファイルアップロード
                 //typeがあれば、Mesurementファイル取込
+                if($type == "sop"){
+                    $this->UploadComponent->fileUploadSop($graphe_id);
+                }else
                 if($type){
                     $this->UploadComponent->fileUploadMesurement($graphe_id,self::Mesurement);
                 }else{
@@ -75,6 +101,62 @@ class GraphsController extends AppController
 
     }
 
+    //CSV出力
+    public function outputMesurement($graphe_id){
+        $this->autoRender = false;
+        $data = $this->GrapheDatas->find('all',['contain'=>'GraphePoints'])
+        ->where(
+            [
+                'GrapheDatas.graphe_id'=>$graphe_id,
+                'GrapheDatas.user_id'=>$this->uAuth['id'],
+            ]
+        );
+
+        $list = [];
+        $title = [];
+        foreach($data as $key=>$value){
+            $title[ $value->id] = $value[ 'label' ];
+            $list[ $value->id ][] = $value['graphe_point'][ 'pointdata' ];
+        }
+
+        //保存場所
+        $filename = date('YmdHis') . '.csv';
+        $file = WWW_ROOT.'csv/' .$filename;
+        $f = fopen($file, 'w');
+        // ヘッダーの出力
+        fputcsv($f, $title);
+
+
+        //最大行数の取得
+        $maxes = [];
+        foreach($list as $key=>$val){
+            $maxes[] = count($val);
+        }
+        //最大行数とヘッダ数を比べて大きいほうを利用
+        $loop = (count($title) > max($maxes) )?count($title):max($maxes);
+        //下記込みように変換
+        $line = [];
+        foreach($list as $key=>$value){
+            //foreach($title as $k=>$val){
+            for($i=0;$i<=$loop;$i++){
+                $line[$i][] = (isset($value[$i]))?$value[$i]:"";
+            }
+        }
+        //var_dump($line);
+        foreach($line as $key=>$value){
+            fputcsv($f, $value);
+        }
+        fclose($f);
+
+        return $this->response->withFile(
+            $file,
+            [
+              'download'=>true,
+            ]
+          );
+
+    }
+    //step1のデータ一覧表示部分
     public function graphdata($graphe_id){
 
         $this->autoRender = false;
@@ -102,7 +184,37 @@ class GraphsController extends AppController
         return $this->redirect(['controller'=>'users','action' => 'index']);
 
     }
+    public function edit($id = null)
+    {
+        $GrapheDatas = $this->GrapheDatas->get($id, [
+            'contain' => [],
+        ]);
+        $GrapheDatas = $this->GrapheDatas->patchEntity($GrapheDatas, $this->request->getData());
+        $this->GrapheDatas->save($GrapheDatas);
+    }
 
+
+    public function delete($graph_id,$graph_data_id)
+    {
+        $graphdata = $this->GrapheDatas->find()->where([
+            'id'=>$graph_data_id,
+            'user_id'=>$this->uAuth[ 'id' ],
+            'graphe_id'=>$graph_id,
+        ])->first();
+
+
+        if ($this->GrapheDatas->delete($graphdata)) {
+            $this->GraphePoints->deleteAll([
+                'graphe_data_id'=>$graph_data_id,
+                'user_id'=>$this->uAuth[ 'id' ]
+            ]);
+
+            $this->Flash->success(__('データの削除を行いました。'));
+        } else {
+            $this->Flash->error(__('データの削除に失敗しました。'));
+        }
+        return $this->redirect(['action' => '/index/',$graph_id]);
+    }
 
 
 }
