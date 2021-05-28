@@ -17,9 +17,44 @@
                                 <canvas id="lineChart" style="height: 700px;max-width: 100%;"></canvas>
                             </div>
                         </div>
+                        <?php foreach($graphe_point as $key=>$value): ?>
+                        <input type="hidden" class="graphe_point" id="line<?=$key?>" value="<?= h($value[ 'point' ]) ?>" />
+                        <?php endforeach; ?>
+                        <?php foreach($graphe_data as $key=>$value): ?>
+                        <input type="hidden" class="graphe_data" id="label<?=$value[ 'id' ]?>" value="<?= h($value[ 'label' ]) ?>" />
+                        <?php endforeach; ?>
                         <!-- /.card-body -->
                     </div>
+                    <!--
                     <a href="" class="btn btn-outline-info w-100">SOPエリアの設定</a>
+                    -->
+                    <div class="card card-success">
+                        <div class="card-header">
+                            <h3 class="card-title"><?= __("SOPエリアの設定") ?></h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="text-right mb-3 ">
+                                <?= $this->Form->button("追加",[
+                                    "class"=>"btn-sm btn-warning text-white",
+                                    "type"=>"button",
+                                    "id"=>"addSop"
+                                ])?>
+                            </div>
+                            <table class="table table-bordered" id="sopTable">
+                                <tr class="bg-info text-center">
+                                    <th></th>
+                                    <th><?= __("エリア下限") ?></th>
+                                    <th><?= __(" ≦ X ≦") ?></th>
+                                    <th><?= __("エリア上限") ?></th>
+                                    <th><?= __("グラフに反映") ?></th>
+                                </tr>
+                                <tbody id="soptbody"></tbody>
+                            </table>
+                        </div>
+                        <!-- /.card-body -->
+                    </div>
+
+
                     <!-- /.card -->
                 </div>
                 <div class="col-md-2">
@@ -51,11 +86,11 @@
                                     <div class="card-header">解析基準</div>
                                     <div class="card-body">
                                         <div class="custom-control custom-radio">
-                                            <input class="custom-control-input" type="radio" id="analyticsBasic1" name="analyticsBasic">
+                                            <input class="custom-control-input" type="radio" id="analyticsBasic1" name="analyticsBasic" checked>
                                             <label for="analyticsBasic1" class="custom-control-label">Number</label>
                                         </div>
                                         <div class="custom-control custom-radio">
-                                            <input class="custom-control-input" type="radio" id="analyticsBasic2" name="analyticsBasic" checked>
+                                            <input class="custom-control-input" type="radio" id="analyticsBasic2" name="analyticsBasic" >
                                             <label for="analyticsBasic2" class="custom-control-label">Mass</label>
                                         </div>
                                     </div>
@@ -68,11 +103,11 @@
                                     <div class="card-header"><?= __("データ表示") ?></div>
                                     <div class="card-body">
                                         <div class="custom-control custom-radio">
-                                            <input class="custom-control-input" type="radio" id="dataDisplay1" name="dataDisplay">
+                                            <input class="custom-control-input" type="radio" id="dataDisplay1" name="dataDisplay" checked >
                                             <label for="dataDisplay1" class="custom-control-label">Count</label>
                                         </div>
                                         <div class="custom-control custom-radio">
-                                            <input class="custom-control-input" type="radio" id="dataDisplay2" name="dataDisplay" checked>
+                                            <input class="custom-control-input" type="radio" id="dataDisplay2" name="dataDisplay" >
                                             <label for="dataDisplay2" class="custom-control-label">Normalized</label>
                                         </div>
                                     </div>

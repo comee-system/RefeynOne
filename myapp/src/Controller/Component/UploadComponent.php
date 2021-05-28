@@ -84,8 +84,10 @@ class UploadComponent extends Component
             $split = array_chunk($data,1000);
             $sql = " INSERT INTO graphe_points (graphe_id, graphe_data_id , user_id , pointdata , created,modified ) VALUES ";
             foreach($split as $key=>$value){
-           //     $packet = "SET GLOBAL max_allowed_packet = 33554423;";
-            //    $connection->execute($packet);
+                if(env('HTTP_HOST') == "local-refeynone:8080" ){
+                    $packet = "SET GLOBAL max_allowed_packet = 33554423;";
+                    $connection->execute($packet);
+                }
                 $imp = [];
                 foreach($value as $k=>$val){
                     $imp[]= "('".$val['graphe_id']."',
@@ -100,22 +102,7 @@ class UploadComponent extends Component
                 $connection->execute($query);
             }
 
-            /*
-            $query = $this->GraphePoints->query();
-            $query->insert([
-                'user_id',
-                'graphe_id',
-                'graphe_data_id',
-                'pointdata',
-                'created',
-                'modified'
-                ]);
-            // dataの数だけvalues追加
-            foreach ($data as $d) {
-                $query->values($d);
-            }
-            $query->execute();
-*/
+
             fclose($fp);
             $connection->commit();
             echo "OK";
@@ -193,8 +180,10 @@ class UploadComponent extends Component
             $split = array_chunk($child,1000);
             $sql = " INSERT INTO graphe_points (graphe_id, graphe_data_id , user_id , pointdata , created,modified ) VALUES ";
             foreach($split as $key=>$value){
-               // $packet = "SET GLOBAL max_allowed_packet = 33554423;";
-               // $connection->execute($packet);
+               if(env('HTTP_HOST') == "local-refeynone:8080" ){
+                    $packet = "SET GLOBAL max_allowed_packet = 33554423;";
+                    $connection->execute($packet);
+                }
                 $imp = [];
                 foreach($value as $k=>$val){
                     $imp[]= "('".$val['graphe_id']."',

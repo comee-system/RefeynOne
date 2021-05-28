@@ -6,7 +6,6 @@ write1();
 write3();
 
 
-
 $("#finishbutton").click(function(){
     if(confirm("終了後、データを削除します。解析情報を残すには「取込データ出力」と「SOP設定出力」、「エリア毎の結果テーブル出力」をしてから終了してください。")){
         return true;
@@ -58,89 +57,104 @@ $("#pngExport").on("click",function(){
 //-------------
 //- LINE CHART -
 //--------------
-var _pt = 100;
+//色指定
+var _r = [];
+var _g = [];
+var _b = [];
+_r[1] = "255";
+_g[1] = "0";
+_b[1] = "0";
+
+_r[2] = "255";
+_g[2] = "255";
+_b[2] = "0";
+
+_r[3] = "255";
+_g[3] = "0";
+_b[3] = "255";
+
+_r[4] = "128";
+_g[4] = "0";
+_b[4] = "0";
+
+_r[5] = "128";
+_g[5] = "128";
+_b[5] = "0";
+
+_r[6] = "128";
+_g[6] = "0";
+_b[6] = "128";
+
+
+_r[7] = "255";
+_g[7] = "128";
+_b[7] = "0";
+
+_r[8] = "128";
+_g[8] = "255";
+_b[8] = "0";
+
+_r[9] = "128";
+_g[9] = "0";
+_b[9] = "255";
+
+_r[0] = "0";
+_g[0] = "0";
+_b[0] = "0";
+
+
+var _pt = 0;
+var _line = [];
+var _count = $(".graphe_point").length;
+for(var _i=1;_i<=_count;_i++){
+    _line[_i] = $("#line"+_i).val().split(",");
+}
+var _data = [];
+var _label = "";
+for(var _i=1;_i<=_count;_i++){
+    _label = $("#label"+_i).val();
+    _data[_i] =
+    {
+        label               : _label,
+        backgroundColor     : 'rgba(60,141,188,0.9)',
+        borderColor         : 'rgba('+_r[_i%10]+','+_g[_i%10]+','+_b[_i%10]+',0.8)',
+        pointRadius          : false,
+        pointColor          : '#3b8bba',
+        pointStrokeColor    : 'rgba(60,141,188,1)',
+        pointHighlightFill  : '#fff',
+        pointHighlightStroke: 'rgba(60,141,188,1)',
+        lineTension: 0,
+     //   borderDash:[5,5],
+        data                : _line[_i]
+    };
+}
+
+var _line = _line[1];
 var areaChartData = {
 
-    labels  : [
-        '0', '100', '200', '300', '400', '500', '600','700','800','900',
-        '1000', '1100', '1200', '1300', '1400', '1500', '1600','1700','1800','1900',
-        '2000', '2100', '2200', '2300', '2400', '2500', '2600','2700','2800','2900',
-    ],
+    labels  : _line,
 
     datasets: [
-    {
+        _data[1],
+        _data[2],
+        _data[3],
+        _data[4],
+        _data[5],
+        _data[6],
+        _data[7],
+        _data[8],
+        _data[9],
+        _data[10],
+        _data[12],
+        _data[13],
+        _data[14],
+        _data[15],
+        _data[16],
+        _data[17],
+        _data[18],
+        _data[19],
+        _data[20], //グラフを最大20個まで準備　より必要であれば増やす
 
-      label               : 'Digital Goods',
-      backgroundColor     : 'rgba(60,141,188,0.9)',
-      borderColor         : 'rgba(255,0,0,0.8)',
-      pointRadius          : false,
-      pointColor          : '#3b8bba',
-      pointStrokeColor    : 'rgba(60,141,188,1)',
-      pointHighlightFill  : '#fff',
-      pointHighlightStroke: 'rgba(60,141,188,1)',
-      lineTension: 0,
-      borderDash:[5,5],
-      data                : [
-          _pt, 48, 40, 19, 86, 27, 90,
-          28, 48, 40, 19, 86, 27, 90,
-          28, 48, 40, 19, 86, 27, 90,
-          28, 48, 40, 19, 86, 27, 90,
-        ]
-    },
-    {
-      label               : 'Digital Goods2',
-      backgroundColor     : 'rgba(255,255,255,0.9)',
-      borderColor         : 'rgba(0,0,0,0.8)',
-      pointRadius          : false,
-      pointColor          : '#3b8bba',
-      pointStrokeColor    : 'rgba(60,141,188,1)',
-      pointHighlightFill  : '#fff',
-      pointHighlightStroke: 'rgba(60,141,188,1)',
-      lineTension: 0,
-      borderDouble:[5,5],
-      data                : [
-          8, 148, 140, 119, 186, 127, 190,
-          128, 148, 140, 119, 186, 127, 190,
-          128, 148, 140, 119, 186, 127, 190,
-          128, 148, 140, 119, 186, 127, 190,
-        ]
-    },
-    {
-      label               : 'Electronics',
-      backgroundColor     : 'rgba(210, 214, 222, 1)',
-      borderColor         : 'rgba(210, 214, 222, 1)',
-      pointRadius         : false,
-      pointColor          : 'rgba(210, 214, 222, 1)',
-      pointStrokeColor    : '#c1c7d1',
-      pointHighlightFill  : '#fff',
-      pointHighlightStroke: 'rgba(220,220,220,1)',
-      lineTension: 0,
-
-      data                : [
-          65, 59, 80, 81, 56, 55, 40,
-          65, 59, 80, 81, 56, 55, 40,
-          65, 59, 80, 81, 56, 55, 40,
-          65, 59, 80, 81, 56, 55, 40,
-        ]
-    },
-    {
-      label               : 'Electronics',
-      backgroundColor     : 'rgba(210, 214, 222, 1)',
-      borderColor         : 'rgba(10, 14, 22, 1)',
-      pointRadius         : false,
-      pointColor          : 'rgba(210, 214, 222, 1)',
-      pointStrokeColor    : '#c1c7d1',
-      pointHighlightFill  : '#fff',
-      pointHighlightStroke: 'rgba(220,220,220,1)',
-      lineTension: 0,
-
-      data                : [
-          100, 159, 180, 81, 156, 155, 140,
-          100, 159, 180, 81, 156, 155, 140,
-          100, 159, 180, 81, 156, 155, 140,
-          100, 159, 180, 81, 156, 155, 140,
-        ]
-    },
   ]
 }
 
@@ -158,10 +172,11 @@ var areaChartOptions = {
         },
         ticks: {
             min: "0",
-            max: "3000",
+            max: "8000",
             maxTicksLimit: 8,
             minRotation: 0,
             maxRotation: 0,
+            start:0
         }
       }],
       yAxes: [{
@@ -203,10 +218,9 @@ try{
 
     var lineChartOptions = $.extend(true, {}, areaChartOptions);
     var lineChartData = $.extend(true, {}, areaChartData);
-    lineChartData.datasets[0].fill = false;
-    lineChartData.datasets[1].fill = false;
-    lineChartData.datasets[2].fill = false;
-    lineChartData.datasets[3].fill = false;
+    for(var _i=0;_i<_count;_i++){
+        lineChartData.datasets[_i].fill = false;
+    }
     lineChartOptions.datasetFill = false;
 
 

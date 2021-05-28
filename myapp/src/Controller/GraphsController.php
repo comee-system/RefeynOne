@@ -3,7 +3,7 @@ namespace App\Controller;
 
 
 use Cake\Event\Event;
-
+use Cake\Datasource\ConnectionManager;
 /**
  * Users Controller
  *
@@ -16,6 +16,7 @@ class GraphsController extends AppController
 
     const RefeynOne = "RefeynOne";
     const Mesurement = "Mesurement";
+    const noname = "noname";
     public function beforeFilter(Event $event)
     {
         parent::beforeFilter($event);
@@ -41,7 +42,6 @@ class GraphsController extends AppController
 
     }
     public function step2($id){
-
         $SopDefaults = $this->SopDefaults->find()->where([
             "user_id"=>$this->uAuth[ 'id' ],
             "graphe_id"=>$id,
@@ -59,14 +59,36 @@ class GraphsController extends AppController
     }
     public function step3($graphe_id){
         //グラフデータ取得
-        $grahpe_point = $this->GrapheDatas->find('all',['contain'=>'GraphePoints'])
-        ->where(
-            [
-                'GrapheDatas.graphe_id'=>$graphe_id,
-                'GrapheDatas.user_id'=>$this->uAuth['id'],
-            ]
-        )->toArray();
+        $connection = ConnectionManager::get('default');
+        $user_id = $this->uAuth['id'];
+
+        $sql = " SELECT
+              id,
+              label
+            FROM graphe_datas WHERE
+            user_id='${user_id}'
+            AND graphe_id = '${graphe_id}'
+        ";
+        $graphe_data = $connection->execute($sql)->fetchall('assoc');
+        foreach($graphe_data as $key=>$val){
+            $graphe_data_id = $val[ 'id' ];
+            $sql = "
+                SELECT
+                GROUP_CONCAT(pointdata) as point
+                FROM graphe_points WHERE
+                user_id='${user_id}'
+                AND graphe_id = '${graphe_id}'
+                AND graphe_data_id = '${graphe_data_id}'
+            ";
+            $graphe_point[$graphe_data_id] = $connection->execute($sql)->fetch('assoc');
+        }
         $this->set("id",$graphe_id);
+        $this->set("graphe_point",$graphe_point);
+        $this->set("graphe_data",$graphe_data);
+
+
+
+
 
     }
     public function step3Graph(){
@@ -76,6 +98,28 @@ class GraphsController extends AppController
     public function step4(){
 
 
+    }
+
+    public function setSop($graphe_id){
+        $this->autoRender=false;
+        $SopAreas = $this->SopAreas->newEntity();
+        $SopAreas->user_id = $this->uAuth['id'];
+        $SopAreas->graphe_id = $graphe_id;
+        $SopAreas->name = self::noname;
+        $SopAreas->minpoint = 0;
+        $SopAreas->maxpoint = 0;
+        $SopAreas->edit = 1;
+        $this->SopAreas->save($SopAreas);
+    }
+    public function getSop($graphe_id){
+        //SOPエリアデータ取得
+        $SopAreas = $this->SopAreas->find()->where([
+            "user_id"=>$this->uAuth[ 'id' ],
+            "graphe_id"=>$graphe_id,
+        ])->toArray();
+        header('Content-type: application/json');
+        echo json_encode($SopAreas,JSON_UNESCAPED_UNICODE);
+        exit();
     }
 
     public function upload($graphe_id,$type=""){

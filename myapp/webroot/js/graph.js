@@ -32,7 +32,72 @@ $(function(){
         return false;
     });
 
+    $("#addSop").on("click",function(){
+        var _id = $("#id").val();
+        $.ajax({
+            url:"/graphs/setSop/"+_id,
+            type:"post",
+        }).done(function(jsonstr){
+            $(this).getSop();
+        });
+    });
+    $(this).getSop();
+
 });
+
+$.fn.getSop = function(){
+
+    try{
+        var _id = $("#id").val();
+        $.ajax({
+            url:"/graphs/getSop/"+_id,
+            type:"post",
+            datatype: "json",
+        }).done(function(jsonstr){
+            console.log(jsonstr);
+            var _tbl = "";
+
+        //  var data = $.parseJSON(jsonstr);
+            var data = jsonstr;
+            var _num = 1;
+            $("#soptbody").html("");
+            $.each(data, function(key, value){
+                _tbl = "<tr class='sopcount' >";
+                _tbl += "<td>"+value.name+"</td>";
+                _tbl += "<td class='text-right'>";
+                if(value.edit == 1){
+                    _tbl += "<input type='text' id='sopmin-"+value.id+"' value='"+value.minpoint+"' class='form-control-sm' />";
+                }else{
+                    _tbl += value.minpoint;
+                    _tbl += "<input type='hidden' id='sopmin-"+value.id+"' value='"+value.minpoint+"' />";
+                }
+                _tbl += "</td>";
+                _tbl += "<td></td>";
+                _tbl += "<td class='text-right'>";
+                if(value.edit == 1){
+                    _tbl += "<input type='text' id='sopmax-"+value.id+"' value='"+value.maxpoint+"' class='form-control-sm' />";
+                }else{
+                    _tbl += value.maxpoint;
+                    _tbl += "<input type='hidden' id='sopmax-"+value.id+"' value='"+value.maxpoint+"' />";
+                }
+
+                _tbl += "</td>";
+                _tbl += "<td class='text-center'><input type='radio' id='sop-"+value.id+"' name='sop' /></td>";
+                _tbl += "</tr>";
+                $("#soptbody").append(_tbl);
+                _num += 1;
+            });
+
+        }).fail(function(){
+
+        });
+    }catch(e){
+
+    }
+
+};
+
+
 $.fn.getGraphData = function(){
 
     try{
@@ -51,7 +116,7 @@ $.fn.getGraphData = function(){
             $("#tbody").html("");
             $.each(data, function(key, value){
                 _tbl = "<tr>";
-                _tbl += "<td>"+_num,+"</td>";
+                _tbl += "<td>"+_num+"</td>";
                 _tbl += "<td><input type='text' class='form-control editlabel' id='label-"+value.id+"' value='"+value.label+"' /></td>";
                 _tbl += "<td>"+value.filename+"</td>";
                 _tbl += "<td class='text-right'>"+value.counts+"</td>";
