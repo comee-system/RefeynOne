@@ -152,7 +152,7 @@ class GraphsController extends AppController
             [
                 'GrapheDatas.graphe_id'=>$graphe_id,
                 'GrapheDatas.user_id'=>$this->uAuth['id'],
-                'GrapheDatas.filename'=>self::Mesurement
+//                'GrapheDatas.filename'=>self::Mesurement
             ]
         )->toArray();
 
