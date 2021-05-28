@@ -17,12 +17,12 @@
                                 <canvas id="lineChart" style="height: 700px;max-width: 100%;"></canvas>
                             </div>
                         </div>
-                        <?php foreach($graphe_point as $key=>$value): ?>
-                        <input type="hidden" class="graphe_point" id="line<?=$key?>" value="<?= h($value[ 'point' ]) ?>" />
-                        <?php endforeach; ?>
-                        <?php foreach($graphe_data as $key=>$value): ?>
-                        <input type="hidden" class="graphe_data" id="label<?=$value[ 'id' ]?>" value="<?= h($value[ 'label' ]) ?>" />
-                        <?php endforeach; ?>
+                        <?php $no=1;foreach($graphe_point as $key=>$value): ?>
+                        <input type="hidden" class="graphe_point" id="line<?=$no?>" value="<?= h($value[ 'point' ]) ?>" />
+                        <?php $no++; endforeach; ?>
+                        <?php $no=1; foreach($graphe_data as $key=>$value): ?>
+                        <input type="hidden" class="graphe_data" id="label<?=$no?>" value="<?= h($value[ 'label' ]) ?>" />
+                        <?php $no++; endforeach; ?>
                         <!-- /.card-body -->
                     </div>
                     <!--
