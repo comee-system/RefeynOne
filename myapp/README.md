@@ -43,6 +43,22 @@
 - 例) C:\xampp3\htdocs\bridge\bridge\cakeapp\webroot\sass_folder> sass --watch base.scss:../css/base.css
 
 
+### GROUP_CONCATのgroup_concat_max_len()が有効にならない対処法
+
+- 現在の設定値を確認
+show variables like 'group_concat_max_len';
+- 一時的に設定値を変更
+set global group_concat_max_len = 100000;
+
+````
+SET GLOBAL group_concat_max_len = 200000
+
+#1227 - Access denied; you need (at least one of) the SUPER privilege(s) for this operation
+````
+レンタルserverでは上記のようになる
+
+- 解消法
+set Session group_concat_max_len = 10000000
 
 # CakePHP Application Skeleton
 

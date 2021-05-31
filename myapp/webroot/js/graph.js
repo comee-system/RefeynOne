@@ -43,6 +43,46 @@ $(function(){
     });
     $(this).getSop();
 
+    //sopText
+    $(".sopText").on("blur",function(){
+        var _val = $(this).val();
+        var _name = $(this).attr("name");
+        console.log(_name);
+        var _id = $("input[name='sopdefaultid']").val();
+        var _data = {
+            name:_name,
+            value:_val
+        };
+        $.ajax({
+            url:"/graphs/editsop/"+_id,
+            type:"post",
+            data:_data,
+            datatype: "json",
+        }).done(function(jsonstr){
+            console.log(jsonstr);
+        });
+    });
+
+
+    //グラフ表示ステータス変更
+    $(".graph_status_edit").click(function(){
+        var _id = $(this).parent("li").attr("id").split("-");
+        var _chk = $(this).prop("checked");
+
+        var _data = {"id":_id[1],"chk":_chk};
+        $.ajax({
+            url:"/graphs/editDispStatus/",
+            type:"post",
+            data:_data,
+        }).done(function(data){
+            console.log(data);
+        }).fail(function(){
+
+        });
+
+        return true;
+    });
+
 });
 
 $.fn.getSop = function(){

@@ -54,6 +54,11 @@ $("#pngExport").on("click",function(){
 
     return false;
 });
+
+
+
+
+
 //-------------
 //- LINE CHART -
 //--------------
@@ -128,91 +133,118 @@ for(var _i=1;_i<=_count;_i++){
         data                : _line[_i]
     };
 }
-
-var _line = _line[1];
-var areaChartData = {
-
-    labels  : _line,
-
-    datasets: [
-        _data[1],
-        _data[2],
-        _data[3],
-        _data[4],
-        _data[5],
-        _data[6],
-        _data[7],
-        _data[8],
-        _data[9],
-        _data[10],
-        _data[12],
-        _data[13],
-        _data[14],
-        _data[15],
-        _data[16],
-        _data[17],
-        _data[18],
-        _data[19],
-        _data[20], //グラフを最大20個まで準備　より必要であれば増やす
-
-  ]
-}
-
-
-var areaChartOptions = {
-    maintainAspectRatio : false,
-    responsive : true,
-    legend: {
-      display: true
-    },
-    scales: {
-      xAxes: [{
-        gridLines : {
-          display : true,
-        },
-        ticks: {
-            min: "0",
-            max: "8000",
-            maxTicksLimit: 8,
-            minRotation: 0,
-            maxRotation: 0,
-            start:0
-        }
-      }],
-      yAxes: [{
-        gridLines : {
-          display : true,
-        }
-
-      }]
-    },
-
-    annotation: {
-        annotations: [
-            {
-                type: 'line', // 線を描画
-                id: 'hLine',
-                mode: 'vertical', // 線を水平に引く
-                scaleID: 'x-axis-0',
-                value: 10, // 基準となる数値
-                borderWidth: 3, // 基準線の太さ
-                borderColor: 'red'  // 基準線の色
-            },
-            {
-                type: 'line', // 線を描画
-                id: 'hLine2',
-                mode: 'vertical', // 線を水平に引く
-                scaleID: 'x-axis-0',
-                value: 20, // 基準となる数値
-                borderWidth: 3, // 基準線の太さ
-                borderColor: 'blue'  // 基準線の色
-            }
-        ]
-    },
-}
-
-
 try{
+    var _labels = $("#binline").val().split(",");
+    console.log(_labels);
+
+    var areaChartData = {
+
+        labels  : _labels,
+
+        datasets: [
+            _data[1],
+            _data[2],
+            _data[3],
+            _data[4],
+            _data[5],
+            _data[6],
+            _data[7],
+            _data[8],
+            _data[9],
+            _data[10],
+            _data[12],
+            _data[13],
+            _data[14],
+            _data[15],
+            _data[16],
+            _data[17],
+            _data[18],
+            _data[19],
+            _data[20], //グラフを最大20個まで準備　より必要であれば増やす
+
+    ]
+    }
+
+
+    var areaChartOptions = {
+        maintainAspectRatio : false,
+        responsive : true,
+        legend: {
+        display: true,
+        align:"end"
+        },
+        scales: {
+        xAxes: [{
+            gridLines : {
+            display : true,
+            },
+            ticks: {                       // 目盛り
+                min: 0,                        // 最小値
+                max: 2500,                       // 最大値
+                stepSize: 5,                   // 軸間隔
+                fontColor: "black",             // 目盛りの色
+                fontSize: 14                   // フォントサイズ
+            },
+            scaleLabel: {                  // 軸ラベル
+                display: true,                 // 表示の有無
+                labelString: 'Mv',     // ラベル
+                fontFamily: "sans-serif",
+                fontColor: "black",             // 文字の色
+                fontFamily: "sans-serif",
+                fontSize: 16                   // フォントサイズ
+            },
+        }],
+        yAxes: [{
+            gridLines : {
+            display : true,
+            color: "rgba(0, 0, 255, 0.2)", // 補助線の色
+            zeroLineColor: "black"         // y=0（Ｘ軸の色）
+            },
+            scaleLabel: {                  // 軸ラベル
+                display: true,                 // 表示の有無
+                labelString: 'Y',     // ラベル
+                fontFamily: "sans-serif",
+                fontColor: "black",             // 文字の色
+                fontFamily: "sans-serif",
+                fontSize: 16                   // フォントサイズ
+            },
+            ticks: {                       // 目盛り
+                min: 0,                        // 最小値
+                max: 50,                       // 最大値
+                stepSize: 10,                   // 軸間隔
+                fontColor: "black",             // 目盛りの色
+                fontSize: 14                   // フォントサイズ
+            }
+
+        }]
+        },
+
+        annotation: {
+            annotations: [
+                {
+                    type: 'line', // 線を描画
+                    id: 'hLine',
+                    mode: 'vertical', // 線を水平に引く
+                    scaleID: 'x-axis-0',
+                    value: 1.2, // 基準となる数値
+                    borderWidth: 3, // 基準線の太さ
+                    borderColor: 'red'  // 基準線の色
+                },
+                {
+                    type: 'line', // 線を描画
+                    id: 'hLine2',
+                    mode: 'vertical', // 線を水平に引く
+                    scaleID: 'x-axis-0',
+                    value: 2, // 基準となる数値
+                    borderWidth: 3, // 基準線の太さ
+                    borderColor: 'blue'  // 基準線の色
+                }
+            ]
+        },
+    }
+
+
+
     var canvas = $('#lineChart').get(0);
     var lineChartCanvas = canvas.getContext('2d');
 

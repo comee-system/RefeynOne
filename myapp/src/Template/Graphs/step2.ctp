@@ -48,6 +48,9 @@
                 <div class="card ">
                     <div class="card-header bg-primary">
                         <?= __("SOP（初期設定）") ?>
+                        <?= $this->Form->hidden("sopdefaultid",[
+                            'value'=>$sopdefaultid
+                        ])?>
                     </div>
                     <div class="card-body">
                         <table class="table table-bordered">
@@ -62,10 +65,11 @@
                                     <td><?= __("グラフの初期値") ?></td>
                                     <td>
                                         <?= $this->Form->control("defaultpoint",[
-                                            "class"=>"form-control",
+                                            "class"=>"form-control sopText",
                                             "type"=>"number",
-                                            "value"=>(!empty($SopDefaults->defaultpoint))?$SopDefaults->defaultpoint:"",
-                                            "label"=>false
+                                            "value"=>(!empty($SopDefaults->defaultpoint))?$SopDefaults->defaultpoint:"0",
+                                            "label"=>false,
+                                            "min"=>"0",
                                         ]) ?>
                                     </td>
                                 </tr>
@@ -73,10 +77,11 @@
                                     <td><?= __("表示範囲(最大値)") ?></td>
                                     <td>
                                         <?= $this->Form->control("dispareamax",[
-                                            "class"=>"form-control",
+                                            "class"=>"form-control sopText",
                                             "type"=>"number",
-                                            "value"=>(!empty($SopDefaults->dispareamax))?$SopDefaults->dispareamax:"",
-                                            "label"=>false
+                                            "value"=>(!empty($SopDefaults->dispareamax))?$SopDefaults->dispareamax:"0",
+                                            "label"=>false,
+                                            "min"=>"0",
                                         ]) ?>
                                     </td>
                                 </tr>
@@ -84,21 +89,21 @@
                                     <td><?= __("Binサイズ(間隔)") ?></td>
                                     <td>
                                         <?= $this->Form->control("binsize",[
-                                            "class"=>"form-control",
+                                            "class"=>"form-control sopText",
                                             "type"=>"number",
-                                            "value"=>(!empty($SopDefaults->binsize))?$SopDefaults->binsize:"",
-                                            "label"=>false
+                                            "min"=>"0",
+                                            "value"=>(!empty($SopDefaults->binsize))?$SopDefaults->binsize:"0",
+                                            "label"=>false,
+
                                         ]) ?>
                                     </td>
                                 </tr>
                                 <tr>
                                     <td><?= __("スムージング") ?></td>
                                     <td>
-                                        <?= $this->Form->control("smooth",[
-                                            "class"=>"form-control",
-                                            "type"=>"number",
-                                            "value"=>(!empty($SopDefaults->smooth))?$SopDefaults->smooth:"",
-                                            "label"=>false
+                                        <?= $this->Form->select("smooth",$array_smooth,[
+                                            "class"=>"form-control sopText",
+                                            "value"=>(!empty($SopDefaults->smooth))?$SopDefaults->smooth:"0",
                                         ]) ?>
                                     </td>
                                 </tr>

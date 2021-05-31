@@ -4,6 +4,11 @@
     <div class="container">
         <?= $this->element("graph_step",['step'=>3]); ?>
         <?= $this->Form->hidden("id",['id'=>'id','value'=>h($id)])?>
+        <?= $this->Form->hidden("defaultpoint",['id'=>'defaultpoint','value'=>h($SopDefaults['defaultpoint'])])?>
+        <?= $this->Form->hidden("dispareamax",['id'=>'dispareamax','value'=>h($SopDefaults['dispareamax'])])?>
+        <?= $this->Form->hidden("binsize",['id'=>'binsize','value'=>h($SopDefaults['binsize'])])?>
+        <?= $this->Form->hidden("smooth",['id'=>'smooth','value'=>h($SopDefaults['smooth'])])?>
+        <?= $this->Form->hidden("binline",['id'=>'binline','value'=>h($binline)])?>
         <?= $this->Form->create("", [
             'enctype' => 'multipart/form-data',
             'url'=>'/graphs/step4'
@@ -73,7 +78,7 @@
                             ])?>
                         </div>
                         <div class="row mt-3">
-                            <?= $this->Html->link("グラフ<br />表示変更",$this->request->getParam('controller')."/step3_graph/",[
+                            <?= $this->Html->link("グラフ<br />表示変更",$this->request->getParam('controller')."/step3_graph/".$id,[
                                 'escape'=>false,
                                 'class'=>'btn btn-warning w-100 text-white text-center'
                             ])?>
@@ -171,7 +176,7 @@
                     ])?>
                 </div>
                 <div class="col-md-6 text-center">
-                    <?= $this->Form->submit("解析",[
+                    <?= $this->Form->submit("次へ(データ出力)",[
                         "class"=>"btn btn-primary w-75"
                     ])?>
                 </div>

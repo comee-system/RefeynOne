@@ -157,6 +157,7 @@ class UploadComponent extends Component
             foreach ($entities as $key=>$entity) {
                 // Save entity
                 $this->GrapheDatas->save($entity);
+
                 $data[$i] = $entity->id;
                 $i++;
             }
@@ -203,7 +204,7 @@ class UploadComponent extends Component
             echo "OK";
         }catch(Exception $e){
             echo $e;
-            $connection->rollback();
+           $connection->rollback();
         }
     }
 
