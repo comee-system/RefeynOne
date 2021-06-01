@@ -4,11 +4,16 @@
     <div class="container">
         <?= $this->element("graph_step",['step'=>3]); ?>
         <?= $this->Form->hidden("id",['id'=>'id','value'=>h($id)])?>
+
+<?php /* ?>
         <?= $this->Form->hidden("defaultpoint",['id'=>'defaultpoint','value'=>h($SopDefaults['defaultpoint'])])?>
         <?= $this->Form->hidden("dispareamax",['id'=>'dispareamax','value'=>h($SopDefaults['dispareamax'])])?>
         <?= $this->Form->hidden("binsize",['id'=>'binsize','value'=>h($SopDefaults['binsize'])])?>
         <?= $this->Form->hidden("smooth",['id'=>'smooth','value'=>h($SopDefaults['smooth'])])?>
         <?= $this->Form->hidden("binline",['id'=>'binline','value'=>h($binline)])?>
+<?php */ ?>
+        <?= $this->Form->hidden("binline",['id'=>'binline','value'=>h($binline)])?>
+
         <?= $this->Form->create("", [
             'enctype' => 'multipart/form-data',
             'url'=>'/graphs/step4'
@@ -22,12 +27,14 @@
                                 <canvas id="lineChart" style="height: 700px;max-width: 100%;"></canvas>
                             </div>
                         </div>
+
                         <?php $no=1;foreach($graphe_point as $key=>$value): ?>
                         <input type="hidden" class="graphe_point" id="line<?=$no?>" value="<?= h($value[ 'point' ]) ?>" />
                         <?php $no++; endforeach; ?>
                         <?php $no=1; foreach($graphe_data as $key=>$value): ?>
                         <input type="hidden" class="graphe_data" id="label<?=$no?>" value="<?= h($value[ 'label' ]) ?>" />
                         <?php $no++; endforeach; ?>
+
                         <!-- /.card-body -->
                     </div>
                     <!--

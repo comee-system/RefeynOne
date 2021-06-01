@@ -31,6 +31,7 @@ class GraphsController extends AppController
         $this->Graphes = $this->loadModel("Graphes");
         $this->GrapheDatas = $this->loadModel("GrapheDatas");
         $this->GraphePoints = $this->loadModel("GraphePoints");
+        $this->GrapheDislays = $this->loadModel("GrapheDisplays");
         $this->SopDefaults = $this->loadModel("SopDefaults");
         $this->SopAreas = $this->loadModel("SopAreas");
         $this->UploadComponent = $this->loadComponent("Upload",$this->uAuth);
@@ -67,6 +68,7 @@ class GraphsController extends AppController
 
     }
     public function step3($graphe_id){
+        $user_id = $this->uAuth['id'];
         //グラフデータ取得
         $connection = ConnectionManager::get('default');
         $user_id = $this->uAuth['id'];
@@ -80,83 +82,209 @@ class GraphsController extends AppController
                 disp = '1'
         ";
         $graphe_data = $connection->execute($sql)->fetchall('assoc');
-        foreach($graphe_data as $key=>$val){
-            $packet = "set Session group_concat_max_len = 10000000;";
-            $connection->execute($packet);
-
-            $graphe_data_id = $val[ 'id' ];
-            $sql = "
-                SELECT
-                GROUP_CONCAT(pointdata) as point
-                FROM graphe_points WHERE
-                user_id='${user_id}'
-                AND graphe_id = '${graphe_id}'
-                AND graphe_data_id = '${graphe_data_id}'
-                AND pointdata != ''
-            ";
-            $graphe_point[$graphe_data_id] = $connection->execute($sql)->fetch('assoc');
-        }
-        $this->set("id",$graphe_id);
-        $this->set("graphe_data",$graphe_data);
 
 
-        //グラフの間隔指定
-        $SopDefaults = $this->___setSpace($graphe_id,$user_id);
-        $defaultpoint = $SopDefaults[ 'defaultpoint' ];
-        $dispareamax = $SopDefaults[ 'dispareamax' ];
-        $binsize = $SopDefaults[ 'binsize' ];
-        $smooth = $SopDefaults[ 'smooth' ];
-        //ヒストグラムの作成
-     //   var_dump($SopDefaults,$graphe_point);
-        $points = [];
-        foreach($graphe_point as $key=>$value){
-            $points[] = explode(",",$value[ 'point' ]);
 
-        }
-        //比較対象の作成
+        //グラフ横軸
+        $sopDefaults = $this->SopDefaults->find()->where([
+                    'user_id'=>$user_id,
+                    'graphe_id'=>$graphe_id
+                ])->first();
+
+        $defaultpoint = $sopDefaults[ 'defaultpoint' ];
+        $dispareamax  = $sopDefaults[ 'dispareamax' ];
+        $binsize      = $sopDefaults[ 'binsize' ];
+        $smooth       = $sopDefaults[ 'smooth' ];
+
+        $line = [];
         $compares = [];
         $no = 0;
         for($i=$defaultpoint;$i<=$dispareamax;$i=$i+$binsize){
+            $line[] = $i;
             $compares[$no]['min'] = $i;
             $compares[$no]['max'] = $i+$binsize;
-            if($i > $dispareamax){
-                break;
-            }
             $no++;
         }
+        $binline = implode(",",$line);
+        $this->set("binline",$binline);
 
 
-//var_dump($points);
-//var_dump($compares);
-//exit();
-        $grafpoint = [];
-        foreach($compares as $ckey=>$compare){
-            foreach($points as $pkey=>$point){
-                $count = 0;
-                foreach($point as $k=>$val){
-                    //echo $compare['min']."=<".$val."<".$compare['max'];
-                    //echo "<br />";
-                    $this->log($compare['min']."=<".$val."<".$compare['max'],'debug');
-                    if(
-                        $val >= $compare['min'] &&
-                        $val < $compare['max']
-                        ){
-                            $count += 1;
+        //グラフ取得範囲
+        //比較対象の作成
+//var_dump($graphe_data,$compares);
+        $data = [];
+        $insert = "";
+
+        $query = $this->GrapheDislays->find()->where([
+            'user_id'=>$user_id,
+            'graphe_id'=>$graphe_id
+            ])->count();
+
+        if($query){
+            //既に登録済みなので何もしない
+        }else{
+            $cnt = [];
+            $cnt2 = [];
+            $cnt3 = [];
+            $cnt4 = [];
+            $sum = [];//ヒストグラムの値を範囲のデータ総数
+            $sum2 = []; //Mass範囲のデータ総数
+            $center=[];
+
+            //smoothの計算
+            $plus = $smooth-ceil($smooth/2);
+            $start = 0;
+            foreach($graphe_data as $key=>$value){
+
+                foreach($compares as $k=>$comp){
+                    $graphePoints = "";
+                    $graphePoints = $this->GraphePoints->find();
+                    $graphePoints = $graphePoints
+                        ->select([
+                            'count'=>$graphePoints->func()->count( 'id' )
+                        ])
+                        ->where([
+                        'user_id'=>$user_id,
+                        'graphe_id'=>$graphe_id,
+                        'graphe_data_id'=>$value[ 'id' ],
+                        'pointdata != '=> "",
+                        'pointdata >= '.$comp[ 'min' ],
+                        'pointdata < '.$comp[ 'max' ],
+                    ])->first();
+
+                    $center[$key][$k] = ($comp[ 'min' ]+$comp[ 'max' ])/2;
+                    $cnt[$key][$k] = $graphePoints->count;
+                    $cnt2[$key][$k] = $graphePoints->count*$center[$key][$k];
+
+                    $s = (isset($sum[$key]))?$sum[$key]:0;
+                    $sum = sprintf("%d",$s+$graphePoints->count);
+                    if($cnt[$key][$k] == 0 || $sum == 0){
+                        $cnt3[$key][$k] = 0;
+                    }else{
+                        $cnt3[$key][$k] = round(((int)$cnt[$key][$k]/(int)$sum),5);
                     }
+
+                    $s2 = (isset($sum2[$key]))?$sum2[$key]:0;
+                    $sum2 = sprintf("%d",$s2+($cnt[$key][$k]*$center[$key][$k]));
+                    if($cnt2[$key][$k] == 0 || $sum2 == 0){
+                        $cnt4[$key][$k] = 0;
+                    }else{
+                        $cnt4[$key][$k] = round(((int)$cnt2[$key][$k]/(int)$sum2),5);
+                    }
+                    //var_dump($graphePoints->count);
+                    //exit();
+
                 }
-                $grafpoint[$pkey][$ckey] = $count;
-                //echo "total=>".$count;
-                //echo "<hr />";
-                $this->log("total=>".$count,'debug');
+
+
+
+                // $data[$key][$k] = $graphePoints->count;
+                //    $this->log("Label=>".$value[ 'label' ]."/count=>".$graphePoints->count."/min=>:".$comp['min']."/max=>:".$comp['max'],'debug');
+                foreach($compares as $k=>$comp){
+
+                    //smoothの設定
+                    $num = 0;
+                    $avecount = 0;
+                    $avecount2 = 0;
+                    $avecount3 = 0;
+                    $avecount4 = 0;
+                    for($i=$start-$plus;$i<=$start+$plus;$i++){
+                        $avecount += (isset($cnt[$key][$i]))?$cnt[$key][$i]:0;
+                        $avecount2 += (isset($cnt2[$key][$i]))?$cnt2[$key][$i]:0;
+                        $avecount3 += (isset($cnt3[$key][$i]))?$cnt3[$key][$i]:0;
+                        $avecount4 += (isset($cnt4[$key][$i]))?$cnt4[$key][$i]:0;
+                        $num++;
+                    }
+
+                    $start += $plus;
+                    $ave1 = round($avecount/$smooth,5);
+                    $ave2 = round($avecount2/$smooth,5);
+                    $ave3 = round($avecount3/$smooth,5);
+                    $ave4 = round($avecount4/$smooth,5);
+
+
+                    $ctr = $center[$key][$k];
+                    $counts1 = $cnt[$key][$k];
+                    $counts2 = $cnt2[$key][$k];
+                    //$counts2 = $counts1*$ctr;
+                   // $counts3 = round($counts1/(int)$sum[$key],5);
+                    $counts3 = $cnt3[$key][$k];
+                    $counts4 = $cnt4[$key][$k];
+                    //$counts4 = round($counts2/(int)$sum2[$key],5);
+                    $insert .= "(
+                        '".$user_id."',
+                        '".$graphe_id."',
+                        '".$value[ 'id' ]."',
+                        '".$counts1."',
+                        '".$counts2."',
+                        '".$counts3."',
+                        '".$counts4."',
+                        '".$ave1."',
+                        '".$ave2."',
+                        '".$ave3."',
+                        '".$ave4."',
+                        '".$comp[ 'max' ]."',
+                        '".$comp[ 'min' ]."',
+                        '".$ctr."',
+                        '".date('Y-m-d H:i:s')."',
+                        '".date('Y-m-d H:i:s')."'
+                    ),";
+                }
+            }
+
+            //取得したデータをデータパターン毎に登録処理を行う
+            //次回アクセス時、表示データ切り替えの際の処理を高速にする
+            if($insert){
+                $sql = "
+                    INSERT INTO graphe_displays (
+                        user_id,
+                        graphe_id,
+                        graphe_data_id,
+                        counts1,
+                        counts2,
+                        counts3,
+                        counts4,
+                        scounts1,
+                        scounts2,
+                        scounts3,
+                        scounts4,
+                        max,
+                        min,
+                        center,
+                        created,
+                        modified
+                    ) VALUES ";
+                $sql .= trim($insert,",");
+                $connection->execute($sql);
             }
         }
 
+        //表示用のデータ取得を行う
+        $sql = "
+            SELECT
+                GROUP_CONCAT( counts1 ) as cnt
+            FROM
+                graphe_displays
+            WHERE
+                user_id='${user_id}' AND
+                graphe_id = '${graphe_id}'
+            GROUP BY graphe_data_id
+            ";
+        $display = $connection->execute($sql)->fetchall('assoc');
+
+
         $graphe_point = [];
-        foreach($grafpoint as $key=>$value){
-            $graphe_point[$key]['point'] = implode(",",$value);
+        foreach($display as $key=>$value){
+            $graphe_point[]['point'] = $value[ 'cnt' ];
         }
 
+        $this->set("id",$graphe_id);
+        $this->set("graphe_data",$graphe_data);
         $this->set("graphe_point",$graphe_point);
+
+
+
+
     }
 
     public function step3Graph($graphe_id = ""){
@@ -168,29 +296,6 @@ class GraphsController extends AppController
     public function step4(){
 
 
-    }
-
-
-    public function ___setSpace($graphe_id,$user_id){
-        $SopDefaults = $this->SopDefaults->find()->where([
-            'user_id'=>$user_id,
-            'graphe_id'=>$graphe_id
-        ])->first();
-
-        $bin=[];
-        $start = $SopDefaults->defaultpoint;
-        $end = $SopDefaults->dispareamax;
-        $num = 1;
-        for($i=$start;$i<=$end;$i=$i+10){
-            $bin[] = $i;
-            if($num > $end) break;
-            $num++;
-        }
-        $binline = implode(",",$bin);
-
-        $this->set("SopDefaults",$SopDefaults->toArray());
-        $this->set("binline",$binline);
-        return $SopDefaults;
     }
 
     public function setSop($graphe_id){

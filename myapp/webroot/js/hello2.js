@@ -160,9 +160,18 @@ try{
             _data[17],
             _data[18],
             _data[19],
-            _data[20], //グラフを最大20個まで準備　より必要であれば増やす
-
-    ]
+            _data[20],
+            _data[21],
+            _data[22],
+            _data[23],
+            _data[24],
+            _data[25],
+            _data[26],
+            _data[27],
+            _data[28],
+            _data[29],
+            _data[30], //グラフを最大30個まで準備　より必要であれば増やす
+        ]
     }
 
 
@@ -180,10 +189,12 @@ try{
             },
             ticks: {                       // 目盛り
                 min: 0,                        // 最小値
-                max: 2500,                       // 最大値
-                stepSize: 5,                   // 軸間隔
+                autoSkip: true,
+                maxTicksLimit: 50, //値の最大表示数
                 fontColor: "black",             // 目盛りの色
-                fontSize: 14                   // フォントサイズ
+                fontSize: 11,                   // フォントサイズ
+                maxRotation: 90,
+                minRotation: 90
             },
             scaleLabel: {                  // 軸ラベル
                 display: true,                 // 表示の有無
@@ -191,7 +202,7 @@ try{
                 fontFamily: "sans-serif",
                 fontColor: "black",             // 文字の色
                 fontFamily: "sans-serif",
-                fontSize: 16                   // フォントサイズ
+                fontSize: 11                   // フォントサイズ
             },
         }],
         yAxes: [{
@@ -210,8 +221,8 @@ try{
             },
             ticks: {                       // 目盛り
                 min: 0,                        // 最小値
-                max: 50,                       // 最大値
-                stepSize: 10,                   // 軸間隔
+            //    max: 1000,                       // 最大値
+            //    stepSize: 100,                   // 軸間隔
                 fontColor: "black",             // 目盛りの色
                 fontSize: 14                   // フォントサイズ
             }
