@@ -72,6 +72,7 @@
                 <div class="col-md-2">
                     <div class="ml-2">
                         <div class="row">
+
                             <?= $this->Form->button("png<br />Export",[
                                 "class"=>"btn btn-warning w-100 text-white",
                                 "type"=>"button",
@@ -79,10 +80,17 @@
                             ])?>
                         </div>
                         <div class="row mt-3">
-                            <?= $this->Form->button("CSV<br />Export",[
+                            <?= $this->Html->link("CSV<br />Export",[
+                                "controller"=>"graphs",
+                                "action"=>"outputGraphe",
+                                $id
+                            ],
+                            [
+                                "escape"=>false,
                                 "class"=>"btn btn-warning w-100 text-white",
-                                "type"=>"button"
+
                             ])?>
+
                         </div>
                         <div class="row mt-3">
                             <?= $this->Html->link("グラフ<br />表示変更",$this->request->getParam('controller')."/step3_graph/".$id,[

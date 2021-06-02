@@ -31,7 +31,7 @@ class GraphsController extends AppController
         $this->Graphes = $this->loadModel("Graphes");
         $this->GrapheDatas = $this->loadModel("GrapheDatas");
         $this->GraphePoints = $this->loadModel("GraphePoints");
-        $this->GrapheDislays = $this->loadModel("GrapheDisplays");
+        $this->GrapheDisplays = $this->loadModel("GrapheDisplays");
         $this->SopDefaults = $this->loadModel("SopDefaults");
         $this->SopAreas = $this->loadModel("SopAreas");
         $this->UploadComponent = $this->loadComponent("Upload",$this->uAuth);
@@ -115,7 +115,7 @@ class GraphsController extends AppController
         $data = [];
         $insert = "";
 
-        $query = $this->GrapheDislays->find()->where([
+        $query = $this->GrapheDisplays->find()->where([
             'user_id'=>$user_id,
             'graphe_id'=>$graphe_id
             ])->count();
@@ -339,6 +339,85 @@ class GraphsController extends AppController
             }
             exit();
         }
+
+    }
+
+    //グラフ画面からcsvエクスポート
+    public function outputGraphe($graphe_id){
+        $this->autoRender = false;
+
+
+        $data = $this->GrapheDatas->find('all',[])
+        ->where(
+            [
+                'GrapheDatas.graphe_id'=>$graphe_id,
+                'GrapheDatas.user_id'=>$this->uAuth['id'],
+            ]
+        )->toArray();
+
+
+        $GrapheDisplays = $this->GrapheDisplays->find('all')
+
+        ->where(
+            [
+                'GrapheDisplays.graphe_id'=>$graphe_id,
+                'GrapheDisplays.user_id'=>$this->uAuth['id'],
+            ]
+        )->toArray();
+
+        $points = [];
+        $n = 0;
+        foreach($GrapheDisplays as $key=>$value){
+            $points[$value->graphe_data_id][$n][ 'count1' ] = $value->counts1;
+            $points[$value->graphe_data_id][$n][ 'min' ] = $value->min;
+            $points[$value->graphe_data_id][$n][ 'max' ] = $value->max;
+            $points[$value->graphe_data_id][$n][ 'center' ] = $value->center;
+            $n++;
+        }
+
+        //保存場所
+        $filename = date('YmdHis') . '_graf.csv';
+        $file = WWW_ROOT.'csv/' .$filename;
+        $f = fopen($file, 'w');
+        $list = [];
+        $list[0][] = mb_convert_encoding('階級','SJIS','UTF-8');
+        $list[0][] = mb_convert_encoding('階級最小値','SJIS','UTF-8');
+        $list[0][] = mb_convert_encoding('階級最大値','SJIS','UTF-8');
+        $list[0][] = mb_convert_encoding('階級中央値','SJIS','UTF-8');
+        $i=0;
+        foreach($data as $key=>$value){
+            $list[$i][] = mb_convert_encoding($value->label,'SJIS','auto');
+        }
+        $i++;
+        $first = true;
+        foreach($data as $key=>$value){
+            foreach($points[$value->id] as $k=>$val){
+                if($first){
+                    $list[$i][] = $val['min'];
+                    $list[$i][] = $val['min'];
+                    $list[$i][] = $val['max'];
+                    $list[$i][] = $val['center'];
+                }
+                $list[$i][] = $val['count1'];
+
+                $i++;
+            }
+            $i=1;
+            $first = false;
+        }
+        foreach($list as $key=>$value){
+            fputcsv($f, $value);
+        }
+
+
+        fclose($f);
+
+        return $this->response->withFile(
+            $file,
+            [
+              'download'=>true,
+            ]
+          );
 
     }
 
