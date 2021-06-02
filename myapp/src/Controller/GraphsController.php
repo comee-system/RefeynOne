@@ -22,6 +22,7 @@ class GraphsController extends AppController
     public function beforeFilter(Event $event)
     {
         parent::beforeFilter($event);
+        ini_set("memory_limit", "4G");
         $this->uAuth = $this->Auth->user();
         if(!$this->uAuth){
             return $this->redirect(['controller'=>'/','action' => '/']);
