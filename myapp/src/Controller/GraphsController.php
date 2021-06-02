@@ -272,7 +272,6 @@ class GraphsController extends AppController
             ";
         $display = $connection->execute($sql)->fetchall('assoc');
 
-
         $graphe_point = [];
         foreach($display as $key=>$value){
             $graphe_point[]['point'] = $value[ 'cnt' ];

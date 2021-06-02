@@ -139,7 +139,7 @@ try{
 
     var areaChartData = {
 
-     //   labels  : _labels,
+        labels  : _labels,
 
         datasets: [
             _data[1],
