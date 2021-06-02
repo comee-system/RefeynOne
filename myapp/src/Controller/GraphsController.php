@@ -148,13 +148,13 @@ class GraphsController extends AppController
                         'user_id'=>$user_id,
                         'graphe_id'=>$graphe_id,
                         'graphe_data_id'=>$value[ 'id' ],
-                        'pointdata != '=> "",
                         'pointdata >= '.$comp[ 'min' ],
                         'pointdata < '.$comp[ 'max' ],
                     ])->first();
 
                     $center[$key][$k] = ($comp[ 'min' ]+$comp[ 'max' ])/2;
                     $cnt[$key][$k] = $graphePoints->count;
+
                     $cnt2[$key][$k] = $graphePoints->count*$center[$key][$k];
 
                     $s = (isset($sum[$key]))?$sum[$key]:0;
