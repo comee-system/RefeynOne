@@ -198,10 +198,11 @@ class GraphsController extends AppController
                     }
 
                     $start += $plus;
-                    $ave1 = round($avecount/$smooth,5);
-                    $ave2 = round($avecount2/$smooth,5);
-                    $ave3 = round($avecount3/$smooth,5);
-                    $ave4 = round($avecount4/$smooth,5);
+
+                    $ave1 = ($avecount > 0 )?round($avecount/$smooth,5):0;
+                    $ave2 = ($avecount2 > 0 )?round($avecount2/$smooth,5):0;
+                    $ave3 = ($avecount3 > 0 )?round($avecount3/$smooth,5):0;
+                    $ave4 = ($avecount4 > 0 )?round($avecount4/$smooth,5):0;
 
 
                     $ctr = $center[$key][$k];
