@@ -65,7 +65,6 @@ class UploadComponent extends Component
             $this->GrapheDatas->save($GrapheDatas);
 
             $graphe_data_id = $GrapheDatas->id;
-
             $data = [];
             $i=0;
             foreach ($eRow as $key=>$value) {
@@ -166,7 +165,7 @@ class UploadComponent extends Component
             $i = 0;
             foreach($data as $key=>$value){
                 foreach($asins[$key] as $k=>$val){
-                    if($k > 0 ){
+                    if($k > 0 && $value ){
                         $child[$i][ 'graphe_id' ] = $graphe_id;
                         $child[$i][ 'graphe_data_id' ] = $value;
                         $child[$i][ 'user_id'   ] = $this->uAuth[ 'id' ];
@@ -187,10 +186,11 @@ class UploadComponent extends Component
                 }
                 $imp = [];
                 foreach($value as $k=>$val){
+
                     $imp[]= "('".$val['graphe_id']."',
                     '".$val[ 'graphe_data_id' ]."',
                     '".$val[ 'user_id' ]."',
-                    '".$val[ 'pointdata' ]."',
+                    '".round($val[ 'pointdata' ],3)."',
                     '".date('Y-m-d H:i:s')."',
                     '".date('Y-m-d H:i:s')."') ";
                 }

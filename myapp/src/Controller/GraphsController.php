@@ -22,7 +22,7 @@ class GraphsController extends AppController
     public function beforeFilter(Event $event)
     {
         parent::beforeFilter($event);
-        ini_set("memory_limit", "4G");
+        ini_set("memory_limit", "-1");
         $this->uAuth = $this->Auth->user();
         if(!$this->uAuth){
             return $this->redirect(['controller'=>'/','action' => '/']);
@@ -68,8 +68,9 @@ class GraphsController extends AppController
         $this->set("sopdefaultid",$SopDefaults[ 'id' ]);
 
     }
+
+
     public function step3($graphe_id){
-        $user_id = $this->uAuth['id'];
         //グラフデータ取得
         $connection = ConnectionManager::get('default');
         $user_id = $this->uAuth['id'];
@@ -83,7 +84,6 @@ class GraphsController extends AppController
                 disp = '1'
         ";
         $graphe_data = $connection->execute($sql)->fetchall('assoc');
-
 
 
         //グラフ横軸
@@ -124,17 +124,63 @@ class GraphsController extends AppController
         if($query){
             //既に登録済みなので何もしない
         }else{
-            $cnt = [];
-            $cnt2 = [];
-            $cnt3 = [];
-            $cnt4 = [];
-            $sum = [];//ヒストグラムの値を範囲のデータ総数
-            $sum2 = []; //Mass範囲のデータ総数
-            $center=[];
 
-            //smoothの計算
-            $plus = $smooth-ceil($smooth/2);
-            $start = 0;
+            $sql = "
+            SELECT a.*, (";
+            foreach($compares as $k=>$comp){
+                $sql .= " ranges_".$comp['min']."_".$comp['max']." + ";
+            }
+            $sql .= "0) as total2";
+            $sql .= " FROM (
+            SELECT graphe_data_id";
+            foreach($compares as $k=>$comp){
+                $ctr = ($comp['min']+$comp['max'])/2;
+                $sql .= ", SUM(CASE WHEN pointdata >= ".$comp['min']." AND pointdata < ".$comp['max']." THEN 1 ELSE 0 END) AS range_".$comp['min']."_".$comp['max'];
+                $sql .= ", ".$ctr." * SUM(CASE WHEN pointdata >= ".$comp['min']." AND pointdata < ".$comp['max']." THEN 1 ELSE 0 END) AS ranges_".$comp['min']."_".$comp['max'];
+            }
+            $sql .= " ,SUM(pointdata) AS total ";
+            $sql .= "
+                FROM graphe_points
+                WHERE graphe_id = '${graphe_id}'
+                GROUP BY graphe_data_id
+                ) as a
+            ";
+            $graphe_points = $connection->execute($sql)->fetchall('assoc');
+
+            foreach($graphe_points as $value){
+
+                $graphe_data_id = $value[ 'graphe_data_id' ];
+                $total = $value[ 'total' ];
+                $total2 = $value[ 'total2' ];
+                foreach($compares as $k=>$comp){
+                    $rg = "range_".$comp[ 'min' ]."_".$comp[ 'max' ];
+                    $rg2 = "ranges_".$comp[ 'min' ]."_".$comp[ 'max' ];
+                    $counts1 = $value[ $rg ];
+
+                    $min = $comp[ 'min' ];
+                    $max = $comp[ 'max' ];
+                    $ctr = ($min+$max)/2;
+                    $counts2 = $value[ $rg2 ];
+                    $counts3 = ($counts1 == 0)?0:round($counts1/$total,2);
+                    $counts4 = ($counts2 == 0)?0:round($counts2/$total2,2);
+                    $insert .= "(
+                        '".$user_id."',
+                        '".$graphe_id."',
+                        '".$graphe_data_id."',
+                        '".$counts1."',
+                        '".$counts2."',
+                        '".$counts3."',
+                        '".$counts4."',
+                        '".$max."',
+                        '".$min."',
+                        '".$ctr."',
+                        '".date('Y-m-d H:i:s')."',
+                        '".date('Y-m-d H:i:s')."'
+                    ),";
+                }
+            }
+
+/*
             foreach($graphe_data as $key=>$value){
 
                 foreach($compares as $k=>$comp){
@@ -151,6 +197,7 @@ class GraphsController extends AppController
                         'pointdata >= '.$comp[ 'min' ],
                         'pointdata < '.$comp[ 'max' ],
                     ])->first();
+
 
                     $center[$key][$k] = ($comp[ 'min' ]+$comp[ 'max' ])/2;
                     $cnt[$key][$k] = $graphePoints->count;
@@ -233,7 +280,7 @@ class GraphsController extends AppController
                     ),";
                 }
             }
-
+*/
             //取得したデータをデータパターン毎に登録処理を行う
             //次回アクセス時、表示データ切り替えの際の処理を高速にする
             if($insert){
@@ -246,10 +293,6 @@ class GraphsController extends AppController
                         counts2,
                         counts3,
                         counts4,
-                        scounts1,
-                        scounts2,
-                        scounts3,
-                        scounts4,
                         max,
                         min,
                         center,
@@ -259,6 +302,7 @@ class GraphsController extends AppController
                 $sql .= trim($insert,",");
                 $connection->execute($sql);
             }
+
         }
 
         //表示用のデータ取得を行う
@@ -271,6 +315,7 @@ class GraphsController extends AppController
                 user_id='${user_id}' AND
                 graphe_id = '${graphe_id}'
             GROUP BY graphe_data_id
+            limit 7
             ";
         $display = $connection->execute($sql)->fetchall('assoc');
 
@@ -282,9 +327,6 @@ class GraphsController extends AppController
         $this->set("id",$graphe_id);
         $this->set("graphe_data",$graphe_data);
         $this->set("graphe_point",$graphe_point);
-
-
-
 
     }
 
@@ -443,9 +485,9 @@ class GraphsController extends AppController
             if($valueid != $value->id) $no = 0;
             if($no == 0){
                 $list[ $value->id][] = $value[ 'label' ];
-            }else{
-                $list[ $value->id ][] = $value['graphe_point'][ 'pointdata' ];
             }
+            $list[ $value->id ][] = $value['graphe_point'][ 'pointdata' ];
+
             $valueid = $value->id;
             $no++;
         }
