@@ -34,7 +34,7 @@ class UploadComponent extends Component
 
     }
     //RefeynOneデータがE列
-    public function fileUploadRefeynOne($graphe_id,$filename){
+    public function fileUploadRefeynOne($graphe_id,$filename,$label){
 
         $connection = ConnectionManager::get('default');
         $connection->begin();
@@ -59,7 +59,8 @@ class UploadComponent extends Component
             $GrapheDatas = $this->GrapheDatas->newEntity();
             $GrapheDatas->user_id   = $this->uAuth[ 'id' ];
             $GrapheDatas->graphe_id = $graphe_id;
-            $GrapheDatas->label = $eRow[0];
+            //$GrapheDatas->label = $eRow[0];
+            $GrapheDatas->label = $label;
             $GrapheDatas->filename = $filename;
             $GrapheDatas->counts = count($eRow)-1;
             $this->GrapheDatas->save($GrapheDatas);
@@ -147,6 +148,7 @@ class UploadComponent extends Component
                 $insert[$i]['label'] = $value[0];
                 $insert[$i]['filename'] = $filename;
                 $insert[$i]['counts'] = $c[$i];
+                $insert[$i]['disp'] = ($i >= 10)?0:1;
                 $i++;
             }
 
@@ -165,7 +167,7 @@ class UploadComponent extends Component
             $i = 0;
             foreach($data as $key=>$value){
                 foreach($asins[$key] as $k=>$val){
-                    if($k > 0 && $value ){
+                    if($k > 0 && $value && strlen($val) > 0  ){
                         $child[$i][ 'graphe_id' ] = $graphe_id;
                         $child[$i][ 'graphe_data_id' ] = $value;
                         $child[$i][ 'user_id'   ] = $this->uAuth[ 'id' ];
@@ -186,7 +188,6 @@ class UploadComponent extends Component
                 }
                 $imp = [];
                 foreach($value as $k=>$val){
-
                     $imp[]= "('".$val['graphe_id']."',
                     '".$val[ 'graphe_data_id' ]."',
                     '".$val[ 'user_id' ]."',

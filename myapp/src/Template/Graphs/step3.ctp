@@ -1,19 +1,38 @@
 
 <div class="content">
-
     <div class="container">
         <?= $this->element("graph_step",['step'=>3]); ?>
         <?= $this->Form->hidden("id",['id'=>'id','value'=>h($id)])?>
 
-<?php /* ?>
-        <?= $this->Form->hidden("defaultpoint",['id'=>'defaultpoint','value'=>h($SopDefaults['defaultpoint'])])?>
-        <?= $this->Form->hidden("dispareamax",['id'=>'dispareamax','value'=>h($SopDefaults['dispareamax'])])?>
-        <?= $this->Form->hidden("binsize",['id'=>'binsize','value'=>h($SopDefaults['binsize'])])?>
-        <?= $this->Form->hidden("smooth",['id'=>'smooth','value'=>h($SopDefaults['smooth'])])?>
         <?= $this->Form->hidden("binline",['id'=>'binline','value'=>h($binline)])?>
-<?php */ ?>
-        <?= $this->Form->hidden("binline",['id'=>'binline','value'=>h($binline)])?>
+        <div class="row mt-3">
+            <div class="col-4">
+                <?= $this->Form->button("pngExport",[
+                    "class"=>"btn btn-warning w-100 text-white",
+                    "type"=>"button",
+                    "id"=>"pngExport"
+                ])?>
+            </div>
+            <div class="col-4">
+                <?= $this->Html->link("CSVExport",[
+                    "controller"=>"graphs",
+                    "action"=>"outputGraphe",
+                    $id
+                ],
+                [
+                    "escape"=>false,
+                    "class"=>"btn btn-warning w-100 text-white",
 
+                ])?>
+
+            </div>
+            <div class="col-4">
+                <?= $this->Html->link("グラフ表示変更",$this->request->getParam('controller')."/step3_graph/".$id,[
+                    'escape'=>false,
+                    'class'=>'btn btn-warning w-100 text-white text-center'
+                ])?>
+            </div>
+        </div>
         <?= $this->Form->create("", [
             'enctype' => 'multipart/form-data',
             'url'=>'/graphs/step4'
@@ -45,6 +64,61 @@
                             <h3 class="card-title"><?= __("SOPエリアの設定") ?></h3>
                         </div>
                         <div class="card-body">
+                            <table class="table table-bordered">
+                                <tr class="bg-info">
+                                    <th class="text-center" colspan=6><?= __("エリア設定") ?></th>
+                                </tr>
+                                <tr>
+                                    <td>&nbsp;</td>
+                                    <td><?= __("エリア1") ?></td>
+                                    <td><?= __("エリア2") ?></td>
+                                    <td><?= __("エリア3") ?></td>
+                                    <td><?= __("エリア4") ?></td>
+                                    <td><?= __("エリア5") ?></td>
+                                </tr>
+                                <tr>
+                                    <td><?= __("上限") ?></td>
+                                    <td class="max-1"></td>
+                                    <td class="max-2"></td>
+                                    <td class="max-3"></td>
+                                    <td class="max-4"></td>
+                                    <td class="max-5"></td>
+                                </tr>
+                                <tr>
+                                    <td><?= __("下限") ?></td>
+                                    <td class="min-1"></td>
+                                    <td class="min-2"></td>
+                                    <td class="min-3"></td>
+                                    <td class="min-4"></td>
+                                    <td class="min-5"></td>
+                                </tr>
+                            </table>
+
+
+                            <div class="row mt-3">
+                                <div class="col-4">
+                                    <?= $this->Form->button("テーブル反映",[
+                                        "class"=>"btn btn-warning w-100 text-white",
+                                        "type"=>"button",
+                                        "id"=>"tableReflect"
+                                    ])?>
+                                </div>
+                                <div class="col-4">
+                                    <?= $this->Html->link("SOPExport",[
+                                        "controller"=>"graphs",
+                                        "action"=>"outputSOP"
+                                    ],
+                                    [
+                                        "escape"=>false,
+                                        "class"=>"btn btn-warning w-100 text-white",
+
+                                    ])?>
+                                </div>
+                            </div>
+
+
+
+                            <!--
                             <div class="text-right mb-3 ">
                                 <?= $this->Form->button("追加",[
                                     "class"=>"btn-sm btn-warning text-white",
@@ -62,6 +136,8 @@
                                 </tr>
                                 <tbody id="soptbody"></tbody>
                             </table>
+                            -->
+
                         </div>
                         <!-- /.card-body -->
                     </div>
@@ -71,33 +147,7 @@
                 </div>
                 <div class="col-md-2">
                     <div class="ml-2">
-                        <div class="row">
 
-                            <?= $this->Form->button("png<br />Export",[
-                                "class"=>"btn btn-warning w-100 text-white",
-                                "type"=>"button",
-                                "id"=>"pngExport"
-                            ])?>
-                        </div>
-                        <div class="row mt-3">
-                            <?= $this->Html->link("CSV<br />Export",[
-                                "controller"=>"graphs",
-                                "action"=>"outputGraphe",
-                                $id
-                            ],
-                            [
-                                "escape"=>false,
-                                "class"=>"btn btn-warning w-100 text-white",
-
-                            ])?>
-
-                        </div>
-                        <div class="row mt-3">
-                            <?= $this->Html->link("グラフ<br />表示変更",$this->request->getParam('controller')."/step3_graph/".$id,[
-                                'escape'=>false,
-                                'class'=>'btn btn-warning w-100 text-white text-center'
-                            ])?>
-                        </div>
 
 
                         <div class="row mt-3">
@@ -182,7 +232,46 @@
             </div>
 
             <div class="row mt-3">
-                <a href="" class="btn btn-outline-success w-100">エリア毎のテーブル表示</a>
+                <div class="alert alert-success w-100" role="alert">
+                   <?= __("エリア毎のテーブル表示") ?>
+
+                </div>
+                <?= $this->Html->link("TableDataExport","/graphs/tableDataExport/".$id,[
+                        "class"=>"btn btn-warning w-25 text-white",
+                    ])?>
+                <div class="areatable">
+                    <table class="mt-3 table table-bordered bg-white" style="width:200%;">
+
+                        <tr>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                            <?php for($i=1;$i<=5;$i++): ?>
+                            <td colspan=4 ><?= __("エリア".$i) ?></td>
+                            <?php endfor; ?>
+                        </tr>
+                        <tr>
+                            <td>&nbsp;</td>
+                            <td rowspan="2" ><?= __("Label") ?></td>
+                            <?php for($i=1;$i<=5;$i++): ?>
+                                <td><?= __("範囲最小値") ?></td>
+                                <td>-</td>
+                                <td><?= __("範囲最大値") ?></td>
+                                <td>-</td>
+                            <?php endfor; ?>
+                        </tr>
+                        <tr>
+                            <td>&nbsp;</td>
+                            <?php for($i=1;$i<=5;$i++): ?>
+                                <td><?= __("割合%") ?></td>
+                                <td><?= __("平均値") ?></td>
+                                <td><?= __("中間値") ?></td>
+                                <td><?= __("モード値") ?></td>
+                            <?php endfor; ?>
+                        </tr>
+
+                    </table>
+                </div>
+
             </div>
             <div class="row m-3">
                 <div class="col-md-6 text-center">

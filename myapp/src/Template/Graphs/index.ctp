@@ -15,7 +15,7 @@
             'id'=>"foo"
             ]); ?>
             <div class="row">
-                <div class="col-md-12 mt-3">
+                <div class="col-md-6 mt-3">
                     <div class="card ">
                         <div class="card-header bg-primary">
                             <?= __("RefeynOneからの出力ファイル取込") ?>
@@ -42,7 +42,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-md-12 mt-3">
+                <div class="col-md-6 mt-3">
 
                     <div class="card ">
                         <div class="card-header bg-info">

@@ -173,7 +173,8 @@ div#screen {
   padding: 0; }
 
 #smartwizard.sw-theme-arrows > ul.step-anchor > li {
-  float: left; }
+  float: left;
+  width: 25%; }
 
 #smartwizard.sw-theme-arrows > ul.step-anchor > li > a {
   color: #bbb;
@@ -185,7 +186,8 @@ div#screen {
   border-radius: 0;
   outline-style: none;
   background: #ddd;
-  cursor: default; }
+  cursor: default;
+  width: 100%; }
 
 #smartwizard.sw-theme-arrows > ul.step-anchor > li > a:after {
   content: " ";
@@ -226,7 +228,8 @@ div#screen {
 #smartwizard.sw-theme-arrows > ul.step-anchor > li.active > a {
   border-color: #5bc0de !important;
   color: #fff !important;
-  background: #5bc0de !important; }
+  background: #5bc0de !important;
+  width: 100%; }
 
 #smartwizard.sw-theme-arrows > ul.step-anchor > li.active > a:after {
   border-left: 30px solid #5bc0de !important; }
@@ -246,5 +249,18 @@ div#screen {
 
 #smartwizard.sw-theme-arrows > ul.step-anchor > li.disabled > a, .sw-theme-arrows > ul.step-anchor > li.disabled > a:hover {
   color: #eee !important; }
+
+div.areatable {
+  width: 100%;
+  overflow: auto; }
+
+div.areatable table td:first-child {
+  width: 40px;
+  min-width: 40px; }
+
+div.areatable table td {
+  white-space: nowrap;
+  min-width: 120px;
+  text-align: center; }
 
 /*# sourceMappingURL=basic.css.map */

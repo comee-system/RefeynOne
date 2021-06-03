@@ -25,6 +25,7 @@ try{
 
         // 取得したファイルをinput[type=file]へ
         fileInput.files = files;
+
         if(typeof files[0] !== 'undefined' && files[0].name.indexOf('.csv') !== -1 ) {
             //ファイルが正常に受け取れた際の処理
             $("#filename").text(files[0]['name']+"を選択しました。");
@@ -42,6 +43,9 @@ try{
     fileInput.addEventListener('change', function(e){
 
         var file = e.target.files[0];
+        if(!file){
+            $("#filename").text("ファイルの選択に失敗しました。");
+        }else
         if(typeof e.target.files[0] !== 'undefined'  && file.name.indexOf('.csv') !== -1  ) {
             // ファイルが正常に受け取れた際の処理
             $("#filename").text(file['name']+"を選択しました。");
@@ -58,32 +62,38 @@ try{
 
 
 $.fn.fileupload = function(){
-    $("#screen").show();
-    let _upfile = $('input[name="uploadFile"]');
-    let fd = new FormData();
-    fd.append("upfile", _upfile.prop('files')[0]);
+    var _label = window.prompt("ユーザー名を入力してください", "");
+    if(!_label){
+        alert("ユーザ名が入力されていません。");
+        return false;
+    }else{
+        $("#screen").show();
+        let _upfile = $('input[name="uploadFile"]');
+        let fd = new FormData();
+        fd.append("upfile", _upfile.prop('files')[0]);
 
-    var _id = $("#id").val();
-    $.ajax({
-        url:"/graphs/upload/"+_id,
-        type:"post",
-        data:fd,
-        processData:false,
-        contentType:false,
-        cache:false,
-    }).done(function(data){
-        if(data >= 1 ){
-            alert("ファイルのアップロードに失敗しました");
-        }else{
-            $("#screen").hide();
-            alert("ファイルのアップロードを行いました。");
-            $(this).getGraphData();
-        }
-        console.log(data);
+        var _id = $("#id").val();
+        $.ajax({
+            url:"/graphs/upload/"+_id+"/RefeynOne/"+_label,
+            type:"post",
+            data:fd,
+            processData:false,
+            contentType:false,
+            cache:false,
+        }).done(function(data){
+            if(data >= 1 ){
+                alert("ファイルのアップロードに失敗しました");
+            }else{
+                $("#screen").hide();
+                alert("ファイルのアップロードを行いました。");
+                $(this).getGraphData();
+            }
+            console.log(data);
 
-    }).fail(function(){
+        }).fail(function(){
 
-    });
+        });
+    }
 };
 
 

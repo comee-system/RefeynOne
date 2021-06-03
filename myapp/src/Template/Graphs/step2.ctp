@@ -16,7 +16,7 @@
             <div class="col-md-12 mt-3">
                 <div class="card ">
                     <div class="card-header bg-primary">
-                        <?= __("初期値設定：以前のSOPファイル取込") ?>
+                        <?= __("SOPファイル取込") ?>
                         <i class="fas fa-question-circle yubi" data-toggle="modal" data-target="#modal-default" ></i>
                     </div>
                     <div class="card-body">
@@ -47,48 +47,45 @@
             <div class="col-md-12 mt-3">
                 <div class="card ">
                     <div class="card-header bg-primary">
-                        <?= __("SOP（初期設定）") ?>
+                        <?= __("解析条件") ?>
                         <?= $this->Form->hidden("sopdefaultid",[
                             'value'=>$sopdefaultid
                         ])?>
                     </div>
                     <div class="card-body">
                         <table class="table table-bordered">
-                            <thead class="bg-info text-center">
-                                <tr>
-                                <th>&nbsp;</th>
-                                <th><?= __("Mw") ?></th>
-                                </tr>
-                            </thead>
-                            <tbody class="bg-white">
-                                <tr>
-                                    <td><?= __("グラフの初期値") ?></td>
-                                    <td>
-                                        <?= $this->Form->control("defaultpoint",[
+                            <tr class="bg-info">
+                                <th class="text-center" colspan=5><?= __("基本設計") ?></th>
+                            </tr>
+                            <tr>
+                                <td><?= __("項目") ?></td>
+                                <td><?= __("グラフの開始値") ?><span class="ml-3 badge badge-danger">必須</span></td>
+                                <td><?= __("グラフの終了値") ?><span class="ml-3 badge badge-danger">必須</span></td>
+                                <td><?= __("Binサイズ") ?><span class="ml-3 badge badge-danger">必須</span></td>
+                                <td><?= __("スムージング") ?><span class="ml-3 badge badge-danger">必須</span></td>
+                            </tr>
+                            <tr>
+                                <td><?= __("値") ?></td>
+                                <td>
+                                    <?= $this->Form->control("defaultpoint",[
                                             "class"=>"form-control sopText",
                                             "type"=>"number",
                                             "value"=>(!empty($SopDefaults->defaultpoint))?$SopDefaults->defaultpoint:"0",
                                             "label"=>false,
                                             "min"=>"0",
                                         ]) ?>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td><?= __("表示範囲(最大値)") ?></td>
-                                    <td>
-                                        <?= $this->Form->control("dispareamax",[
+                                </td>
+                                <td>
+                                    <?= $this->Form->control("dispareamax",[
                                             "class"=>"form-control sopText",
                                             "type"=>"number",
                                             "value"=>(!empty($SopDefaults->dispareamax))?$SopDefaults->dispareamax:"0",
                                             "label"=>false,
                                             "min"=>"0",
                                         ]) ?>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td><?= __("Binサイズ(間隔)") ?></td>
-                                    <td>
-                                        <?= $this->Form->control("binsize",[
+                                </td>
+                                <td>
+                                    <?= $this->Form->control("binsize",[
                                             "class"=>"form-control sopText",
                                             "type"=>"number",
                                             "min"=>"0",
@@ -96,19 +93,14 @@
                                             "label"=>false,
 
                                         ]) ?>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td><?= __("スムージング") ?></td>
-                                    <td>
-                                        <?= $this->Form->select("smooth",$array_smooth,[
+                                </td>
+                                <td>
+                                    <?= $this->Form->select("smooth",$array_smooth,[
                                             "class"=>"form-control sopText",
                                             "value"=>(!empty($SopDefaults->smooth))?$SopDefaults->smooth:"0",
                                         ]) ?>
-                                    </td>
-                                </tr>
-
-                            </tbody>
+                                </td>
+                            </tr>
                         </table>
                     </div>
                 </div>
@@ -123,7 +115,36 @@
                         <small>※エリア設定は解析時に入力可能です。</small>
                     </div>
                     <div class="card-body">
-
+                        <table class="table table-bordered">
+                            <tr class="bg-info">
+                                <th class="text-center" colspan=6><?= __("エリア設定") ?></th>
+                            </tr>
+                            <tr>
+                                <td>&nbsp;</td>
+                                <td><?= __("エリア1") ?></td>
+                                <td><?= __("エリア2") ?></td>
+                                <td><?= __("エリア3") ?></td>
+                                <td><?= __("エリア4") ?></td>
+                                <td><?= __("エリア5") ?></td>
+                            </tr>
+                            <tr>
+                                <td><?= __("上限") ?></td>
+                                <td class="max-1"></td>
+                                <td class="max-2"></td>
+                                <td class="max-3"></td>
+                                <td class="max-4"></td>
+                                <td class="max-5"></td>
+                            </tr>
+                            <tr>
+                                <td><?= __("下限") ?></td>
+                                <td class="min-1"></td>
+                                <td class="min-2"></td>
+                                <td class="min-3"></td>
+                                <td class="min-4"></td>
+                                <td class="min-5"></td>
+                            </tr>
+                        </table>
+                    <!--
                         <table class="table table-bordered">
                             <thead class="bg-info text-center">
                                 <tr>
@@ -146,7 +167,7 @@
 
                             </tbody>
                         </table>
-
+                    -->
 
                     </div>
                 </div>

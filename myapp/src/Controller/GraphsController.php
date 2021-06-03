@@ -308,14 +308,27 @@ class GraphsController extends AppController
         //表示用のデータ取得を行う
         $sql = "
             SELECT
+                GROUP_CONCAT( id ) as line
+            FROM
+                graphe_datas
+            WHERE
+                user_id='${user_id}' AND
+                graphe_id = '${graphe_id}' AND
+                disp = 1
+        ";
+        $rlt = $connection->execute($sql)->fetch('assoc');
+        $line = $rlt['line'];
+        $sql = "
+            SELECT
                 GROUP_CONCAT( counts1 ) as cnt
             FROM
                 graphe_displays
             WHERE
                 user_id='${user_id}' AND
-                graphe_id = '${graphe_id}'
+                graphe_id = '${graphe_id}' AND
+                graphe_data_id IN (${line})
             GROUP BY graphe_data_id
-            limit 7
+
             ";
         $display = $connection->execute($sql)->fetchall('assoc');
 
@@ -363,7 +376,7 @@ class GraphsController extends AppController
         exit();
     }
 
-    public function upload($graphe_id,$type=""){
+    public function upload($graphe_id,$type="",$label=""){
         $this->autoRender = false;
 
         if($this->request->is('ajax')){
@@ -375,7 +388,7 @@ class GraphsController extends AppController
                 if($type == "mesurement" ){
                     $this->UploadComponent->fileUploadMesurement($graphe_id,self::Mesurement);
                 }else{
-                    $this->UploadComponent->fileUploadRefeynOne($graphe_id,self::RefeynOne);
+                    $this->UploadComponent->fileUploadRefeynOne($graphe_id,self::RefeynOne,$label);
                 }
             }else{
                 echo 1;
@@ -398,9 +411,7 @@ class GraphsController extends AppController
             ]
         )->toArray();
 
-
         $GrapheDisplays = $this->GrapheDisplays->find('all')
-
         ->where(
             [
                 'GrapheDisplays.graphe_id'=>$graphe_id,

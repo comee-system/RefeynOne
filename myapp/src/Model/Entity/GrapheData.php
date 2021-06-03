@@ -35,6 +35,7 @@ class GrapheData extends Entity
         'graphe_id' => true,
         'label' => true,
         'filename' => true,
+        'disp' => true,
         'counts' => true,
         'created' => true,
         'modified' => true,

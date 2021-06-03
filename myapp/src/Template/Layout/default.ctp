@@ -30,15 +30,33 @@
 
     <?= $this->fetch('content') ?>
 
-    <footer class="fixed-bottom p-2 text-center">
-        <?php /*
-        <?= $this->Html->image("lss-logo_2.png",[
-            'dev'=>false,
-            'class'=>'__logo',
-            'alt'=>'ライフサイエンスソリューション株式会社'
-        ],
-        ); ?>
-        */ ?>
+    <footer class="p-2 text-center">
+        <div class="row">
+            <div class="col-6">
+                <div class="row">
+                    <div class="col-3">
+                        <?= $this->Html->link("運営会社情報",
+                            "https://ls-solutions.co.jp",
+                            ['class'=>''])
+                        ?>
+                    </div>
+                    <div class="col-3">
+                        <?= $this->Html->link("お問い合わせ",
+                            "https://ls-solutions.co.jp/contact/",
+                            ['class'=>''])
+                        ?>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 text-right">
+                <?= $this->Html->image("lss-logo_2.png",[
+                    'dev'=>false,
+                    'class'=>'__logo',
+                    'alt'=>'ライフサイエンスソリューション株式会社'
+                ],
+                ); ?>
+            </div>
+        </div>
     </footer>
 </div>
 <!-- jQuery -->
