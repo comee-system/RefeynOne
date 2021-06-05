@@ -274,6 +274,17 @@ div.areatable table td {
   left: 0;
   display: none; }
 
+div#cardbody {
+  position: relative; }
+  div#cardbody div#cardscreen {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.3);
+    z-index: 100;
+    top: 0;
+    left: 0; }
+
 @keyframes sp-anime {
   100% {
     transform: rotate(360deg); } }

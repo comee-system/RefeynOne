@@ -1,4 +1,8 @@
-
+<div id="screen">
+    <div class="spinner-border m-5" role="status">
+    <span class="sr-only">Loading...</span>
+    </div>
+</div>
 <div class="content">
     <div class="container">
         <?= $this->element("graph_step",['step'=>3]); ?>
@@ -45,7 +49,8 @@
                 <div class="col-md-10">
                     <!-- LINE CHART -->
                     <div class="card card-info">
-                        <div class="card-body">
+                        <div class="card-body" id="cardbody">
+                            <div id="cardscreen"></div>
                             <div class="chart">
                                 <canvas id="lineChart" style="height: 700px;max-width: 100%;"></canvas>
                             </div>
@@ -249,7 +254,10 @@
                                 <div class="card card-info">
                                     <div class="card-header"><?= __("スムージング")?></div>
                                     <div class="card-body">
-                                        <input type="text" name="" value=""  class="form-control-sm w-100" />
+                                        <?= $this->Form->select("smooth",$array_smooth,[
+                                            "class"=>"form-control sopText",
+                                            "value"=>$smooth,
+                                        ]) ?>
                                     </div>
                                 </div>
                             </div>

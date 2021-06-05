@@ -28,6 +28,7 @@ class GraphsController extends AppController
             return $this->redirect(['controller'=>'/','action' => '/']);
         }
         $this->array_smooth = Configure::read("array_smooth");
+        $this->array_graf_type = Configure::read("array_graf_type");
         $this->session = $this->getRequest()->getSession();;
 
         $this->Graphes = $this->loadModel("Graphes");
@@ -115,7 +116,7 @@ class GraphsController extends AppController
             FROM graphe_datas WHERE
                 user_id='${user_id}' AND
                 graphe_id = '${graphe_id}' AND
-                disp = '1'
+                disp != 0
         ";
         $graphe_data = $connection->execute($sql)->fetchall('assoc');
 
@@ -360,7 +361,7 @@ class GraphsController extends AppController
             WHERE
                 user_id='${user_id}' AND
                 graphe_id = '${graphe_id}' AND
-                disp = 1
+                disp != 0
         ";
         $rlt = $connection->execute($sql)->fetch('assoc');
         $line = $rlt['line'];
@@ -374,23 +375,41 @@ class GraphsController extends AppController
                 graphe_id = '${graphe_id}' AND
                 graphe_data_id IN (${line})
             GROUP BY graphe_data_id
-
             ";
         $display = $connection->execute($sql)->fetchall('assoc');
 
         $graphe_point = [];
         foreach($display as $key=>$value){
-            $graphe_point[]['point'] = $value[ 'cnt' ];
+            $graphe_point[]['point'] = $this->setSmooth($value,$smooth);
+           // $graphe_point[]['point'] = $value[ 'cnt' ];
         }
-
-
-
-
 
         $this->set("id",$graphe_id);
         $this->set("graphe_data",$graphe_data);
         $this->set("graphe_point",$graphe_point);
+        $this->set("smooth",$smooth);
 
+    }
+
+    public function setSmooth($array,$smooth){
+        $ex = explode(",",$array[ 'cnt' ]);
+        $count = count($ex);
+        $start = 0-floor($smooth/2);
+        $end = $count+floor($smooth/2);
+        $list = [];
+        for($i=$start;$i<=$end;$i++){
+            $numeric=0;
+            for($j=$i;$j<$i+$smooth;$j++){
+                $numeric += (isset($ex[$j]))?$ex[$j]:0;
+            }
+            if($i >= 0){
+                $list[] = $numeric/$smooth;
+            }
+            if($count < $i) break;
+        }
+        $imp = implode(",",$list);
+
+        return $imp;
     }
 
     public function step3Graph($graphe_id = ""){
@@ -789,6 +808,37 @@ class GraphsController extends AppController
 
     }
 
+    public function createDispGraph($id = ""){
+        $this->autoRender = false;
+        $connection = ConnectionManager::get('default');
+        $user_id = $this->uAuth['id'];
+        preg_match("/[0-9]/",$this->request->getData("basic"),$basic);
+        preg_match("/[0-9]/",$this->request->getData("display"),$display);
+        $code = $basic[0].$display[0];
+        $clum = $this->array_graf_type[$code];
+        $sql = "
+            SELECT a.* FROM (
+            SELECT
+                GROUP_CONCAT( ".$clum." ) as cnt,
+                gdisplay.graphe_data_id,
+                gdata.label,
+                gdata.disp
+            FROM
+                graphe_displays as gdisplay
+                LEFT JOIN graphe_datas as gdata ON gdisplay.graphe_data_id = gdata.id
+            WHERE
+                gdisplay.user_id='${user_id}' AND
+                gdisplay.graphe_id = '${id}' AND
+                gdata.disp != 0
+            GROUP BY gdisplay.graphe_data_id
+                ) as a
+            ORDER BY a.disp ASC
+            ";
+        $display = $connection->execute($sql)->fetchall('assoc');
+        header('Content-type: application/json');
+        echo json_encode($display,JSON_UNESCAPED_UNICODE);
+        exit();
+    }
 
 
     //平均値を求める関数

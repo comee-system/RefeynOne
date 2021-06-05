@@ -224,4 +224,11 @@ Configure::write("array_smooth", [
     17=>17,
     19=>19
 ]);
+//解析基準/データ表示
+Configure::write("array_graf_type",[
+    11=>"counts1",
+    21=>"counts2",
+    12=>"counts3",
+    22=>"counts4",
+]);
 

@@ -61,20 +61,80 @@ var _maxTicksLimit = 10; //値の最大表示数
 var _areamin = 0;
 var _areamax = 0;
 createGraf();
-//テーブル反映ボタン
+//グラフ反映ボタン
 $("[name='reflect_graf']").click(function(){
+    creatLine();
+    createGraf();
+});
+
+//解析基準
+$(document).on("click","[name='analyticsBasic']",function(){
+    //表示用データの切り替えを行う
+    createDispGraph();
+});
+$(document).on("click","[name='dataDisplay']",function(){
+    //表示用データの切り替えを行う
+    createDispGraph();
+});
+
+
+function createDispGraph(){
+    $("#screen").show();
+    var _id = $("#id").val();
+    //解析基準
+    var _basic = $("[name='analyticsBasic']:checked").attr("id");
+    //データ表示
+    var _display = $("[name='dataDisplay']:checked").attr("id");
+    var _data = {
+        "basic":_basic,
+        "display":_display,
+    };
+    $.ajax({
+        url:"/graphs/createDispGraph/"+_id,
+        type:"post",
+        data:_data,
+       // datatype: "json",
+    }).done(function(data){
+        $(".graphe_point").remove();
+        $(".graphe_data").remove();
+        var _num = 1;
+        var _cnt = "";
+        var _label = "";
+        $.each(data,function(key,value){
+            var _hidden = "";
+            _cnt = value.cnt;
+            _label = value.label;
+            _hidden += "<input type='hidden' class='graphe_point' id='line"+_num+"' value='"+_cnt+"' />";
+            _hidden += "<input type='hidden' class='graphe_data' id='label"+_num+"' value='"+_label+"' />";
+            _num = _num+1;
+            $("#cardbody").append(_hidden);
+        });
+
+        $("#screen").hide();
+        console.log("OK");
+        creatLine();
+        createGraf();
+
+    }).fail(function(){
+
+    });
+
+}
+//エリア設定で縦ラインを引く値
+function creatLine(){
     var _dispareamax = $("#dispareamax").val();
     var _memori = _dispareamax/_maxTicksLimit; //グラフの区切り値
     var _separate = _dispareamax/_memori;
-    var _id = $(this).attr("id").split("-")[2];
+    var _chk = $("[name='reflect_graf']:checked").attr("id");
+    if(!_chk) return false;
+    var _id = _chk.split("-")[2];
     var _maxpoint = $("#maxpoint-"+_id).val();
     var _bin = $("#binsize").val()/_maxTicksLimit;
     _areamax = (_maxpoint/_separate)/_bin;
 
     var _minpoint = $("#minpoint-"+_id).val();
     _areamin = (_minpoint/_separate)/_bin;
-    createGraf();
-});
+}
 
 
 function createGraf(){
