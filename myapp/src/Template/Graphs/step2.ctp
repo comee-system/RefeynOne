@@ -121,53 +121,31 @@
                             </tr>
                             <tr>
                                 <td>&nbsp;</td>
-                                <td><?= __("エリア1") ?></td>
-                                <td><?= __("エリア2") ?></td>
-                                <td><?= __("エリア3") ?></td>
-                                <td><?= __("エリア4") ?></td>
-                                <td><?= __("エリア5") ?></td>
+                                <?php for($i=1;$i<=5;$i++ ):?>
+                                <td><?= __("エリア".$i) ?></td>
+                                <?php endfor; ?>
                             </tr>
                             <tr>
                                 <td><?= __("上限") ?></td>
-                                <td class="max-1"></td>
-                                <td class="max-2"></td>
-                                <td class="max-3"></td>
-                                <td class="max-4"></td>
-                                <td class="max-5"></td>
+                                <?php for($i=0;$i<=4;$i++ ):?>
+                                <td >
+                                    <?php if(isset($SopAreas[$i][ 'maxpoint' ])): ?>
+                                    <?= h(number_format($SopAreas[$i][ 'maxpoint' ])) ?>
+                                    <?php endif; ?>
+                                </td>
+                                <?php endfor; ?>
                             </tr>
                             <tr>
                                 <td><?= __("下限") ?></td>
-                                <td class="min-1"></td>
-                                <td class="min-2"></td>
-                                <td class="min-3"></td>
-                                <td class="min-4"></td>
-                                <td class="min-5"></td>
+                                <?php for($i=0;$i<=4;$i++ ):?>
+                                <td >
+                                    <?php if(isset($SopAreas[$i][ 'minpoint' ])): ?>
+                                    <?= h(number_format($SopAreas[$i][ 'minpoint' ])) ?>
+                                    <?php endif; ?>
+                                </td>
+                                <?php endfor; ?>
                             </tr>
                         </table>
-                    <!--
-                        <table class="table table-bordered">
-                            <thead class="bg-info text-center">
-                                <tr>
-
-                                <th></th>
-                                <th><?= __("エリア下限")?></th>
-                                <th><?= __("≦X＜")?></th>
-                                <th><?=__("エリア上限")?></th>
-                                </tr>
-                            </thead>
-                            <tbody class="bg-white text-center no-boarder">
-                                <?php foreach( $SopAreas as $key=>$value):?>
-                                    <tr>
-                                        <td><?= h($value->name) ?></td>
-                                        <td><?= number_format($value->minpoint) ?></td>
-                                        <td ></td>
-                                        <td><?= number_format($value->maxpoint) ?></td>
-                                    </tr>
-                                <?php endforeach; ?>
-
-                            </tbody>
-                        </table>
-                    -->
 
                     </div>
                 </div>
@@ -190,8 +168,6 @@
             </div>
         </div>
         <?= $this->Form->end(); ?>
-
-
     </div>
 </div>
 

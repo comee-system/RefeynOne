@@ -3,6 +3,10 @@
     <div class="container">
         <?= $this->element("graph_step",['step'=>3]); ?>
         <?= $this->Form->hidden("id",['id'=>'id','value'=>h($id)])?>
+        <?= $this->Form->hidden("defaultpoint",['id'=>'defaultpoint','value'=>h($defaultpoint)])?>
+        <?= $this->Form->hidden("dispareamax",['id'=>'dispareamax','value'=>h($dispareamax)])?>
+        <?= $this->Form->hidden("binsize",['id'=>'binsize','value'=>h($binsize)])?>
+        <?= $this->Form->hidden("smooth",['id'=>'smooth','value'=>h($smooth)])?>
 
         <?= $this->Form->hidden("binline",['id'=>'binline','value'=>h($binline)])?>
         <div class="row mt-3">
@@ -70,30 +74,75 @@
                                 </tr>
                                 <tr>
                                     <td>&nbsp;</td>
-                                    <td><?= __("エリア1") ?></td>
-                                    <td><?= __("エリア2") ?></td>
-                                    <td><?= __("エリア3") ?></td>
-                                    <td><?= __("エリア4") ?></td>
-                                    <td><?= __("エリア5") ?></td>
+                                    <?php for($i=0;$i<=4;$i++ ):
+                                        $num = $i+1;
+                                        $sop_id = "";
+                                        if(isset($SopAreas[$i][ 'id' ])):
+                                            $sop_id = $SopAreas[$i][ 'id' ];
+                                        endif;
+                                        ?>
+                                    <td class="text-center" id="areaname-<?= $sop_id ?>"><?= __("エリア".$num) ?></td>
+                                    <?php endfor; ?>
                                 </tr>
                                 <tr>
                                     <td><?= __("上限") ?></td>
-                                    <td class="max-1"></td>
-                                    <td class="max-2"></td>
-                                    <td class="max-3"></td>
-                                    <td class="max-4"></td>
-                                    <td class="max-5"></td>
+                                    <?php for($i=0;$i<=4;$i++ ):?>
+                                    <td class="text-center" >
+                                        <?php
+                                            $text = "";
+                                            $sop_id = "";
+                                            if(isset($SopAreas[$i][ 'id' ])):
+                                                $sop_id = $SopAreas[$i][ 'id' ];
+                                                $text = $SopAreas[$i][ 'maxpoint' ];
+                                            endif;
+                                        ?>
+                                        <?= $this->Form->input("maxpoint-".$sop_id,[
+                                            'class'=>'form-control sopArea',
+                                            'label'=>false,
+                                            'value'=>$text
+                                        ])?>
+                                    </td>
+                                    <?php endfor; ?>
                                 </tr>
                                 <tr>
                                     <td><?= __("下限") ?></td>
-                                    <td class="min-1"></td>
-                                    <td class="min-2"></td>
-                                    <td class="min-3"></td>
-                                    <td class="min-4"></td>
-                                    <td class="min-5"></td>
+                                    <?php for($i=0;$i<=4;$i++ ):?>
+                                    <td class="text-center" >
+                                        <?php
+                                            $text = "";
+                                            $sop_id = "";
+                                            if(isset($SopAreas[$i][ 'id' ])):
+                                                $sop_id = $SopAreas[$i][ 'id' ];
+                                                $text = $SopAreas[$i][ 'minpoint' ];
+                                            endif;
+                                        ?>
+                                        <?= $this->Form->input("minpoint-".$sop_id,[
+                                            'class'=>'form-control sopArea',
+                                            'label'=>false,
+                                            'value'=>$text
+                                        ])?>
+                                    </td>
+                                    <?php endfor; ?>
+                                </tr>
+                                <tr>
+                                    <td nowrap><?= __("グラフ反映") ?></td>
+                                    <?php for($i=0;$i<=4;$i++):?>
+                                    <?php
+                                        $sop_id = "";
+                                        if(isset($SopAreas[$i][ 'id' ])):
+                                            $sop_id = $SopAreas[$i][ 'id' ];
+                                        endif;
+                                    ?>
+                                    <td class="text-center">
+                                        <?= $this->Form->radio('reflect_graf',
+                                        [$sop_id=>'text'],
+                                        [
+                                            'label'=>false
+                                        ]);?>
+                                    </td>
+                                    <?php endfor; ?>
                                 </tr>
                             </table>
-
 
                             <div class="row mt-3">
                                 <div class="col-4">
@@ -116,27 +165,6 @@
                                 </div>
                             </div>
 
-
-
-                            <!--
-                            <div class="text-right mb-3 ">
-                                <?= $this->Form->button("追加",[
-                                    "class"=>"btn-sm btn-warning text-white",
-                                    "type"=>"button",
-                                    "id"=>"addSop"
-                                ])?>
-                            </div>
-                            <table class="table table-bordered" id="sopTable">
-                                <tr class="bg-info text-center">
-                                    <th></th>
-                                    <th><?= __("エリア下限") ?></th>
-                                    <th><?= __(" ≦ X ≦") ?></th>
-                                    <th><?= __("エリア上限") ?></th>
-                                    <th><?= __("グラフに反映") ?></th>
-                                </tr>
-                                <tbody id="soptbody"></tbody>
-                            </table>
-                            -->
 
                         </div>
                         <!-- /.card-body -->
@@ -241,35 +269,45 @@
                     ])?>
                 <div class="areatable">
                     <table class="mt-3 table table-bordered bg-white" style="width:200%;">
+                        <thead>
+                            <tr>
+                                <td>&nbsp;</td>
+                                <td>&nbsp;</td>
+                                <?php for($i=1;$i<=5;$i++): ?>
+                                <td colspan=4 ><?= __("エリア".$i) ?></td>
+                                <?php endfor; ?>
+                            </tr>
+                            <tr>
+                                <td>&nbsp;</td>
+                                <td rowspan="2" ><?= __("Label") ?></td>
+                                <?php for($i=0;$i<5;$i++):
+                                    $sop_id = "";
+                                    if(isset($SopAreas[$i][ 'id' ])):
+                                        $sop_id = $SopAreas[$i][ 'id' ];
+                                    endif;
+                                    ?>
 
-                        <tr>
-                            <td>&nbsp;</td>
-                            <td>&nbsp;</td>
-                            <?php for($i=1;$i<=5;$i++): ?>
-                            <td colspan=4 ><?= __("エリア".$i) ?></td>
-                            <?php endfor; ?>
-                        </tr>
-                        <tr>
-                            <td>&nbsp;</td>
-                            <td rowspan="2" ><?= __("Label") ?></td>
-                            <?php for($i=1;$i<=5;$i++): ?>
-                                <td><?= __("範囲最小値") ?></td>
-                                <td>-</td>
-                                <td><?= __("範囲最大値") ?></td>
-                                <td>-</td>
-                            <?php endfor; ?>
-                        </tr>
-                        <tr>
-                            <td>&nbsp;</td>
-                            <?php for($i=1;$i<=5;$i++): ?>
-                                <td><?= __("割合%") ?></td>
-                                <td><?= __("平均値") ?></td>
-                                <td><?= __("中間値") ?></td>
-                                <td><?= __("モード値") ?></td>
-                            <?php endfor; ?>
-                        </tr>
+                                    <td><?= __("範囲最小値") ?></td>
+                                    <td id="areamins-<?=$sop_id?>">-</td>
+                                    <td><?= __("範囲最大値") ?></td>
+                                    <td id="areamaxs-<?=$sop_id?>">-</td>
+                                <?php endfor; ?>
+                            </tr>
+                            <tr>
+                                <td>&nbsp;</td>
+                                <?php for($i=1;$i<=5;$i++): ?>
+                                    <td><?= __("割合%") ?></td>
+                                    <td><?= __("平均値") ?></td>
+                                    <td><?= __("中間値") ?></td>
+                                    <td><?= __("モード値") ?></td>
+                                <?php endfor; ?>
+                            </tr>
+                        </thead>
+                        <tbody id="areaTables">
 
+                        </tbody>
                     </table>
+                    <div class="spinner"></div>
                 </div>
 
             </div>

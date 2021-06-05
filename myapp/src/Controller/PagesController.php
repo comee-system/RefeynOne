@@ -35,6 +35,8 @@ class PagesController extends AppController
         $uAuth = $this->Auth->user();
         $this->set("uAuth",$uAuth);
         $this->Auth->allow(['display']);
+        $this->set("bottom","fixed-bottom");
+
     }
     /**
      * Displays a view

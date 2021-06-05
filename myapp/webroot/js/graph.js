@@ -4,6 +4,51 @@ export const write3 = function () {
 $(function(){
     $(this).getGraphData();
 
+    //エリアごとのテーブル反映
+    $("#tableReflect").click(function(){
+        var _id = $("#id").val();
+        var _data = {};
+        $.ajax({
+            url:"/graphs/getAreaTable/"+_id,
+            type:"post",
+            data:_data,
+            datatype: "json",
+        }).done(function(data){
+            var _areas = data.areas;
+            var _tbl = "";
+            $.each(_areas,function(key,value){
+                var _areamins = "#areamins-"+value[ 'id' ];
+                var _areamaxs = "#areamaxs-"+value[ 'id' ];
+                $(_areamins).html(value['minpoint']);
+                $(_areamaxs).html(value['maxpoint']);
+            });
+            var _label = data.label;
+            var _lists = data.lists;
+            var _table = "";
+            var _num = 1;
+            $("#areaTables").html("");
+            $.each(_label,function(_key,_value){
+                _table = "<tr>";
+                _table += "<td>"+_num+"</td>";
+                _table += "<td>"+_value.label+"</td>";
+                var _detail = _lists[_key];
+                console.log(_detail);
+                $.each(_detail,function(_k,_val){
+                    _table += "<td>"+_val.lot+"</td>";
+                    _table += "<td>"+_val.ave+"</td>";
+                    _table += "<td>"+_val.median+"</td>";
+                    _table += "<td>"+_val.mode+"</td>";
+                });
+                _table += "</tr>";
+                $("#areaTables").append(_table);
+                _num++;
+            });
+        }).fail(function(){
+
+        });
+        return false;
+    });
+
     //ファイル削除
     $(document).on("click",".grapdelete",function(){
         if(confirm("取込みファイルの削除を行います。よろしいですか?")){
@@ -25,7 +70,6 @@ $(function(){
             data:_data,
             datatype: "json",
         }).done(function(data){
-            console.log("ddd");
         }).fail(function(){
 
         });
@@ -47,7 +91,6 @@ $(function(){
     $(".sopText").on("blur",function(){
         var _val = $(this).val();
         var _name = $(this).attr("name");
-        console.log(_name);
         var _id = $("input[name='sopdefaultid']").val();
         var _data = {
             name:_name,
@@ -59,11 +102,29 @@ $(function(){
             data:_data,
             datatype: "json",
         }).done(function(jsonstr){
-            console.log(jsonstr);
         });
     });
+    //SOPエリアの設定
+    $(".sopArea").on("blur",function(){
 
+        var _val = $(this).val();
+        var _name = $(this).attr("name").split("-");
+        var _id = parseInt(_name[1]);
+        _name = _name[0];
+        var _data = {
+            name:_name,
+            value:_val
+        };
+        $.ajax({
+            url:"/graphs/editsoparea/"+_id,
+            type:"post",
+            data:_data,
+            datatype: "json",
+        }).done(function(jsonstr){
+        });
 
+        return false;
+    });
     //グラフ表示ステータス変更
     $(".graph_status_edit").click(function(){
         var _id = $(this).parent("li").attr("id").split("-");
@@ -94,7 +155,6 @@ $.fn.getSop = function(){
             type:"post",
             datatype: "json",
         }).done(function(jsonstr){
-            console.log(jsonstr);
             var _tbl = "";
 
         //  var data = $.parseJSON(jsonstr);
@@ -147,7 +207,6 @@ $.fn.getGraphData = function(){
             type:"post",
             datatype: "json",
         }).done(function(jsonstr){
-            //console.log(jsonstr);
             var _tbl = "";
 
         //  var data = $.parseJSON(jsonstr);

@@ -30,7 +30,7 @@
 
     <?= $this->fetch('content') ?>
 
-    <footer class="p-2 text-center">
+    <footer class="<?= $bottom ?> p-2 text-center ">
         <div class="row">
             <div class="col-6">
                 <div class="row">

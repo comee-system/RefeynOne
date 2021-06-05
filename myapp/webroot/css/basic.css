@@ -263,4 +263,19 @@ div.areatable table td {
   min-width: 120px;
   text-align: center; }
 
+.spinner {
+  width: 32px;
+  height: 32px;
+  margin: 10px auto;
+  border: 4px #ddd solid;
+  border-top: 4px #2e93e6 solid;
+  border-radius: 50%;
+  animation: sp-anime 1.0s infinite linear;
+  left: 0;
+  display: none; }
+
+@keyframes sp-anime {
+  100% {
+    transform: rotate(360deg); } }
+
 /*# sourceMappingURL=basic.css.map */

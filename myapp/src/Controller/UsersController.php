@@ -21,6 +21,7 @@ class UsersController extends AppController
         $this->Auth->allow(['add', 'hoge']);
         $this->uAuth = $this->Auth->user();
         $this->set("uAuth",$this->uAuth);
+        $this->set("bottom","fixed-bottom");
     }
 
     /**

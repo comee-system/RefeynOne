@@ -244,6 +244,7 @@ class UploadComponent extends Component
                 'graphe_id'=>$graphe_id,
                 'user_id'=>$this->uAuth[ 'id' ]
             ]);
+            $count = 0;
             foreach($asins as $key=>$value){
                 if($key >= 6){
                     $SopAreas = $this->SopAreas->newEntity();
@@ -253,8 +254,26 @@ class UploadComponent extends Component
                     $SopAreas->minpoint = $value[1];
                     $SopAreas->maxpoint = $value[2];
                     $this->SopAreas->save($SopAreas);
+                    $count++;
                 }
             }
+
+            do{
+                //初期状態で5insertを行う
+                if($count >= 5){
+                    $flag = true;
+                }else{
+                    $SopAreas = $this->SopAreas->newEntity();
+                    $SopAreas->user_id   = $this->uAuth[ 'id' ];
+                    $SopAreas->graphe_id = $graphe_id;
+                    $SopAreas->name = "";
+                    $SopAreas->minpoint = 0;
+                    $SopAreas->maxpoint = 0;
+                    $this->SopAreas->save($SopAreas);
+                }
+                $count++;
+            }while($flag);
+
 
 
             fclose($fp);

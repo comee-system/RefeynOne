@@ -28,6 +28,7 @@ class GraphsController extends AppController
             return $this->redirect(['controller'=>'/','action' => '/']);
         }
         $this->array_smooth = Configure::read("array_smooth");
+        $this->session = $this->request->session();
 
         $this->Graphes = $this->loadModel("Graphes");
         $this->GrapheDatas = $this->loadModel("GrapheDatas");
@@ -38,7 +39,7 @@ class GraphsController extends AppController
         $this->UploadComponent = $this->loadComponent("Upload",$this->uAuth);
         $this->set("uAuth",$this->uAuth);
         $this->set("array_smooth",$this->array_smooth);
-
+        $this->set("bottom","");
     }
 
     public function index($id = ""){
@@ -51,6 +52,24 @@ class GraphsController extends AppController
     }
     public function step2($id){
         $this->editsop("",$id);
+
+
+        //初期状態でエリアを5個登録する
+        $count = $this->SopAreas->find()->where([
+            'graphe_id'=>$id
+        ])->count();
+        if($count <= 0 ){
+            for($i=1;$i<=5;$i++){
+                $SopAreas = $this->SopAreas->newEntity();
+                $SopAreas->user_id   = $this->uAuth[ 'id' ];
+                $SopAreas->graphe_id = $id;
+                $SopAreas->name = "";
+                $SopAreas->minpoint = 0;
+                $SopAreas->maxpoint = 0;
+                $this->SopAreas->save($SopAreas);
+            }
+        }
+
         $SopDefaults = $this->SopDefaults->find()->where([
             "user_id"=>$this->uAuth[ 'id' ],
             "graphe_id"=>$id,
@@ -61,6 +80,10 @@ class GraphsController extends AppController
             "graphe_id"=>$id,
         ])->toArray();
 
+
+
+        //セッションの登録
+        $this->session->write('step', "step2");
         $this->set("id",$id);
        // $this->set("SopDefaults",$SopDefaults);
         $this->set(compact('SopDefaults'));
@@ -71,6 +94,17 @@ class GraphsController extends AppController
 
 
     public function step3($graphe_id){
+        //セッションの確認
+        $step = $this->session->read('step');
+        $this->session->write('step', "step3");
+
+        $SopAreas = $this->SopAreas->find()->where([
+            "user_id"=>$this->uAuth[ 'id' ],
+            "graphe_id"=>$graphe_id,
+        ])->toArray();
+        $this->set(compact('SopAreas'));
+
+
         //グラフデータ取得
         $connection = ConnectionManager::get('default');
         $user_id = $this->uAuth['id'];
@@ -108,6 +142,10 @@ class GraphsController extends AppController
         }
         $binline = implode(",",$line);
         $this->set("binline",$binline);
+        $this->set("defaultpoint",$defaultpoint);
+        $this->set("dispareamax",$dispareamax);
+        $this->set("binsize",$binsize);
+        $this->set("smooth",$smooth);
 
 
         //グラフ取得範囲
@@ -116,14 +154,22 @@ class GraphsController extends AppController
         $data = [];
         $insert = "";
 
+        //登録データの確認
+/*
         $query = $this->GrapheDisplays->find()->where([
             'user_id'=>$user_id,
             'graphe_id'=>$graphe_id
             ])->count();
+*/
 
-        if($query){
+        if($step != "step2"){
             //既に登録済みなので何もしない
         }else{
+            //グラフ用の表示データを削除
+            $this->GrapheDisplays->deleteAll(
+                ['graphe_id'=>$graphe_id]
+            );
+
 
             $sql = "
             SELECT a.*, (";
@@ -336,6 +382,10 @@ class GraphsController extends AppController
         foreach($display as $key=>$value){
             $graphe_point[]['point'] = $value[ 'cnt' ];
         }
+
+
+
+
 
         $this->set("id",$graphe_id);
         $this->set("graphe_data",$graphe_data);
@@ -614,6 +664,24 @@ class GraphsController extends AppController
         $SopDefaults = $this->SopDefaults->patchEntity($SopDefaults, $set,['validate'=>false]);
         $this->SopDefaults->save($SopDefaults);
     }
+    public function editsoparea($id = null)
+    {
+
+        $this->autoRender = false;
+        $set = [];
+        if($id > 0 ){
+            $SopAreas = $this->SopAreas->get($id, [
+            'contain' => [],
+            ]);
+        }
+
+        if($this->request->getData("name")){
+            $set[$this->request->getData('name')] = $this->request->getData('value');
+        }
+
+        $SopAreas = $this->SopAreas->patchEntity($SopAreas, $set,['validate'=>false]);
+        $this->SopAreas->save($SopAreas);
+    }
 
 
     public function delete($graph_id,$graph_data_id)
@@ -637,6 +705,148 @@ class GraphsController extends AppController
         }
         return $this->redirect(['action' => '/index/',$graph_id]);
     }
+
+
+    public function getAreaTable($id){
+        $this->autoRender = false;
+        $connection = ConnectionManager::get('default');
+
+        $areas= $this->SopAreas->find()->where([
+            "user_id"=>$this->uAuth[ 'id' ],
+            "graphe_id"=>$id,
+        ])->toArray();
+
+        $user_id = $this->uAuth['id'];
+        $SopAreas[ 'areas' ] = $areas;
+
+        $sql = " SELECT ";
+            foreach($areas as $k=>$value){
+                $sql .= " SUM( CASE WHEN disp.counts1 >= ".$value[ 'minpoint' ]." AND disp.counts1 <".$value[ 'maxpoint' ]." THEN disp.counts1 ELSE 0 END ) AS sum_".$value[ 'minpoint' ]."_".$value[ 'maxpoint' ]
+                .",";
+
+                $sql .= " GROUP_CONCAT( CASE WHEN disp.counts1 >= ".$value[ 'minpoint' ]." AND disp.counts1 <".$value[ 'maxpoint' ]." THEN disp.counts1 ELSE NULL END ) AS groupLine_".$value[ 'minpoint' ]."_".$value[ 'maxpoint' ].",";
+            }
+        $sql .= "
+
+                graphe_data_id,
+                data.counts as total,
+                data.label as label
+            FROM
+                graphe_displays as disp
+                LEFT JOIN graphe_datas as data ON data.id  = disp.graphe_data_id
+            where
+                disp.user_id = ${user_id} AND
+                disp.graphe_id = ${id}
+                GROUP BY disp.graphe_data_id
+        ";
+
+        $list = $connection->execute($sql)->fetchall('assoc');
+        $lists = [];
+        $label = [];
+        $median = 0;
+        $mode = [];
+        $lot = 0;
+        $ave = 0;
+        foreach($list as $key=>$value){
+            $total = $value['total'];
+            $label[$key]['label'] = $value[ 'label' ];
+            $no = 0;
+            foreach($value as $k=>$val){
+                if(preg_match("/^groupLine_/",$k)){
+                    $ex = [];
+                    $ex = explode(",",$val);
+                   // $lists[$key][$k][ 'median' ] = $this->median($ex);
+                    $median = $this->median($ex);
+                    $mode = $this->mode($ex);
+                  //  $lists[$key][$k][ 'mode' ] = $mode[0];
+                }
+                if(preg_match("/^sum_/",$k)){
+                //    $lists[$key][$k][ 'lot' ] = round($val/$total*100,2);
+                //    $lists[$key][$k][ 'ave' ] = round(($val == 0)?0:$total/$val,2);
+                    $lot = round($val/$total*100,2);
+                    $ave = round(($val == 0)?0:$total/$val,2);
+
+                    $lists[$key][$no][ 'lot' ] = $lot;
+                    $lists[$key][$no][ 'ave' ] = $ave;
+                    $lists[$key][$no][ 'median' ] = $median;
+                    if(!empty($mode[0])){
+                        $lists[$key][$no][ 'mode' ] = $mode[0];
+                    }else{
+                        $lists[$key][$no][ 'mode' ] = 0;
+                    }
+                    $no++;
+
+                }
+
+            }
+
+        }
+        $SopAreas[ 'label' ] = $label;
+        $SopAreas[ 'lists' ] = $lists;
+        header('Content-type: application/json');
+        echo json_encode($SopAreas,JSON_UNESCAPED_UNICODE);
+        exit();
+
+    }
+
+
+
+    //平均値を求める関数
+    public function average(array $values)
+    {
+        return (float) (array_sum($values) / count($values));
+    }
+
+    public function variance(array $values)
+    {
+        // 平均値を求める
+        $ave = $this->average($values);
+
+        $variance = 0.0;
+        foreach ($values as $val) {
+            $variance += pow($val - $ave, 2);
+        }
+        return (float) ($variance / count($values));
+    }
+
+    public function standardDeviation(array $values)
+    {
+        // 分散を求める
+        $variance = $this->variance($values);
+
+        // 分散の平方根
+        return (float) sqrt($variance);
+    }
+
+    //偏差値を求める
+    public function standardScore( $target, array $arr)
+    {
+        return ( $target - $this->average($arr) ) / $this->standardDeviation($arr) * 10 + 50;
+    }
+
+    /*
+    * 最頻値を求める
+    */
+    public function mode(array $values)
+    {
+    	//最頻値を求める。それぞれの頻出回数を計算して配列に入れる。
+    	$data = array_count_values($values);
+    	$max = max($data);//配列から最大値を取得する。
+    	$result[0] = array_keys($data,$max);
+    	return $result[0];
+    }
+    /*
+    *中央値を求める関数
+    */
+    public function median(array $values){
+
+		sort($values);
+		if (count($values) % 2 == 0){
+			return (($values[(count($values)/2)-1]+$values[((count($values)/2))])/2);
+		}else{
+			return ($values[floor(count($values)/2)]);
+		}
+	}
 
 
 }
