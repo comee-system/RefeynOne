@@ -28,7 +28,7 @@ class GraphsController extends AppController
             return $this->redirect(['controller'=>'/','action' => '/']);
         }
         $this->array_smooth = Configure::read("array_smooth");
-        $this->session = $this->request->session();
+        $this->session = $this->getRequest()->getSession();;
 
         $this->Graphes = $this->loadModel("Graphes");
         $this->GrapheDatas = $this->loadModel("GrapheDatas");
