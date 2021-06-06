@@ -255,8 +255,9 @@
                                     <div class="card-header"><?= __("スムージング")?></div>
                                     <div class="card-body">
                                         <?= $this->Form->select("smooth",$array_smooth,[
-                                            "class"=>"form-control sopText",
+                                            "class"=>"form-control",
                                             "value"=>$smooth,
+                                            "id"=>"selectSmoothId"
                                         ]) ?>
                                     </div>
                                 </div>

@@ -17,7 +17,7 @@
 
                             <?php foreach($grafData as $key=>$value):
                                 $chk = false;
-                                if($value->disp == 1) $chk = true;
+                                if($value->disp >= 1) $chk = true;
                                 ?>
                                 <li class="list-group-item" id="num-<?=$value->id?>" >
                                     <?= $this->Form->checkbox("graph_status[]",[

@@ -117,6 +117,7 @@ class GraphsController extends AppController
                 user_id='${user_id}' AND
                 graphe_id = '${graphe_id}' AND
                 disp != 0
+            ORDER BY disp >0 DESC,disp
         ";
         $graphe_data = $connection->execute($sql)->fetchall('assoc');
 
@@ -227,107 +228,6 @@ class GraphsController extends AppController
                 }
             }
 
-/*
-            foreach($graphe_data as $key=>$value){
-
-                foreach($compares as $k=>$comp){
-                    $graphePoints = "";
-                    $graphePoints = $this->GraphePoints->find();
-                    $graphePoints = $graphePoints
-                        ->select([
-                            'count'=>$graphePoints->func()->count( 'id' )
-                        ])
-                        ->where([
-                        'user_id'=>$user_id,
-                        'graphe_id'=>$graphe_id,
-                        'graphe_data_id'=>$value[ 'id' ],
-                        'pointdata >= '.$comp[ 'min' ],
-                        'pointdata < '.$comp[ 'max' ],
-                    ])->first();
-
-
-                    $center[$key][$k] = ($comp[ 'min' ]+$comp[ 'max' ])/2;
-                    $cnt[$key][$k] = $graphePoints->count;
-
-                    $cnt2[$key][$k] = $graphePoints->count*$center[$key][$k];
-
-                    $s = (isset($sum[$key]))?$sum[$key]:0;
-                    $sum = sprintf("%d",$s+$graphePoints->count);
-                    if($cnt[$key][$k] == 0 || $sum == 0){
-                        $cnt3[$key][$k] = 0;
-                    }else{
-                        $cnt3[$key][$k] = round(((int)$cnt[$key][$k]/(int)$sum),5);
-                    }
-
-                    $s2 = (isset($sum2[$key]))?$sum2[$key]:0;
-                    $sum2 = sprintf("%d",$s2+($cnt[$key][$k]*$center[$key][$k]));
-                    if($cnt2[$key][$k] == 0 || $sum2 == 0){
-                        $cnt4[$key][$k] = 0;
-                    }else{
-                        $cnt4[$key][$k] = round(((int)$cnt2[$key][$k]/(int)$sum2),5);
-                    }
-                    //var_dump($graphePoints->count);
-                    //exit();
-
-                }
-
-
-
-                // $data[$key][$k] = $graphePoints->count;
-                //    $this->log("Label=>".$value[ 'label' ]."/count=>".$graphePoints->count."/min=>:".$comp['min']."/max=>:".$comp['max'],'debug');
-                foreach($compares as $k=>$comp){
-
-                    //smoothの設定
-                    $num = 0;
-                    $avecount = 0;
-                    $avecount2 = 0;
-                    $avecount3 = 0;
-                    $avecount4 = 0;
-                    for($i=$start-$plus;$i<=$start+$plus;$i++){
-                        $avecount += (isset($cnt[$key][$i]))?$cnt[$key][$i]:0;
-                        $avecount2 += (isset($cnt2[$key][$i]))?$cnt2[$key][$i]:0;
-                        $avecount3 += (isset($cnt3[$key][$i]))?$cnt3[$key][$i]:0;
-                        $avecount4 += (isset($cnt4[$key][$i]))?$cnt4[$key][$i]:0;
-                        $num++;
-                    }
-
-                    $start += $plus;
-
-                    $ave1 = ($avecount > 0 )?round($avecount/$smooth,5):0;
-                    $ave2 = ($avecount2 > 0 )?round($avecount2/$smooth,5):0;
-                    $ave3 = ($avecount3 > 0 )?round($avecount3/$smooth,5):0;
-                    $ave4 = ($avecount4 > 0 )?round($avecount4/$smooth,5):0;
-
-
-                    $ctr = $center[$key][$k];
-                    $counts1 = $cnt[$key][$k];
-                    $counts2 = $cnt2[$key][$k];
-                    //$counts2 = $counts1*$ctr;
-                   // $counts3 = round($counts1/(int)$sum[$key],5);
-                    $counts3 = $cnt3[$key][$k];
-                    $counts4 = $cnt4[$key][$k];
-                    //$counts4 = round($counts2/(int)$sum2[$key],5);
-                    $insert .= "(
-                        '".$user_id."',
-                        '".$graphe_id."',
-                        '".$value[ 'id' ]."',
-                        '".$counts1."',
-                        '".$counts2."',
-                        '".$counts3."',
-                        '".$counts4."',
-                        '".$ave1."',
-                        '".$ave2."',
-                        '".$ave3."',
-                        '".$ave4."',
-                        '".$comp[ 'max' ]."',
-                        '".$comp[ 'min' ]."',
-                        '".$ctr."',
-                        '".date('Y-m-d H:i:s')."',
-                        '".date('Y-m-d H:i:s')."'
-                    ),";
-                }
-            }
-*/
             //取得したデータをデータパターン毎に登録処理を行う
             //次回アクセス時、表示データ切り替えの際の処理を高速にする
             if($insert){
@@ -365,6 +265,7 @@ class GraphsController extends AppController
         ";
         $rlt = $connection->execute($sql)->fetch('assoc');
         $line = $rlt['line'];
+        //こちらは初回ページになるのでcounts1固定となる
         $sql = "
             SELECT
                 GROUP_CONCAT( counts1 ) as cnt
@@ -400,7 +301,7 @@ class GraphsController extends AppController
         for($i=$start;$i<=$end;$i++){
             $numeric=0;
             for($j=$i;$j<$i+$smooth;$j++){
-                $numeric += (isset($ex[$j]))?$ex[$j]:0;
+                $numeric += (isset($ex[$j]) && $ex[$j])?$ex[$j]:0;
             }
             if($i >= 0){
                 $list[] = $numeric/$smooth;
@@ -413,11 +314,66 @@ class GraphsController extends AppController
     }
 
     public function step3Graph($graphe_id = ""){
-        $grafData = $this->GrapheDatas->find();
+        $user_id = $this->uAuth['id'];
+        $grafData = $this->GrapheDatas->find()
+            ->where([
+                'user_id'=>$user_id,
+                'graphe_id'=>$graphe_id
+            ])->order("disp >0 DESC,disp ");
+        //並び順の指定
+        $this->editSort($graphe_id);
 
         $this->set("id",$graphe_id);
         $this->set("grafData",$grafData);
+
     }
+    public function editSort($graphe_id){
+        $user_id = $this->uAuth['id'];
+        $grafData = $this->GrapheDatas->find()
+        ->where([
+            'user_id'=>$user_id,
+            'graphe_id'=>$graphe_id,
+            'disp !='=>0
+        ])->order("disp");
+        $no = 1;
+        foreach($grafData as $key=>$value){
+            $GrapheDatas = $this->GrapheDatas->get($value[ 'id' ]);
+            $GrapheDatas->disp = $no;
+            $this->GrapheDatas->save($GrapheDatas);
+            $no++;
+        }
+    }
+    public function editSortArray($graphe_id){
+        $this->autoRender = false;
+        //チェックの対象データ
+        $user_id = $this->uAuth['id'];
+        $grafData = $this->GrapheDatas->find()
+        ->select(['id'])
+        ->where([
+            'user_id'=>$user_id,
+            'graphe_id'=>$graphe_id,
+            'disp !='=>0
+        ])->order("disp")->toArray();
+        $chklist = [];
+        foreach($grafData as $key=>$value){
+            $chklist[$value['id']] = "on";
+        }
+        $array = $this->request->getData("array");
+        $no = 1;
+        foreach($array as $key=>$value){
+            $ex = explode("-",$value);
+            if($chklist[$ex[1]]){
+                $GrapheDatas = $this->GrapheDatas->get($ex[1]);
+                $GrapheDatas->disp = $no;
+                $this->GrapheDatas->save($GrapheDatas);
+                $no++;
+            }
+        }
+        exit();
+    }
+
+
+
     public function step4(){
 
 
@@ -648,6 +604,22 @@ class GraphsController extends AppController
         $this->GrapheDatas->save($GrapheDatas);
         exit();
     }
+    public function editDispSmooth($id)
+    {
+        $this->autoRender = false;
+        $userid = $this->uAuth['id'];
+        $smooth = $this->request->getData("smooth");
+        $SopDefaults = $this->SopDefaults->find()->where([
+            "graphe_id"=>$id,
+            'user_id'=>$userid
+        ])->first();
+        $SopDefaults->smooth = $smooth;
+        $this->SopDefaults->save($SopDefaults);
+        exit();
+    }
+
+
+
     public function editsop($id = null,$graphe_id = "")
     {
 
@@ -725,7 +697,7 @@ class GraphsController extends AppController
         return $this->redirect(['action' => '/index/',$graph_id]);
     }
 
-
+    //エリア毎のテーブル表示
     public function getAreaTable($id){
         $this->autoRender = false;
         $connection = ConnectionManager::get('default');
@@ -738,12 +710,23 @@ class GraphsController extends AppController
         $user_id = $this->uAuth['id'];
         $SopAreas[ 'areas' ] = $areas;
 
+        $SopDefaults = $this->SopDefaults->find()->where([
+            "user_id"=>$this->uAuth['id'],
+            "graphe_id"=>$id
+        ])->first();
+
+        preg_match("/[0-9]/",$this->request->getData("basic"),$basic);
+        preg_match("/[0-9]/",$this->request->getData("display"),$display);
+        $code = $basic[0].$display[0];
+
+        $clum = $this->array_graf_type[$code];
+        $smooth = $SopDefaults[ 'smooth' ];
+
         $sql = " SELECT ";
             foreach($areas as $k=>$value){
-                $sql .= " SUM( CASE WHEN disp.counts1 >= ".$value[ 'minpoint' ]." AND disp.counts1 <".$value[ 'maxpoint' ]." THEN disp.counts1 ELSE 0 END ) AS sum_".$value[ 'minpoint' ]."_".$value[ 'maxpoint' ]
-                .",";
+                $sql .= " SUM( CASE WHEN disp.".$clum." >= ".$value[ 'minpoint' ]." AND disp.".$clum." <".$value[ 'maxpoint' ]." THEN disp.".$clum." ELSE 0 END ) AS sum_".$value[ 'minpoint' ]."_".$value[ 'maxpoint' ].",";
 
-                $sql .= " GROUP_CONCAT( CASE WHEN disp.counts1 >= ".$value[ 'minpoint' ]." AND disp.counts1 <".$value[ 'maxpoint' ]." THEN disp.counts1 ELSE NULL END ) AS groupLine_".$value[ 'minpoint' ]."_".$value[ 'maxpoint' ].",";
+                $sql .= " GROUP_CONCAT( CASE WHEN disp.".$clum." >= ".$value[ 'minpoint' ]." AND disp.".$clum." <".$value[ 'maxpoint' ]." THEN disp.".$clum." ELSE NULL END ) AS groupLine_".$value[ 'minpoint' ]."_".$value[ 'maxpoint' ].",";
             }
         $sql .= "
 
@@ -760,6 +743,17 @@ class GraphsController extends AppController
         ";
 
         $list = $connection->execute($sql)->fetchall('assoc');
+
+        //smooth反映
+        foreach($list as $key=>$value){
+            foreach($value as $k=>$val){
+                if(preg_match("/^groupLine_/",$k)){
+                    $value['cnt'] = $val;
+                    $list[$key][$k] = $this->setSmooth($value,$smooth);
+                }
+            }
+        }
+
         $lists = [];
         $label = [];
         $median = 0;
@@ -774,14 +768,10 @@ class GraphsController extends AppController
                 if(preg_match("/^groupLine_/",$k)){
                     $ex = [];
                     $ex = explode(",",$val);
-                   // $lists[$key][$k][ 'median' ] = $this->median($ex);
                     $median = $this->median($ex);
                     $mode = $this->mode($ex);
-                  //  $lists[$key][$k][ 'mode' ] = $mode[0];
                 }
                 if(preg_match("/^sum_/",$k)){
-                //    $lists[$key][$k][ 'lot' ] = round($val/$total*100,2);
-                //    $lists[$key][$k][ 'ave' ] = round(($val == 0)?0:$total/$val,2);
                     $lot = round($val/$total*100,2);
                     $ave = round(($val == 0)?0:$total/$val,2);
 
@@ -796,9 +786,7 @@ class GraphsController extends AppController
                     $no++;
 
                 }
-
             }
-
         }
         $SopAreas[ 'label' ] = $label;
         $SopAreas[ 'lists' ] = $lists;

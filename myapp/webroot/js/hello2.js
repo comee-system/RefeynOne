@@ -35,12 +35,24 @@ $('.duallistbox').bootstrapDualListbox({
 
 $("#sortable").sortable({
     update: function(){
-        console.log($('#sortable').sortable("toArray"));
+        //console.log($('#sortable').sortable("toArray"));
+        var _data = {"array":$('#sortable').sortable("toArray")};
+        var _id = $("#id").val();
+        $.ajax({
+            url:"/graphs/editSortArray/"+_id,
+            type:"post",
+            data:_data,
+            datatype: "json",
+        }).done(function(data){
+            console.log(data);
+            console.log("Sort");
+
+        }).fail(function(){
+
+        });
+
     },
     axis: 'y',
-});
-$(".graph_status_edit").on("click",function(){
-    console.log("click");
 });
 
 $("#pngExport").on("click",function(){
@@ -76,8 +88,30 @@ $(document).on("click","[name='dataDisplay']",function(){
     //表示用データの切り替えを行う
     createDispGraph();
 });
+//スムージングの切り替えを行う
+$(document).on("change","select#selectSmoothId",function(){
+    editSmooth();
+});
+function editSmooth(){
+    var _id = $("#id").val();
+    var _selectSmoothId = $("#selectSmoothId").val();
+    var _data = {
+        "smooth":_selectSmoothId,
+    };
+    $.ajax({
+        url:"/graphs/editDispSmooth/"+_id,
+        type:"post",
+        data:_data,
+        datatype: "json",
+    }).done(function(data){
+        //表示用データの切り替えを行う
+        createDispGraph();
 
+    }).fail(function(){
 
+    });
+    return true;
+}
 function createDispGraph(){
     $("#screen").show();
     var _id = $("#id").val();

@@ -7,7 +7,14 @@ $(function(){
     //エリアごとのテーブル反映
     $("#tableReflect").click(function(){
         var _id = $("#id").val();
-        var _data = {};
+        //解析基準
+        var _basic = $("[name='analyticsBasic']:checked").attr("id");
+        //データ表示
+        var _display = $("[name='dataDisplay']:checked").attr("id");
+        var _data = {
+            "basic":_basic,
+            "display":_display,
+        };
         $.ajax({
             url:"/graphs/getAreaTable/"+_id,
             type:"post",
