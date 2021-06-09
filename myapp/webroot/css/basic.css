@@ -285,6 +285,9 @@ div#cardbody {
     top: 0;
     left: 0; }
 
+div.firstload {
+  background-color: rgba(100, 100, 100, 0.5); }
+
 @keyframes sp-anime {
   100% {
     transform: rotate(360deg); } }

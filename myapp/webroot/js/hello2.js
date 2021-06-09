@@ -5,6 +5,22 @@ import {write3} from './graph.js'
 write1();
 write3();
 
+//グラフを作る処理のみ
+if($("#createGraf").length){
+    var _id = $("#id").val();
+    var _data = {};
+    $.ajax({
+        url:"/graphs/beforeStep3/"+_id,
+        type:"post",
+        data:_data,
+        datatype: "json",
+    }).done(function(data){
+        location.href = "/graphs/step3/"+_id;
+    }).fail(function(){
+
+    });
+
+};
 
 $("#finishbutton").click(function(){
     if(confirm("終了後、データを削除します。解析情報を残すには「取込データ出力」と「SOP設定出力」、「エリア毎の結果テーブル出力」をしてから終了してください。")){

@@ -93,11 +93,158 @@ class GraphsController extends AppController
 
     }
 
+    public function beforeStep3($graphe_id){
+
+        if($this->request->is('ajax')){
+            $this->autoRender=false;
+
+
+            //セッションの確認
+            $step = $this->session->read('step');
+            $this->session->write('step', "step3");
+/*
+            $SopAreas = $this->SopAreas->find()->where([
+                "user_id"=>$this->uAuth[ 'id' ],
+                "graphe_id"=>$graphe_id,
+            ])->toArray();
+            $this->set(compact('SopAreas'));
+*/
+
+            //グラフデータ取得
+            $connection = ConnectionManager::get('default');
+            $user_id = $this->uAuth['id'];
+
+            $sql = " SELECT
+                id,
+                label
+                FROM graphe_datas WHERE
+                    user_id='${user_id}' AND
+                    graphe_id = '${graphe_id}' AND
+                    disp != 0
+                ORDER BY disp >0 DESC,disp
+            ";
+            $graphe_data = $connection->execute($sql)->fetchall('assoc');
+
+
+            //グラフ横軸
+            $sopDefaults = $this->SopDefaults->find()->where([
+                        'user_id'=>$user_id,
+                        'graphe_id'=>$graphe_id
+                    ])->first();
+
+            $defaultpoint = $sopDefaults[ 'defaultpoint' ];
+            $dispareamax  = $sopDefaults[ 'dispareamax' ];
+            $binsize      = $sopDefaults[ 'binsize' ];
+            $smooth       = $sopDefaults[ 'smooth' ];
+
+            $compares = [];
+            $no = 0;
+            for($i=$defaultpoint;$i<=$dispareamax;$i=$i+$binsize){
+
+                $compares[$no]['min'] = $i;
+                $compares[$no]['max'] = $i+$binsize;
+                $no++;
+            }
+
+            //グラフ取得範囲
+            //比較対象の作成
+            $data = [];
+            $insert = "";
+
+            if($step != "step2"){
+                //既に登録済みなので何もしない
+            }else{
+                //グラフ用の表示データを削除
+                $this->GrapheDisplays->deleteAll(
+                    ['graphe_id'=>$graphe_id]
+                );
+
+                $sql = "
+                SELECT a.*, (";
+                foreach($compares as $k=>$comp){
+                    $sql .= " ranges_".$comp['min']."_".$comp['max']." + ";
+                }
+                $sql .= "0) as total2";
+                $sql .= " FROM (
+                SELECT graphe_data_id";
+                foreach($compares as $k=>$comp){
+                    $ctr = ($comp['min']+$comp['max'])/2;
+                    $sql .= ", SUM(CASE WHEN pointdata >= ".$comp['min']." AND pointdata < ".$comp['max']." THEN 1 ELSE 0 END) AS range_".$comp['min']."_".$comp['max'];
+                    $sql .= ", ".$ctr." * SUM(CASE WHEN pointdata >= ".$comp['min']." AND pointdata < ".$comp['max']." THEN 1 ELSE 0 END) AS ranges_".$comp['min']."_".$comp['max'];
+                }
+                $sql .= " ,SUM(pointdata) AS total ";
+                $sql .= "
+                    FROM graphe_points
+                    WHERE graphe_id = '${graphe_id}'
+                    GROUP BY graphe_data_id
+                    ) as a
+                ";
+                $graphe_points = $connection->execute($sql)->fetchall('assoc');
+
+                foreach($graphe_points as $value){
+
+                    $graphe_data_id = $value[ 'graphe_data_id' ];
+                    $total = $value[ 'total' ];
+                    $total2 = $value[ 'total2' ];
+                    foreach($compares as $k=>$comp){
+                        $rg = "range_".$comp[ 'min' ]."_".$comp[ 'max' ];
+                        $rg2 = "ranges_".$comp[ 'min' ]."_".$comp[ 'max' ];
+                        $counts1 = $value[ $rg ];
+
+                        $min = $comp[ 'min' ];
+                        $max = $comp[ 'max' ];
+                        $ctr = ($min+$max)/2;
+                        $counts2 = $value[ $rg2 ];
+                        $counts3 = ($counts1 == 0)?0:round($counts1/$total,2);
+                        $counts4 = ($counts2 == 0)?0:round($counts2/$total2,2);
+                        $insert .= "(
+                            '".$user_id."',
+                            '".$graphe_id."',
+                            '".$graphe_data_id."',
+                            '".$counts1."',
+                            '".$counts2."',
+                            '".$counts3."',
+                            '".$counts4."',
+                            '".$max."',
+                            '".$min."',
+                            '".$ctr."',
+                            '".date('Y-m-d H:i:s')."',
+                            '".date('Y-m-d H:i:s')."'
+                        ),";
+                    }
+                }
+
+                //取得したデータをデータパターン毎に登録処理を行う
+                //次回アクセス時、表示データ切り替えの際の処理を高速にする
+                if($insert){
+                    $sql = "
+                        INSERT INTO graphe_displays (
+                            user_id,
+                            graphe_id,
+                            graphe_data_id,
+                            counts1,
+                            counts2,
+                            counts3,
+                            counts4,
+                            max,
+                            min,
+                            center,
+                            created,
+                            modified
+                        ) VALUES ";
+                    $sql .= trim($insert,",");
+                    $connection->execute($sql);
+                }
+
+            }
+
+            exit();
+        }
+        $this->set("id",$graphe_id);
+    }
+
 
     public function step3($graphe_id){
-        //セッションの確認
-        $step = $this->session->read('step');
-        $this->session->write('step', "step3");
 
         $SopAreas = $this->SopAreas->find()->where([
             "user_id"=>$this->uAuth[ 'id' ],
@@ -105,14 +252,12 @@ class GraphsController extends AppController
         ])->toArray();
         $this->set(compact('SopAreas'));
 
-
-        //グラフデータ取得
         $connection = ConnectionManager::get('default');
         $user_id = $this->uAuth['id'];
 
         $sql = " SELECT
-              id,
-              label
+            id,
+            label
             FROM graphe_datas WHERE
                 user_id='${user_id}' AND
                 graphe_id = '${graphe_id}' AND
@@ -124,9 +269,9 @@ class GraphsController extends AppController
 
         //グラフ横軸
         $sopDefaults = $this->SopDefaults->find()->where([
-                    'user_id'=>$user_id,
-                    'graphe_id'=>$graphe_id
-                ])->first();
+            'user_id'=>$user_id,
+            'graphe_id'=>$graphe_id
+        ])->first();
 
         $defaultpoint = $sopDefaults[ 'defaultpoint' ];
         $dispareamax  = $sopDefaults[ 'dispareamax' ];
@@ -147,110 +292,8 @@ class GraphsController extends AppController
         $this->set("defaultpoint",$defaultpoint);
         $this->set("dispareamax",$dispareamax);
         $this->set("binsize",$binsize);
-        $this->set("smooth",$smooth);
 
 
-        //グラフ取得範囲
-        //比較対象の作成
-//var_dump($graphe_data,$compares);
-        $data = [];
-        $insert = "";
-
-        //登録データの確認
-/*
-        $query = $this->GrapheDisplays->find()->where([
-            'user_id'=>$user_id,
-            'graphe_id'=>$graphe_id
-            ])->count();
-*/
-
-        if($step != "step2"){
-            //既に登録済みなので何もしない
-        }else{
-            //グラフ用の表示データを削除
-            $this->GrapheDisplays->deleteAll(
-                ['graphe_id'=>$graphe_id]
-            );
-
-
-            $sql = "
-            SELECT a.*, (";
-            foreach($compares as $k=>$comp){
-                $sql .= " ranges_".$comp['min']."_".$comp['max']." + ";
-            }
-            $sql .= "0) as total2";
-            $sql .= " FROM (
-            SELECT graphe_data_id";
-            foreach($compares as $k=>$comp){
-                $ctr = ($comp['min']+$comp['max'])/2;
-                $sql .= ", SUM(CASE WHEN pointdata >= ".$comp['min']." AND pointdata < ".$comp['max']." THEN 1 ELSE 0 END) AS range_".$comp['min']."_".$comp['max'];
-                $sql .= ", ".$ctr." * SUM(CASE WHEN pointdata >= ".$comp['min']." AND pointdata < ".$comp['max']." THEN 1 ELSE 0 END) AS ranges_".$comp['min']."_".$comp['max'];
-            }
-            $sql .= " ,SUM(pointdata) AS total ";
-            $sql .= "
-                FROM graphe_points
-                WHERE graphe_id = '${graphe_id}'
-                GROUP BY graphe_data_id
-                ) as a
-            ";
-            $graphe_points = $connection->execute($sql)->fetchall('assoc');
-
-            foreach($graphe_points as $value){
-
-                $graphe_data_id = $value[ 'graphe_data_id' ];
-                $total = $value[ 'total' ];
-                $total2 = $value[ 'total2' ];
-                foreach($compares as $k=>$comp){
-                    $rg = "range_".$comp[ 'min' ]."_".$comp[ 'max' ];
-                    $rg2 = "ranges_".$comp[ 'min' ]."_".$comp[ 'max' ];
-                    $counts1 = $value[ $rg ];
-
-                    $min = $comp[ 'min' ];
-                    $max = $comp[ 'max' ];
-                    $ctr = ($min+$max)/2;
-                    $counts2 = $value[ $rg2 ];
-                    $counts3 = ($counts1 == 0)?0:round($counts1/$total,2);
-                    $counts4 = ($counts2 == 0)?0:round($counts2/$total2,2);
-                    $insert .= "(
-                        '".$user_id."',
-                        '".$graphe_id."',
-                        '".$graphe_data_id."',
-                        '".$counts1."',
-                        '".$counts2."',
-                        '".$counts3."',
-                        '".$counts4."',
-                        '".$max."',
-                        '".$min."',
-                        '".$ctr."',
-                        '".date('Y-m-d H:i:s')."',
-                        '".date('Y-m-d H:i:s')."'
-                    ),";
-                }
-            }
-
-            //取得したデータをデータパターン毎に登録処理を行う
-            //次回アクセス時、表示データ切り替えの際の処理を高速にする
-            if($insert){
-                $sql = "
-                    INSERT INTO graphe_displays (
-                        user_id,
-                        graphe_id,
-                        graphe_data_id,
-                        counts1,
-                        counts2,
-                        counts3,
-                        counts4,
-                        max,
-                        min,
-                        center,
-                        created,
-                        modified
-                    ) VALUES ";
-                $sql .= trim($insert,",");
-                $connection->execute($sql);
-            }
-
-        }
 
         //表示用のデータ取得を行う
         $sql = "

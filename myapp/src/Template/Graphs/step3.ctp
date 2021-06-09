@@ -65,9 +65,6 @@
 
                         <!-- /.card-body -->
                     </div>
-                    <!--
-                    <a href="" class="btn btn-outline-info w-100">SOPエリアの設定</a>
-                    -->
                     <div class="card card-success">
                         <div class="card-header">
                             <h3 class="card-title"><?= __("SOPエリアの設定") ?></h3>

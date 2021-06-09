@@ -148,7 +148,7 @@ class UploadComponent extends Component
                 $insert[$i]['label'] = $value[0];
                 $insert[$i]['filename'] = $filename;
                 $insert[$i]['counts'] = $c[$i];
-                $insert[$i]['disp'] = ($i >= 10)?0:1;
+                $insert[$i]['disp'] = ($i >= 10)?0:$i+1;
                 $i++;
             }
 

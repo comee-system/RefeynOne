@@ -162,7 +162,7 @@
 
             </div>
             <div class="col-md-6 text-center">
-                <?= $this->Html->link("次へ(解析)","/graphs/step3/".$id,[
+                <?= $this->Html->link("次へ(解析)","/graphs/beforeStep3/".$id,[
                     "class"=>"btn btn-primary w-75"
                 ])?>
             </div>
