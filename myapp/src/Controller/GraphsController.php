@@ -855,7 +855,7 @@ class GraphsController extends AppController
             $set[ 'defaultpoint' ] = 0;
             $set[ 'dispareamax' ] = 0;
             $set[ 'binsize' ] = 0;
-            $set[ 'smooth' ] = 0;
+            $set[ 'smooth' ] = 1;
         }
         $SopDefaults = $this->SopDefaults->patchEntity($SopDefaults, $set,['validate'=>false]);
         $this->SopDefaults->save($SopDefaults);
