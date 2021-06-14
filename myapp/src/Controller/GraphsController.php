@@ -570,9 +570,8 @@ class GraphsController extends AppController
 
         $graphe_datas = $this->GrapheDatas->find()->where([
             "user_id"=>$this->uAuth['id'],
-            "graphe_id"=>$graphe_id,
-            "disp > " => 0
-        ])->limit(10)->toArray();
+            "graphe_id"=>$graphe_id
+        ])->toArray();
         $sort = [];
         foreach($graphe_datas as $key=>$value){
             $sort[$key] = $value['disp'];
@@ -616,7 +615,7 @@ class GraphsController extends AppController
                 'GrapheDisplays.user_id'=>$this->uAuth['id'],
             ]
             );
-
+/*
         if($this->request->getData("CSVExport-min_x") ){
             $GrapheDisplays = $GrapheDisplays->where([
                 'GrapheDisplays.min >= '=>$this->request->getData("CSVExport-min_x")
@@ -634,8 +633,6 @@ class GraphsController extends AppController
                 'GrapheDisplays.'.$graf_type.' >= '=>$this->request->getData("CSVExport-min_y")
                 ]);
         }
-
-        /*
         if($this->request->getData("CSVExport-max_y") ){
             $GrapheDisplays = $GrapheDisplays->where([
                 'GrapheDisplays.'.$graf_type.' <= '=>$this->request->getData("CSVExport-max_y")
@@ -1100,5 +1097,28 @@ class GraphsController extends AppController
 		}
 	}
 
+    public function outputSOP(){
+
+
+        $list = [];
+
+        //保存場所
+        $filename = "SOP-".date('YmdHis') . '.csv';
+        $file = WWW_ROOT.'csv/' .$filename;
+        $f = fopen($file, 'w');
+
+        fputcsv($f, $list);
+
+        fclose($f);
+
+        return $this->response->withFile(
+            $file,
+            [
+                'download'=>true,
+            ]
+            );
+
+        exit();
+    }
 
 }
