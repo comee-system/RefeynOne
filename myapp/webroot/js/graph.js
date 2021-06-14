@@ -127,6 +127,7 @@ $(function(){
         var _name = $(this).attr("name").split("-");
         var _id = parseInt(_name[1]);
         //値のチェック
+        /*
         var _minpoint = $("#minpoint-"+_id).val();
         var _maxpoint = $("#maxpoint-"+_id).val();
         if(parseInt(_minpoint) >= parseInt(_maxpoint)){
@@ -135,6 +136,7 @@ $(function(){
             $("#"+_id).val(_before[_id]);
             return false;
         }
+        */
 
         _name = _name[0];
         var _data = {

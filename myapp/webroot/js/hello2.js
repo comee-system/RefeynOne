@@ -91,6 +91,16 @@ var _areamax = 0;
 createGraf();
 //グラフ反映ボタン
 $("[name='reflect_graf']").click(function(){
+
+    //値のチェック
+    var _id = $(this).attr("id").split("-");
+    var _minpoint = $("#minpoint-"+_id[2]).val();
+    var _maxpoint = $("#maxpoint-"+_id[2]).val();
+     if(parseInt(_minpoint) >= parseInt(_maxpoint)){
+        alert("エリア設定の入力値に不備があります。");
+        return false;
+    }
+
     creatLine();
     createGraf();
 });
