@@ -568,17 +568,22 @@ class GraphsController extends AppController
         //var_dump($SopDefaults);
         //exit();
 
-        $graphe_datas = $this->GrapheDatas->find()->where([
+        $graphe_datas = $this->GrapheDatas
+        ->find('all',[
+            "order"=>['disp is null','disp asc']
+        ])
+        ->where([
             "user_id"=>$this->uAuth['id'],
             "graphe_id"=>$graphe_id
         ])->toArray();
+        /*
         $sort = [];
         foreach($graphe_datas as $key=>$value){
             $sort[$key] = $value['disp'];
         }
 
         array_multisort($sort,SORT_ASC,$graphe_datas);
-
+        */
         $row = 0;
         $list = [];
         $list[$row++][] = mb_convert_encoding('設定情報','SJIS','UTF-8');
