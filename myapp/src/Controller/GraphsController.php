@@ -570,7 +570,7 @@ class GraphsController extends AppController
 
         $graphe_datas = $this->GrapheDatas
         ->find('all',[
-            "order"=>['disp is null','disp asc']
+            "order"=>['disp is null','disp = 0 asc','disp asc']
         ])
         ->where([
             "user_id"=>$this->uAuth['id'],
