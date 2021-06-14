@@ -321,7 +321,6 @@ class GraphsController extends AppController
             GROUP BY graphe_data_id
             ";
         $display = $connection->execute($sql)->fetchall('assoc');
-
         $graphe_point = [];
         foreach($display as $key=>$value){
             $graphe_point[]['point'] = $this->setSmooth($value,$smooth);
@@ -467,6 +466,7 @@ class GraphsController extends AppController
     }
 
     //グラフ画面からcsvエクスポート
+    /*
     public function outputGraphe($graphe_id){
         $this->autoRender = false;
 
@@ -542,7 +542,124 @@ class GraphsController extends AppController
           );
 
     }
+    */
+    //csvExport
+    public function outputGraphe($graphe_id){
+        $this->autoRender = false;
+        $array_basic[1] = "Number";
+        $array_basic[2] = "Mass";
+        $array_display[1] = "Count";
+        $array_display[2] = "Normalized";
 
+        preg_match("/[0-9]/",$this->request->getData("CSVExport-analyticsBasic"),$basic);
+        preg_match("/[0-9]/",$this->request->getData("CSVExport-dataDisplay"),$display);
+        $code = $basic[0].$display[0];
+
+        $SopDefaults = $this->SopDefaults->find()->where([
+            "user_id"=>$this->uAuth['id'],
+            "graphe_id"=>$graphe_id
+            ])->first();
+        //var_dump($SopDefaults);
+        //exit();
+
+        $graphe_datas = $this->GrapheDatas->find()->where([
+            "user_id"=>$this->uAuth['id'],
+            "graphe_id"=>$graphe_id
+        ])->limit(10)->toArray();
+        $sort = [];
+        foreach($graphe_datas as $key=>$value){
+            $sort[$key] = $value['disp'];
+        }
+
+        array_multisort($sort,SORT_ASC,$graphe_datas);
+
+        $row = 0;
+        $list = [];
+        $list[$row++][] = mb_convert_encoding('設定情報','SJIS','UTF-8');
+        $list[$row][] = mb_convert_encoding('ファイル作成日','SJIS','UTF-8');
+        $list[$row++][] = date("Y/m/d");
+        $list[$row][] = mb_convert_encoding('グラフの開始値','SJIS','UTF-8');
+        $list[$row++][] = $SopDefaults->defaultpoint;
+        $list[$row][] = mb_convert_encoding('グラフの終了値','SJIS','UTF-8');
+        $list[$row++][] = $SopDefaults->dispareamax;
+        $list[$row][] = mb_convert_encoding('Binサイズ','SJIS','UTF-8');
+        $list[$row++][] = $SopDefaults->binsize;
+        $list[$row][] = mb_convert_encoding('スムージング','SJIS','UTF-8');
+        $list[$row++][] = $SopDefaults->smooth;
+        $list[$row][] = mb_convert_encoding('解析基準','SJIS','UTF-8');
+        $list[$row++][] = $array_basic[$basic[0]];
+        $list[$row][] = mb_convert_encoding('データ表示','SJIS','UTF-8');
+        $list[$row++][] = $array_display[$display[0]];
+        $list[$row++][] = "";
+        $list[$row++][] = mb_convert_encoding('度数分布表','SJIS','UTF-8');
+        $list[$row][] = mb_convert_encoding('階級','SJIS','UTF-8');
+        $list[$row][] = mb_convert_encoding('階級最小値','SJIS','UTF-8');
+        $list[$row][] = mb_convert_encoding('階級最大値','SJIS','UTF-8');
+        $list[$row][] = mb_convert_encoding('階級中央値','SJIS','UTF-8');
+        foreach($graphe_datas as $key=>$value){
+            $list[$row][] = $value->label;
+        }
+        $row++;
+
+
+        $GrapheDisplays = $this->GrapheDisplays->find('all')
+        ->where(
+            [
+                'GrapheDisplays.graphe_id'=>$graphe_id,
+                'GrapheDisplays.user_id'=>$this->uAuth['id'],
+            ]
+        )->toArray();
+
+        $points = [];
+        $n = 0;
+        foreach($GrapheDisplays as $key=>$value){
+            $points[$value->graphe_data_id][$n][ 'count1' ] = $value->counts1;
+            $points[$value->graphe_data_id][$n][ 'min' ] = $value->min;
+            $points[$value->graphe_data_id][$n][ 'max' ] = $value->max;
+            $points[$value->graphe_data_id][$n][ 'center' ] = $value->center;
+            $n++;
+        }
+
+        $def = $row;
+        $first = true;
+        foreach($graphe_datas as $key=>$value){
+            foreach($points[$value->id] as $k=>$val){
+                //$list[$row][] = $val['count1'];
+                if($first){
+                    $list[$row][] = $val['min'];
+                    $list[$row][] = $val['min'];
+                    $list[$row][] = $val['max'];
+                    $list[$row][] = $val['center'];
+                }
+                $list[$row][] = $val['count1'];
+                $row++;
+            }
+            $row=$def;
+            $first = false;
+        }
+
+
+
+
+        //保存場所
+        $filename = "CSV-".date('YmdHis') . '.csv';
+        $file = WWW_ROOT.'csv/' .$filename;
+        $f = fopen($file, 'w');
+        foreach($list as $key=>$value){
+            fputcsv($f, $value);
+        }
+
+
+        fclose($f);
+
+        return $this->response->withFile(
+            $file,
+            [
+              'download'=>true,
+            ]
+          );
+
+    }
     //CSV出力
     public function outputMesurement($graphe_id){
         $this->autoRender = false;

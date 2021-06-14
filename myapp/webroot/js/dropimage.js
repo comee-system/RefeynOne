@@ -62,9 +62,9 @@ try{
 
 
 $.fn.fileupload = function(){
-    var _label = window.prompt("ユーザー名を入力してください", "");
+    var _label = window.prompt("Label名を入力してください", "");
     if(!_label){
-        alert("ユーザ名が入力されていません。");
+        alert("Label名が入力されていません。");
         return false;
     }else{
         $("#screen").show();

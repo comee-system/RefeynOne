@@ -108,6 +108,16 @@ $(document).on("click","[name='dataDisplay']",function(){
 $(document).on("change","select#selectSmoothId",function(){
     editSmooth();
 });
+//CSVExport
+$(document).on("click","#CSVExport",function(){
+    var _basic = $("[name='analyticsBasic']:checked").attr("id");
+    //データ表示
+    var _display = $("[name='dataDisplay']:checked").attr("id");
+    $("#CSVExport_analyticsBasic").val(_basic);
+    $("#CSVExport_dataDisplay").val(_display);
+    $("#CSVExportForm").submit();
+    return false;
+});
 function editSmooth(){
     var _id = $("#id").val();
     var _selectSmoothId = $("#selectSmoothId").val();
@@ -391,7 +401,7 @@ function createGraf(){
 
         var lineChartOptions = $.extend(true, {}, areaChartOptions);
         var lineChartData = $.extend(true, {}, areaChartData);
-        for(var _i=0;_i<_count;_i++){
+        for(var _i=0;_i<_count-1;_i++){
             lineChartData.datasets[_i].fill = false;
         }
         lineChartOptions.datasetFill = false;
@@ -405,7 +415,8 @@ function createGraf(){
         });
 
     }catch(e){
-
+        console.log("error");
+        console.log(e);
     }
 }
 

@@ -37,13 +37,20 @@
                     <div class="col-3">
                         <?= $this->Html->link("運営会社情報",
                             "https://ls-solutions.co.jp",
-                            ['class'=>''])
+                            [
+                                'class'=>'',
+                                'target'=>"_blank"
+                            ])
                         ?>
                     </div>
                     <div class="col-3">
                         <?= $this->Html->link("お問い合わせ",
                             "https://ls-solutions.co.jp/contact/",
-                            ['class'=>''])
+                            [
+                                'class'=>'',
+                                'target'=>"_blank"
+
+                            ])
                         ?>
                     </div>
                 </div>

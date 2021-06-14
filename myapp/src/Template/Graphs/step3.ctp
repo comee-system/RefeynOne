@@ -23,16 +23,25 @@
             </div>
             <div class="col-4">
                 <?= $this->Html->link("CSVExport",[
-                    "controller"=>"graphs",
-                    "action"=>"outputGraphe",
-                    $id
                 ],
                 [
                     "escape"=>false,
                     "class"=>"btn btn-warning w-100 text-white",
-
+                    "id"=>"CSVExport"
                 ])?>
+            <?= $this->Form->create(null,[
+                "type"=>"post",
+                "id"=>"CSVExportForm",
+                "url"=>[
+                    "controller"=>"graphs",
+                    "action"=>"outputGraphe",
+                    $id
+                ]
+            ]);?>
+            <?= $this->Form->hidden("CSVExport-analyticsBasic",['id'=>'CSVExport_analyticsBasic','value'=>""])?>
+            <?= $this->Form->hidden("CSVExport-dataDisplay",['id'=>'CSVExport_dataDisplay','value'=>""])?>
 
+            <?= $this->Form->end();?>
             </div>
             <div class="col-4">
                 <?= $this->Html->link("グラフ表示変更",$this->request->getParam('controller')."/step3_graph/".$id,[
@@ -52,7 +61,7 @@
                         <div class="card-body" id="cardbody">
                             <div id="cardscreen"></div>
                             <div class="chart">
-                                <canvas id="lineChart" style="height: 700px;max-width: 100%;"></canvas>
+                                <canvas id="lineChart" style="height: 450px;max-width: 100%;"></canvas>
                             </div>
                         </div>
 
@@ -86,6 +95,26 @@
                                     <td class="text-center" id="areaname-<?= $sop_id ?>"><?= __("エリア".$num) ?></td>
                                     <?php endfor; ?>
                                 </tr>
+                                                                <tr>
+                                    <td><?= __("下限") ?></td>
+                                    <?php for($i=0;$i<=4;$i++ ):?>
+                                    <td class="text-center" >
+                                        <?php
+                                            $text = "";
+                                            $sop_id = "";
+                                            if(isset($SopAreas[$i][ 'id' ])):
+                                                $sop_id = $SopAreas[$i][ 'id' ];
+                                                $text = $SopAreas[$i][ 'minpoint' ];
+                                            endif;
+                                        ?>
+                                        <?= $this->Form->input("minpoint-".$sop_id,[
+                                            'class'=>'form-control sopArea',
+                                            'label'=>false,
+                                            'value'=>$text
+                                        ])?>
+                                    </td>
+                                    <?php endfor; ?>
+                                </tr>
                                 <tr>
                                     <td><?= __("上限") ?></td>
                                     <?php for($i=0;$i<=4;$i++ ):?>
@@ -106,26 +135,7 @@
                                     </td>
                                     <?php endfor; ?>
                                 </tr>
-                                <tr>
-                                    <td><?= __("下限") ?></td>
-                                    <?php for($i=0;$i<=4;$i++ ):?>
-                                    <td class="text-center" >
-                                        <?php
-                                            $text = "";
-                                            $sop_id = "";
-                                            if(isset($SopAreas[$i][ 'id' ])):
-                                                $sop_id = $SopAreas[$i][ 'id' ];
-                                                $text = $SopAreas[$i][ 'minpoint' ];
-                                            endif;
-                                        ?>
-                                        <?= $this->Form->input("minpoint-".$sop_id,[
-                                            'class'=>'form-control sopArea',
-                                            'label'=>false,
-                                            'value'=>$text
-                                        ])?>
-                                    </td>
-                                    <?php endfor; ?>
-                                </tr>
+
                                 <tr>
                                     <td nowrap><?= __("グラフ反映") ?></td>
                                     <?php for($i=0;$i<=4;$i++):?>
@@ -177,10 +187,7 @@
                 </div>
                 <div class="col-md-2">
                     <div class="ml-2">
-
-
-
-                        <div class="row mt-3">
+                        <div class="row">
                             <div class="col-12">
                                 <div class="card card-info">
                                     <div class="card-header">解析基準</div>
@@ -246,6 +253,8 @@
                                 </div>
                             </div>
                         </div>
+
+                        <!--
                         <div class="row mt-3">
                             <div class="col-12">
                                 <div class="card card-info">
@@ -260,7 +269,7 @@
                                 </div>
                             </div>
                         </div>
-
+                        -->
                     </div>
                 </div>
             </div>

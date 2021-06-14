@@ -111,12 +111,31 @@ $(function(){
         }).done(function(jsonstr){
         });
     });
-    //SOPエリアの設定
-    $(".sopArea").on("blur",function(){
 
+    var sopArea = $(".sopArea").length;
+    var _before = [];
+    if(sopArea > 0){
+        $(".sopArea").each(function(i, elem) {
+            var _id = $(this).attr("id");
+            _before[_id] = $(this).val();
+        });
+    }
+
+    //SOPエリアの設定
+    $(".sopArea").on("blur",function(event){
         var _val = $(this).val();
         var _name = $(this).attr("name").split("-");
         var _id = parseInt(_name[1]);
+        //値のチェック
+        var _minpoint = $("#minpoint-"+_id).val();
+        var _maxpoint = $("#maxpoint-"+_id).val();
+        if(parseInt(_minpoint) >= parseInt(_maxpoint)){
+            alert("エリア設定の入力値に不備があります。");
+            var _id = $(this).attr("id");
+            $("#"+_id).val(_before[_id]);
+            return false;
+        }
+
         _name = _name[0];
         var _data = {
             name:_name,
