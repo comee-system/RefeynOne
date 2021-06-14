@@ -554,6 +554,7 @@ class GraphsController extends AppController
         preg_match("/[0-9]/",$this->request->getData("CSVExport-analyticsBasic"),$basic);
         preg_match("/[0-9]/",$this->request->getData("CSVExport-dataDisplay"),$display);
         $code = $basic[0].$display[0];
+        $graf_type = $this->array_graf_type[$code];
 
         $SopDefaults = $this->SopDefaults->find()->where([
             "user_id"=>$this->uAuth['id'],
@@ -564,7 +565,8 @@ class GraphsController extends AppController
 
         $graphe_datas = $this->GrapheDatas->find()->where([
             "user_id"=>$this->uAuth['id'],
-            "graphe_id"=>$graphe_id
+            "graphe_id"=>$graphe_id,
+            "disp > " => 0
         ])->limit(10)->toArray();
         $sort = [];
         foreach($graphe_datas as $key=>$value){
@@ -608,12 +610,37 @@ class GraphsController extends AppController
                 'GrapheDisplays.graphe_id'=>$graphe_id,
                 'GrapheDisplays.user_id'=>$this->uAuth['id'],
             ]
-        )->toArray();
+            );
+
+        if($this->request->getData("CSVExport-min_x") ){
+            $GrapheDisplays = $GrapheDisplays->where([
+                'GrapheDisplays.max >= '=>$this->request->getData("CSVExport-min_x")
+                ]);
+        }
+        if($this->request->getData("CSVExport-max_x") ){
+            $GrapheDisplays = $GrapheDisplays->where([
+                'GrapheDisplays.min <= '=>$this->request->getData("CSVExport-max_x")
+                ]);
+        }
+        if($this->request->getData("CSVExport-min_y") ){
+            $GrapheDisplays = $GrapheDisplays->where([
+                'GrapheDisplays.'.$graf_type.' >= '=>$this->request->getData("CSVExport-min_y")
+                ]);
+        }
+        if($this->request->getData("CSVExport-max_y") ){
+            $GrapheDisplays = $GrapheDisplays->where([
+                'GrapheDisplays.'.$graf_type.' <= '=>$this->request->getData("CSVExport-max_y")
+                ]);
+        }
+
+
+        $GrapheDisplays = $GrapheDisplays->toArray();
 
         $points = [];
         $n = 0;
         foreach($GrapheDisplays as $key=>$value){
-            $points[$value->graphe_data_id][$n][ 'count1' ] = $value->counts1;
+
+            $points[$value->graphe_data_id][$n][ 'count' ] = $value->$graf_type;
             $points[$value->graphe_data_id][$n][ 'min' ] = $value->min;
             $points[$value->graphe_data_id][$n][ 'max' ] = $value->max;
             $points[$value->graphe_data_id][$n][ 'center' ] = $value->center;
@@ -631,7 +658,8 @@ class GraphsController extends AppController
                     $list[$row][] = $val['max'];
                     $list[$row][] = $val['center'];
                 }
-                $list[$row][] = $val['count1'];
+
+                $list[$row][] = $val['count'];
                 $row++;
             }
             $row=$def;
@@ -756,8 +784,16 @@ class GraphsController extends AppController
             'user_id'=>$userid,
             'id'=>$id
         ])->first();
+        //最大値
+        $GrapheDatasMax = $this->GrapheDatas->find();
+
+        $GrapheDatasMax = $GrapheDatasMax->select(['max_order' => $GrapheDatasMax->func()->max('disp')])
+        ->where([
+            'user_id'=>$userid,
+            'graphe_id'=>$GrapheDatas->graphe_id
+        ])->first();
         $flag = 0;
-        if($chk === "true" ) $flag = 1;
+        if($chk === "true" ) $flag = $GrapheDatasMax[ 'max_order' ]+1;
         $set[ 'disp' ] = $flag;
 
         $GrapheDatas->disp = $flag;
@@ -977,8 +1013,17 @@ class GraphsController extends AppController
             WHERE
                 gdisplay.user_id='${user_id}' AND
                 gdisplay.graphe_id = '${id}' AND
-                gdata.disp != 0
-            GROUP BY gdisplay.graphe_data_id
+                gdata.disp != 0 ";
+            if($this->request->getData("min_x") && $this->request->getData("max_x")){
+                $sql .= " AND gdisplay.max >= ".$this->request->getData('min_x');
+                $sql .= " AND gdisplay.min <= ".$this->request->getData('max_x');
+            }
+            if($this->request->getData("min_y") && $this->request->getData("max_y")){
+                $sql .= " AND gdisplay.".$clum." >= ".$this->request->getData('min_y');
+                $sql .= " AND gdisplay.".$clum." <= ".$this->request->getData('max_y');
+            }
+
+            $sql .= " GROUP BY gdisplay.graphe_data_id
                 ) as a
             ORDER BY a.disp ASC
             ";

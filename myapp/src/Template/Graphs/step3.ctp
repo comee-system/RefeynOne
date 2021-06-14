@@ -40,6 +40,10 @@
             ]);?>
             <?= $this->Form->hidden("CSVExport-analyticsBasic",['id'=>'CSVExport_analyticsBasic','value'=>""])?>
             <?= $this->Form->hidden("CSVExport-dataDisplay",['id'=>'CSVExport_dataDisplay','value'=>""])?>
+            <?= $this->Form->hidden("CSVExport-min_x",['id'=>'CSVExport_min_x','value'=>""])?>
+            <?= $this->Form->hidden("CSVExport-max_x",['id'=>'CSVExport_max_x','value'=>""])?>
+            <?= $this->Form->hidden("CSVExport-min_y",['id'=>'CSVExport_min_y','value'=>""])?>
+            <?= $this->Form->hidden("CSVExport-max_y",['id'=>'CSVExport_max_y','value'=>""])?>
 
             <?= $this->Form->end();?>
             </div>
@@ -204,7 +208,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="row mt-3">
+                        <div class="row mt-1">
                             <div class="col-12">
                                 <div class="card card-info">
                                     <div class="card-header"><?= __("データ表示") ?></div>
@@ -221,7 +225,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="row mt-3">
+                        <div class="row mt-1">
                             <div class="col-12">
                                 <div class="card card-info">
                                     <div class="card-header"><?= __("データ範囲") ?></div>
@@ -234,19 +238,32 @@
                                         <div class="row">
                                             <div class="col-2 text-center"><small class="text-muted"><?= __("X") ?></small></div>
                                             <div class="col-5">
-                                                <input type="text" name="" value=""  class="form-control-sm w-100" />
+                                                <?= $this->Form->text("min_x",[
+                                                    "class"=>"form-control-sm w-100"
+                                                ])?>
                                             </div>
                                             <div class="col-5">
-                                                <input type="text" name="" value=""  class="form-control-sm w-100" />
+                                                <?= $this->Form->text("max_x",[
+                                                    "class"=>"form-control-sm w-100"
+                                                ])?>
+                                            </div>
+                                        </div>
+                                        <div class="row ">
+                                            <div class="col-2 text-center"><small class="text-muted"><?= __("Y")?></small></div>
+                                            <div class="col-5">
+                                                <?= $this->Form->text("min_y",[
+                                                    "class"=>"form-control-sm w-100"
+                                                ])?>
+                                            </div>
+                                            <div class="col-5">
+                                                <?= $this->Form->text("max_y",[
+                                                    "class"=>"form-control-sm w-100"
+                                                ])?>
                                             </div>
                                         </div>
                                         <div class="row mt-1">
-                                            <div class="col-2 text-center"><small class="text-muted"><?= __("Y")?></small></div>
-                                            <div class="col-5">
-                                                <input type="text" name="" value=""  class="form-control-sm w-100" />
-                                            </div>
-                                            <div class="col-5">
-                                                <input type="text" name="" value=""  class="form-control-sm w-100" />
+                                            <div class="col-12 text-right">
+                                                <a href="javascript:void(0);" id="dataAreaButton" class="btn-sm text-white  btn-warning">反映</a>
                                             </div>
                                         </div>
                                     </div>

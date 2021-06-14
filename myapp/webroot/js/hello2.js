@@ -104,6 +104,12 @@ $(document).on("click","[name='dataDisplay']",function(){
     //表示用データの切り替えを行う
     createDispGraph();
 });
+//データ範囲
+$(document).on("click","#dataAreaButton",function(){
+    //表示用データの切り替えを行う
+    createDispGraph();
+});
+
 //スムージングの切り替えを行う
 $(document).on("change","select#selectSmoothId",function(){
     editSmooth();
@@ -115,6 +121,17 @@ $(document).on("click","#CSVExport",function(){
     var _display = $("[name='dataDisplay']:checked").attr("id");
     $("#CSVExport_analyticsBasic").val(_basic);
     $("#CSVExport_dataDisplay").val(_display);
+
+
+    var _min_x = $("input[name='min_x']").val();
+    var _max_x = $("input[name='max_x']").val();
+    var _min_y = $("input[name='min_y']").val();
+    var _max_y = $("input[name='max_y']").val();
+    $("#CSVExport_min_x").val(_min_x);
+    $("#CSVExport_max_x").val(_max_x);
+    $("#CSVExport_min_y").val(_min_y);
+    $("#CSVExport_max_y").val(_max_y);
+
     $("#CSVExportForm").submit();
     return false;
 });
@@ -138,8 +155,38 @@ function editSmooth(){
     });
     return true;
 }
+var _defaultlabels = $("#binline").val();
+
 function createDispGraph(){
     $("#screen").show();
+
+    //X軸の表示範囲指定
+    var _labels = _defaultlabels.split(",");
+    var _min_x = $("input[name='min_x']").val();
+    var _max_x = $("input[name='max_x']").val();
+    var _min_y = $("input[name='min_y']").val();
+    var _max_y = $("input[name='max_y']").val();
+    var _bl = [];
+    var _i=0;
+    if(_min_x && _max_x ){
+        $("#defaultpoint").val(_min_x);
+        $("#dispareamax").val(_max_x);
+        $.each(_labels,function(key,value){
+            if(
+                parseInt(_min_x) <= parseInt(value) &&
+                parseInt(value) <= parseInt(_max_x)
+            ){
+                _bl[_i] = value;
+                _i++;
+            }
+        });
+        var _join = _bl.join();
+       // console.log(_join);
+        $("#binline").val(_join);
+    }else{
+        $("#binline").val(_defaultlabels);
+    }
+
     var _id = $("#id").val();
     //解析基準
     var _basic = $("[name='analyticsBasic']:checked").attr("id");
@@ -148,6 +195,10 @@ function createDispGraph(){
     var _data = {
         "basic":_basic,
         "display":_display,
+        "min_x":_min_x,
+        "max_x":_max_x,
+        "min_y":_min_y,
+        "max_y":_max_y,
     };
     $.ajax({
         url:"/graphs/createDispGraph/"+_id,
@@ -190,10 +241,15 @@ function creatLine(){
     var _id = _chk.split("-")[2];
     var _maxpoint = $("#maxpoint-"+_id).val();
     var _bin = $("#binsize").val()/_maxTicksLimit;
-    _areamax = (_maxpoint/_separate)/_bin;
 
+
+    var _min_x = $("input[name='min_x']").val();
+    var _max_x = $("input[name='max_x']").val();
+
+    _areamax = ((_maxpoint-_min_x)/_separate)/_bin;
     var _minpoint = $("#minpoint-"+_id).val();
-    _areamin = (_minpoint/_separate)/_bin;
+    _areamin = ((_minpoint-_min_x)/_separate)/_bin;
+
 }
 
 
@@ -360,7 +416,7 @@ function createGraf(){
                     fontSize: 16                   // フォントサイズ
                 },
                 ticks: {                       // 目盛り
-                    min: 0,                        // 最小値
+                //    min: 0,                        // 最小値
                 //    max: 1000,                       // 最大値
                 //    stepSize: 100,                   // 軸間隔
                     fontColor: "black",             // 目盛りの色
@@ -401,11 +457,10 @@ function createGraf(){
 
         var lineChartOptions = $.extend(true, {}, areaChartOptions);
         var lineChartData = $.extend(true, {}, areaChartData);
-        for(var _i=0;_i<_count-1;_i++){
+        for(var _i=0;_i<_count;_i++){
             lineChartData.datasets[_i].fill = false;
         }
         lineChartOptions.datasetFill = false;
-
 
 
         var lineChart = new Chart(lineChartCanvas, {
@@ -415,8 +470,8 @@ function createGraf(){
         });
 
     }catch(e){
-        console.log("error");
-        console.log(e);
+       // console.log("error");
+       // console.log(e);
     }
 }
 

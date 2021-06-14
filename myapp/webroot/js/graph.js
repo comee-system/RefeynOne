@@ -176,6 +176,7 @@ $.fn.getSop = function(){
 
     try{
         var _id = $("#id").val();
+        if(!_id) return false;
         $.ajax({
             url:"/graphs/getSop/"+_id,
             type:"post",
@@ -228,6 +229,9 @@ $.fn.getGraphData = function(){
 
     try{
         var _id = $("#id").val();
+        if(!_id){
+            return false;
+        }
         $.ajax({
             url:"/graphs/graphdata/"+_id,
             type:"post",
