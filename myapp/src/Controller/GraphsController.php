@@ -345,8 +345,13 @@ class GraphsController extends AppController
             for($j=$i;$j<$i+$smooth;$j++){
                 $numeric += (isset($ex[$j]) && $ex[$j])?$ex[$j]:0;
             }
+
             if($i >= 0){
-                $list[] = $numeric/$smooth;
+                if($smooth == 0){
+                    $list[] = 0;
+                }else{
+                    $list[] = $numeric/$smooth;
+                }
             }
             if($count < $i) break;
         }
@@ -614,25 +619,29 @@ class GraphsController extends AppController
 
         if($this->request->getData("CSVExport-min_x") ){
             $GrapheDisplays = $GrapheDisplays->where([
-                'GrapheDisplays.max >= '=>$this->request->getData("CSVExport-min_x")
+                'GrapheDisplays.min >= '=>$this->request->getData("CSVExport-min_x")
                 ]);
         }
+
         if($this->request->getData("CSVExport-max_x") ){
             $GrapheDisplays = $GrapheDisplays->where([
-                'GrapheDisplays.min <= '=>$this->request->getData("CSVExport-max_x")
+                'GrapheDisplays.max <= '=>$this->request->getData("CSVExport-max_x")
                 ]);
         }
+
         if($this->request->getData("CSVExport-min_y") ){
             $GrapheDisplays = $GrapheDisplays->where([
                 'GrapheDisplays.'.$graf_type.' >= '=>$this->request->getData("CSVExport-min_y")
                 ]);
         }
+
+        /*
         if($this->request->getData("CSVExport-max_y") ){
             $GrapheDisplays = $GrapheDisplays->where([
                 'GrapheDisplays.'.$graf_type.' <= '=>$this->request->getData("CSVExport-max_y")
                 ]);
         }
-
+*/
 
         $GrapheDisplays = $GrapheDisplays->toArray();
 
@@ -651,7 +660,7 @@ class GraphsController extends AppController
         $first = true;
         foreach($graphe_datas as $key=>$value){
             foreach($points[$value->id] as $k=>$val){
-                //$list[$row][] = $val['count1'];
+
                 if($first){
                     $list[$row][] = $val['min'];
                     $list[$row][] = $val['min'];
