@@ -145,7 +145,7 @@ class GraphsController extends AppController
             $data = [];
             $insert = "";
 
-            if($step != "step2"){
+            if( $step != "step2"){
                 //既に登録済みなので何もしない
             }else{
                 //グラフ用の表示データを削除
@@ -179,8 +179,7 @@ class GraphsController extends AppController
                     GROUP BY graphe_data_id
                     ) as a
                 ";
-                print $sql;
-                exit();
+
                 $graphe_points = $connection->execute($sql)->fetchall('assoc');
 
                 foreach($graphe_points as $value){
