@@ -6,6 +6,7 @@ $(function(){
 
     //エリアごとのテーブル反映
     $("#tableReflect").click(function(){
+        alert("ssss");
         var _id = $("#id").val();
         //解析基準
         var _basic = $("[name='analyticsBasic']:checked").attr("id");
