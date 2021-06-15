@@ -347,7 +347,7 @@ class GraphsController extends AppController
             $counter = 0;
             for($j=$i;$j<$i+$smooth;$j++){
                 if(isset($ex[$j])){
-                    $numeric = $numeric+$ex[$j];
+                    $numeric = (int)$numeric+(int)$ex[$j];
                     $counter++;
                 }
             }
