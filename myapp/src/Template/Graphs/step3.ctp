@@ -14,14 +14,14 @@
 
         <?= $this->Form->hidden("binline",['id'=>'binline','value'=>h($binline)])?>
         <div class="row mt-3">
-            <div class="col-4">
+            <div class="">
                 <?= $this->Form->button("pngExport",[
                     "class"=>"btn btn-warning w-100 text-white",
                     "type"=>"button",
                     "id"=>"pngExport"
                 ])?>
             </div>
-            <div class="col-4">
+            <div class="">
                 <?= $this->Html->link("CSVExport",[
                 ],
                 [
@@ -29,30 +29,26 @@
                     "class"=>"btn btn-warning w-100 text-white",
                     "id"=>"CSVExport"
                 ])?>
-            <?= $this->Form->create(null,[
-                "type"=>"post",
-                "id"=>"CSVExportForm",
-                "url"=>[
-                    "controller"=>"graphs",
-                    "action"=>"outputGraphe",
-                    $id
-                ]
-            ]);?>
-            <?= $this->Form->hidden("CSVExport-analyticsBasic",['id'=>'CSVExport_analyticsBasic','value'=>""])?>
-            <?= $this->Form->hidden("CSVExport-dataDisplay",['id'=>'CSVExport_dataDisplay','value'=>""])?>
-            <?= $this->Form->hidden("CSVExport-min_x",['id'=>'CSVExport_min_x','value'=>""])?>
-            <?= $this->Form->hidden("CSVExport-max_x",['id'=>'CSVExport_max_x','value'=>""])?>
-            <?= $this->Form->hidden("CSVExport-min_y",['id'=>'CSVExport_min_y','value'=>""])?>
-            <?= $this->Form->hidden("CSVExport-max_y",['id'=>'CSVExport_max_y','value'=>""])?>
 
-            <?= $this->Form->end();?>
+                <?= $this->Form->create(null,[
+                    "type"=>"post",
+                    "id"=>"CSVExportForm",
+                    "url"=>[
+                        "controller"=>"graphs",
+                        "action"=>"outputGraphe",
+                        $id
+                    ]
+                ]);?>
+                <?= $this->Form->hidden("CSVExport-analyticsBasic",['id'=>'CSVExport_analyticsBasic','value'=>""])?>
+                <?= $this->Form->hidden("CSVExport-dataDisplay",['id'=>'CSVExport_dataDisplay','value'=>""])?>
+                <?= $this->Form->hidden("CSVExport-min_x",['id'=>'CSVExport_min_x','value'=>""])?>
+                <?= $this->Form->hidden("CSVExport-max_x",['id'=>'CSVExport_max_x','value'=>""])?>
+                <?= $this->Form->hidden("CSVExport-min_y",['id'=>'CSVExport_min_y','value'=>""])?>
+                <?= $this->Form->hidden("CSVExport-max_y",['id'=>'CSVExport_max_y','value'=>""])?>
+
+                <?= $this->Form->end();?>
             </div>
-            <div class="col-4">
-                <?= $this->Html->link("グラフ表示変更",$this->request->getParam('controller')."/step3_graph/".$id,[
-                    'escape'=>false,
-                    'class'=>'btn btn-warning w-100 text-white text-center'
-                ])?>
-            </div>
+
         </div>
         <?= $this->Form->create("", [
             'enctype' => 'multipart/form-data',
@@ -271,6 +267,12 @@
                             </div>
                         </div>
 
+                        <div class="col-12">
+                            <?= $this->Html->link("グラフ表示変更",$this->request->getParam('controller')."/step3_graph/".$id,[
+                                'escape'=>false,
+                                'class'=>'btn btn-primary w-100 text-white text-center'
+                            ])?>
+                        </div>
                         <!--
                         <div class="row mt-3">
                             <div class="col-12">

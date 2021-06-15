@@ -95,20 +95,14 @@ class GraphsController extends AppController
 
     public function beforeStep3($graphe_id){
 
-        if($this->request->is('ajax')){
+        if( $this->request->is('ajax')){
             $this->autoRender=false;
 
 
             //セッションの確認
             $step = $this->session->read('step');
             $this->session->write('step', "step3");
-/*
-            $SopAreas = $this->SopAreas->find()->where([
-                "user_id"=>$this->uAuth[ 'id' ],
-                "graphe_id"=>$graphe_id,
-            ])->toArray();
-            $this->set(compact('SopAreas'));
-*/
+
 
             //グラフデータ取得
             $connection = ConnectionManager::get('default');
@@ -164,21 +158,29 @@ class GraphsController extends AppController
                 foreach($compares as $k=>$comp){
                     $sql .= " ranges_".$comp['min']."_".$comp['max']." + ";
                 }
-                $sql .= "0) as total2";
+                $sql .= "0) as total2 ,(";
+                foreach($compares as $k=>$comp){
+                    $sql .= " range_".$comp['min']."_".$comp['max']." + ";
+                }
+                $sql .= "0) as total";
+
                 $sql .= " FROM (
                 SELECT graphe_data_id";
                 foreach($compares as $k=>$comp){
                     $ctr = ($comp['min']+$comp['max'])/2;
                     $sql .= ", SUM(CASE WHEN pointdata >= ".$comp['min']." AND pointdata < ".$comp['max']." THEN 1 ELSE 0 END) AS range_".$comp['min']."_".$comp['max'];
+
                     $sql .= ", ".$ctr." * SUM(CASE WHEN pointdata >= ".$comp['min']." AND pointdata < ".$comp['max']." THEN 1 ELSE 0 END) AS ranges_".$comp['min']."_".$comp['max'];
                 }
-                $sql .= " ,SUM(pointdata) AS total ";
+                //$sql .= " ,SUM(pointdata) AS total ";
                 $sql .= "
                     FROM graphe_points
                     WHERE graphe_id = '${graphe_id}'
                     GROUP BY graphe_data_id
                     ) as a
                 ";
+                print $sql;
+                exit();
                 $graphe_points = $connection->execute($sql)->fetchall('assoc');
 
                 foreach($graphe_points as $value){

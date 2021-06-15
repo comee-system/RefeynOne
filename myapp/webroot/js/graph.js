@@ -109,6 +109,7 @@ $(function(){
             data:_data,
             datatype: "json",
         }).done(function(jsonstr){
+            console.log(jsonstr);
         });
     });
 

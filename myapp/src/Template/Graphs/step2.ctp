@@ -87,7 +87,7 @@
                                 <td>
                                     <?= $this->Form->control("binsize",[
                                             "class"=>"form-control sopText",
-                                            "type"=>"number",
+                                            "type"=>"text",
                                             "min"=>"0",
                                             "value"=>(!empty($SopDefaults->binsize))?$SopDefaults->binsize:"0",
                                             "label"=>false,
@@ -126,21 +126,21 @@
                                 <?php endfor; ?>
                             </tr>
                             <tr>
-                                <td><?= __("上限") ?></td>
-                                <?php for($i=0;$i<=4;$i++ ):?>
-                                <td >
-                                    <?php if(isset($SopAreas[$i][ 'maxpoint' ])): ?>
-                                    <?= h(number_format($SopAreas[$i][ 'maxpoint' ])) ?>
-                                    <?php endif; ?>
-                                </td>
-                                <?php endfor; ?>
-                            </tr>
-                            <tr>
                                 <td><?= __("下限") ?></td>
                                 <?php for($i=0;$i<=4;$i++ ):?>
                                 <td >
                                     <?php if(isset($SopAreas[$i][ 'minpoint' ])): ?>
                                     <?= h(number_format($SopAreas[$i][ 'minpoint' ])) ?>
+                                    <?php endif; ?>
+                                </td>
+                                <?php endfor; ?>
+                            </tr>
+                            <tr>
+                                <td><?= __("上限") ?></td>
+                                <?php for($i=0;$i<=4;$i++ ):?>
+                                <td >
+                                    <?php if(isset($SopAreas[$i][ 'maxpoint' ])): ?>
+                                    <?= h(number_format($SopAreas[$i][ 'maxpoint' ])) ?>
                                     <?php endif; ?>
                                 </td>
                                 <?php endfor; ?>
