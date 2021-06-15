@@ -6,55 +6,10 @@ $(function(){
 
     //エリアごとのテーブル反映
     $("#tableReflect").click(function(){
-        var _id = $("#id").val();
-        //解析基準
-        var _basic = $("[name='analyticsBasic']:checked").attr("id");
-        //データ表示
-        var _display = $("[name='dataDisplay']:checked").attr("id");
-        var _data = {
-            "basic":_basic,
-            "display":_display,
-        };
-        $.ajax({
-            url:"/graphs/getAreaTable/"+_id,
-            type:"post",
-            data:_data,
-            datatype: "json",
-        }).done(function(data){
-            console.log(data);
-            var _areas = data.areas;
-            var _tbl = "";
-            $.each(_areas,function(key,value){
-                var _areamins = "#areamins-"+value[ 'id' ];
-                var _areamaxs = "#areamaxs-"+value[ 'id' ];
-                $(_areamins).html(value['minpoint']);
-                $(_areamaxs).html(value['maxpoint']);
-            });
-            var _label = data.label;
-            var _lists = data.lists;
-            var _table = "";
-            var _num = 1;
-            $("#areaTables").html("");
-            $.each(_label,function(_key,_value){
-                _table = "<tr>";
-                _table += "<td>"+_num+"</td>";
-                _table += "<td>"+_value.label+"</td>";
-                var _detail = _lists[_key];
-                console.log(_detail);
-                $.each(_detail,function(_k,_val){
-                    _table += "<td>"+_val.lot+"</td>";
-                    _table += "<td>"+_val.ave+"</td>";
-                    _table += "<td>"+_val.median+"</td>";
-                    _table += "<td>"+_val.mode+"</td>";
-                });
-                _table += "</tr>";
-                $("#areaTables").append(_table);
-                _num++;
-            });
-        }).fail(function(e){
-            console.log(e);
-        });
-        return false;
+        $(this).tableReflect();
+    });
+    $("#tableDataExport").click(function(){
+        $(this).tableReflect("export");
     });
 
     //ファイル削除
@@ -175,6 +130,66 @@ $(function(){
     });
 
 });
+var ex = "";
+$.fn.tableReflect = function(ex = ""){
+
+    var _id = $("#id").val();
+    //解析基準
+    var _basic = $("[name='analyticsBasic']:checked").attr("id");
+    //データ表示
+    var _display = $("[name='dataDisplay']:checked").attr("id");
+    var _data = {
+        "basic":_basic,
+        "display":_display,
+    };
+    $.ajax({
+        url:"/graphs/getAreaTable/"+_id,
+        type:"post",
+        data:_data,
+        datatype: "json",
+    }).done(function(data){
+
+        if(ex == "export"){ //tableDataExportボタンを押下
+            console.log(data);
+
+
+        }else{
+            var _areas = data.areas;
+            var _tbl = "";
+            $.each(_areas,function(key,value){
+                var _areamins = "#areamins-"+value[ 'id' ];
+                var _areamaxs = "#areamaxs-"+value[ 'id' ];
+                $(_areamins).html(value['minpoint']);
+                $(_areamaxs).html(value['maxpoint']);
+            });
+            var _label = data.label;
+            var _lists = data.lists;
+            var _table = "";
+            var _num = 1;
+            $("#areaTables").html("");
+            $.each(_label,function(_key,_value){
+                _table = "<tr>";
+                _table += "<td>"+_num+"</td>";
+                _table += "<td>"+_value.label+"</td>";
+                var _detail = _lists[_key];
+                console.log(_detail);
+                $.each(_detail,function(_k,_val){
+                    _table += "<td>"+_val.lot+"</td>";
+                    _table += "<td>"+_val.ave+"</td>";
+                    _table += "<td>"+_val.median+"</td>";
+                    _table += "<td>"+_val.mode+"</td>";
+                });
+                _table += "</tr>";
+                $("#areaTables").append(_table);
+                _num++;
+            });
+        }
+    }).fail(function(e){
+        console.log(e);
+    });
+    return false;
+
+};
 
 $.fn.getSop = function(){
 

@@ -51,7 +51,7 @@
         </div>
         <?= $this->Form->create("", [
             'enctype' => 'multipart/form-data',
-            'url'=>'/graphs/step4'
+            'url'=>'/graphs/step4/'.$id
             ]); ?>
             <div class="row mt-3">
                 <div class="col-md-10">
@@ -166,7 +166,8 @@
                                 <div class="col-6 text-right">
                                     <?= $this->Html->link("SOPExport",[
                                         "controller"=>"graphs",
-                                        "action"=>"outputSOP"
+                                        "action"=>"outputSOP",
+                                        $id
                                     ],
                                     [
                                         "escape"=>false,
@@ -297,8 +298,9 @@
                    <?= __("エリア毎のテーブル表示") ?>
 
                 </div>
-                <?= $this->Html->link("TableDataExport","/graphs/tableDataExport/".$id,[
+                <?= $this->Html->link("TableDataExport","javascript:void(0);",[
                         "class"=>"btn btn-warning w-25 text-white",
+                        "id"=>"tableDataExport"
                     ])?>
                 <div class="areatable">
                     <table class="mt-3 table table-bordered bg-white" style="width:200%;">

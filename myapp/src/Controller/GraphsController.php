@@ -424,9 +424,9 @@ class GraphsController extends AppController
 
 
 
-    public function step4(){
+    public function step4($graphe_id){
 
-
+        $this->set("id",$graphe_id);
     }
 
     public function setSop($graphe_id){
@@ -1118,26 +1118,70 @@ class GraphsController extends AppController
 		}
 	}
 
-    public function outputSOP(){
+    public function outputSOP($graphe_id){
+        $user_id = $this->uAuth['id'];
+        $sopDefaults = $this->SopDefaults->find()->where([
+            'user_id'=>$user_id,
+            'graphe_id'=>$graphe_id
+        ])->first();
 
+        $SopAreas = $this->SopAreas->find()->where([
+            "user_id"=>$this->uAuth[ 'id' ],
+            "graphe_id"=>$graphe_id,
+        ])->order(['id'=>"ASC"])->toArray();
+
+        $defaultpoint = $sopDefaults[ 'defaultpoint' ];
+        $dispareamax  = $sopDefaults[ 'dispareamax' ];
+        $binsize      = $sopDefaults[ 'binsize' ];
+        $smooth       = $sopDefaults[ 'smooth' ];
 
         $list = [];
+        $row = 0;
+        $lists[$row][] = mb_convert_encoding('グラフの初期値','SJIS','UTF-8');
+        $lists[$row++][] = $defaultpoint;
+        $lists[$row][] = mb_convert_encoding('表示範囲','SJIS','UTF-8');
+        $lists[$row++][] = $dispareamax;
+        $lists[$row][] = mb_convert_encoding('Binサイズ（間隔）','SJIS','UTF-8');
+        $lists[$row++][] = $binsize;
+        $lists[$row][] = mb_convert_encoding('スムージング','SJIS','UTF-8');
+        $lists[$row++][] = $smooth;
+
+        $lists[$row++][] = mb_convert_encoding(' ','SJIS','UTF-8');
+        $lists[$row++][] = mb_convert_encoding('','SJIS','UTF-8');
+        $lists[$row][] = mb_convert_encoding('','SJIS','UTF-8');
+        $lists[$row][] = mb_convert_encoding('下限','SJIS','UTF-8');
+        $lists[$row++][] = mb_convert_encoding('上限','SJIS','UTF-8');
+
+        $no=0;
+        for($i=1;$i<=4;$i++){
+            $lists[$row][] = mb_convert_encoding('エリア'.$i,'SJIS','UTF-8');
+            $lists[$row][] = $SopAreas[$no][ 'minpoint' ];
+            $lists[$row++][] = $SopAreas[$no][ 'maxpoint' ];
+            $no++;
+        }
+
+
 
         //保存場所
         $filename = "SOP-".date('YmdHis') . '.csv';
         $file = WWW_ROOT.'csv/' .$filename;
         $f = fopen($file, 'w');
-
-        fputcsv($f, $list);
-
+        foreach($lists as $key=>$list){
+            fputcsv($f, $list);
+        }
         fclose($f);
-
         return $this->response->withFile(
             $file,
             [
                 'download'=>true,
             ]
             );
+
+        exit();
+    }
+    public function tableDataExport($graphe_id){
+        $this->autoRender = false;
+
 
         exit();
     }
