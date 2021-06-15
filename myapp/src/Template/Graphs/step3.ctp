@@ -16,7 +16,7 @@
         <div class="row mt-3">
             <div class="col-12 d-flex">
                 <?= $this->Form->button("pngExport",[
-                    "class"=>"btn btn-warning w-25 text-white",
+                    "class"=>"btn btn-warning  text-white",
                     "type"=>"button",
                     "id"=>"pngExport"
                 ])?>
@@ -25,7 +25,7 @@
                 ],
                 [
                     "escape"=>false,
-                    "class"=>"btn btn-warning w-25 text-white ml-5",
+                    "class"=>"btn btn-warning  text-white ml-2",
                     "id"=>"CSVExport"
                 ])?>
 
@@ -156,21 +156,21 @@
                             </table>
 
                             <div class="row mt-3">
-                                <div class="col-4">
+                                <div class="col-6">
                                     <?= $this->Form->button("テーブル反映",[
-                                        "class"=>"btn btn-warning w-100 text-white",
+                                        "class"=>"btn btn-primary w-50 text-white",
                                         "type"=>"button",
                                         "id"=>"tableReflect"
                                     ])?>
                                 </div>
-                                <div class="col-4">
+                                <div class="col-6 text-right">
                                     <?= $this->Html->link("SOPExport",[
                                         "controller"=>"graphs",
                                         "action"=>"outputSOP"
                                     ],
                                     [
                                         "escape"=>false,
-                                        "class"=>"btn btn-warning w-100 text-white",
+                                        "class"=>"btn btn-warning w-50 text-white",
 
                                     ])?>
                                 </div>
@@ -223,7 +223,7 @@
                         <div class="row mt-1">
                             <div class="col-12">
                                 <div class="card card-info">
-                                    <div class="card-header"><?= __("データ範囲") ?></div>
+                                    <div class="card-header"><?= __("表示データ範囲") ?></div>
                                     <div class="card-body p-1">
                                         <div class="row">
                                             <div class="col-2 text-center"><small class="text-muted f6 text-nowrap"><?= __("範囲") ?></small></div>

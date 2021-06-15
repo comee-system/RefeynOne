@@ -216,6 +216,7 @@ function createDispGraph(){
         data:_data,
        // datatype: "json",
     }).done(function(data){
+        console.log(data);
         $(".graphe_point").remove();
         $(".graphe_data").remove();
         var _num = 1;
@@ -264,6 +265,12 @@ function creatLine(){
 
 
 function createGraf(){
+
+    var _basic = $("[name='analyticsBasic']:checked").next().text();
+    var _display = $("[name='dataDisplay']:checked").attr("id");
+    if(_display == "dataDisplay1") _display = "counts";
+    if(_display == "dataDisplay2") _display = "signal ratio";
+
     //-------------
     //- LINE CHART -
     //--------------
@@ -404,7 +411,7 @@ function createGraf(){
                 },
                 scaleLabel: {                  // 軸ラベル
                     display: true,                 // 表示の有無
-                    labelString: 'Mv',     // ラベル
+                    labelString: 'Mv('+_basic+')',     // ラベル
                     fontFamily: "sans-serif",
                     fontColor: "black",             // 文字の色
                     fontFamily: "sans-serif",
@@ -419,7 +426,7 @@ function createGraf(){
                 },
                 scaleLabel: {                  // 軸ラベル
                     display: true,                 // 表示の有無
-                    labelString: 'Y',     // ラベル
+                    labelString: _display,     // ラベル
                     fontFamily: "sans-serif",
                     fontColor: "black",             // 文字の色
                     fontFamily: "sans-serif",
