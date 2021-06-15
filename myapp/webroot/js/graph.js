@@ -6,7 +6,6 @@ $(function(){
 
     //エリアごとのテーブル反映
     $("#tableReflect").click(function(){
-        alert("ssss");
         var _id = $("#id").val();
         //解析基準
         var _basic = $("[name='analyticsBasic']:checked").attr("id");
@@ -22,6 +21,7 @@ $(function(){
             data:_data,
             datatype: "json",
         }).done(function(data){
+            console.log(data);
             var _areas = data.areas;
             var _tbl = "";
             $.each(_areas,function(key,value){
@@ -51,8 +51,8 @@ $(function(){
                 $("#areaTables").append(_table);
                 _num++;
             });
-        }).fail(function(){
-
+        }).fail(function(e){
+            console.log(e);
         });
         return false;
     });
