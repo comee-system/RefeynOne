@@ -399,8 +399,8 @@ function createGraf(){
                     maxTicksLimit: _maxTicksLimit, //値の最大表示数
                     fontColor: "black",             // 目盛りの色
                     fontSize: 11,                   // フォントサイズ
-                    maxRotation: 90,
-                    minRotation: 90
+                    maxRotation: 0,
+                    minRotation: 0,
                 },
                 scaleLabel: {                  // 軸ラベル
                     display: true,                 // 表示の有無
@@ -415,7 +415,7 @@ function createGraf(){
                 gridLines : {
                 display : true,
                 color: "rgba(0, 0, 255, 0.2)", // 補助線の色
-                zeroLineColor: "black"         // y=0（Ｘ軸の色）
+                zeroLineColor: "black",         // y=0（Ｘ軸の色）
                 },
                 scaleLabel: {                  // 軸ラベル
                     display: true,                 // 表示の有無
@@ -423,14 +423,15 @@ function createGraf(){
                     fontFamily: "sans-serif",
                     fontColor: "black",             // 文字の色
                     fontFamily: "sans-serif",
-                    fontSize: 16                   // フォントサイズ
+                    fontSize: 11,                   // フォントサイズ
                 },
                 ticks: {                       // 目盛り
                 //    min: 0,                        // 最小値
                 //    max: 1000,                       // 最大値
                 //    stepSize: 100,                   // 軸間隔
                     fontColor: "black",             // 目盛りの色
-                    fontSize: 14                   // フォントサイズ
+                    fontSize: 11,                   // フォントサイズ
+
                 }
 
             }]

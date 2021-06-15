@@ -649,19 +649,27 @@ class GraphsController extends AppController
         $GrapheDisplays = $GrapheDisplays->toArray();
 
         $points = [];
+        $pointData = [];
         $n = 0;
         foreach($GrapheDisplays as $key=>$value){
 
-            $points[$value->graphe_data_id][$n][ 'count' ] = $value->$graf_type;
+            $pointData[$value->graphe_data_id][$n] = $value->$graf_type;
             $points[$value->graphe_data_id][$n][ 'min' ] = $value->min;
             $points[$value->graphe_data_id][$n][ 'max' ] = $value->max;
             $points[$value->graphe_data_id][$n][ 'center' ] = $value->center;
             $n++;
         }
+        $implodes = [];
+        foreach($pointData as $key=>$value){
+            $imp[ 'cnt' ] = implode(",",$value);
+            $implode = $this->setSmooth($imp,$SopDefaults->smooth);
+            $implodes[$key] = explode(",",$implode);
+        }
 
         $def = $row;
         $first = true;
         foreach($graphe_datas as $key=>$value){
+            $no = 0;
             foreach($points[$value->id] as $k=>$val){
 
                 if($first){
@@ -670,9 +678,11 @@ class GraphsController extends AppController
                     $list[$row][] = $val['max'];
                     $list[$row][] = $val['center'];
                 }
+                //$list[$row][] = $val['count'];
 
-                $list[$row][] = $val['count'];
+                $list[$row][] = $implodes[$value->id][$no];
                 $row++;
+                $no++;
             }
             $row=$def;
             $first = false;
