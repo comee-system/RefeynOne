@@ -347,7 +347,7 @@ class GraphsController extends AppController
             $counter = 0;
             for($j=$i;$j<$i+$smooth;$j++){
                 if(isset($ex[$j])){
-                    $numeric = (int)$numeric+(int)$ex[$j];
+                    $numeric = $numeric+$ex[$j];
                     $counter++;
                 }
             }
@@ -667,6 +667,7 @@ class GraphsController extends AppController
             $implode = $this->setSmooth($imp,$SopDefaults->smooth);
             $implodes[$key] = explode(",",$implode);
         }
+
         $def = $row;
         $first = true;
         foreach($graphe_datas as $key=>$value){
@@ -680,8 +681,11 @@ class GraphsController extends AppController
                     $list[$row][] = $val['center'];
                 }
                 //$list[$row][] = $val['count'];
-
-                $list[$row][] = $implodes[$value->id][$no];
+                if(isset($implodes[$value->id][$no])){
+                    $list[$row][] = $implodes[$value->id][$no];
+                }else{
+                    $list[$row][] = "-";
+                }
                 $row++;
                 $no++;
             }
