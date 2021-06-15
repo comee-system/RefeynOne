@@ -948,7 +948,6 @@ class GraphsController extends AppController
                 $sql .= " GROUP_CONCAT( CASE WHEN disp.".$clum." >= ".$value[ 'minpoint' ]." AND disp.".$clum." <".$value[ 'maxpoint' ]." THEN disp.".$clum." ELSE NULL END ) AS groupLine_".$value[ 'minpoint' ]."_".$value[ 'maxpoint' ].",";
             }
         $sql .= "
-
                 graphe_data_id,
                 data.counts as total,
                 data.label as label
@@ -960,6 +959,7 @@ class GraphsController extends AppController
                 disp.graphe_id = ${id}
                 GROUP BY disp.graphe_data_id
         ";
+print $sql;
 
         $list = $connection->execute($sql)->fetchall('assoc');
 
