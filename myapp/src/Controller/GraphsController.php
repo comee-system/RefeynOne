@@ -995,7 +995,7 @@ class GraphsController extends AppController
             $no = 0;
             foreach($areas as $k=>$val){
                 $lot = "lot_".$val[ 'minpoint' ]."_".$val[ 'maxpoint' ];
-                $lists[$key][$no][ 'lot' ] = $value[$lot];
+                $lists[$key][$no][ 'lot' ] = round($value[$lot]*100,2);
                 $no++;
             }
             /*
