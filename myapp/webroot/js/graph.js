@@ -132,7 +132,6 @@ $(function(){
 });
 var ex = "";
 $.fn.tableReflect = function(ex = ""){
-
     var _id = $("#id").val();
     //解析基準
     var _basic = $("[name='analyticsBasic']:checked").attr("id");
@@ -149,12 +148,13 @@ $.fn.tableReflect = function(ex = ""){
         data:_data,
         datatype: "json",
     }).done(function(data){
-
         if(ex == "export"){ //tableDataExportボタンを押下
             console.log(data);
 
 
         }else{
+            console.log(data);
+
             var _areas = data.areas;
             var _tbl = "";
             $.each(_areas,function(key,value){
@@ -186,6 +186,7 @@ $.fn.tableReflect = function(ex = ""){
             });
         }
     }).fail(function(e){
+        console.log("error");
         console.log(e);
     });
     return false;

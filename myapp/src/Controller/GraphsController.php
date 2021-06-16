@@ -347,7 +347,7 @@ class GraphsController extends AppController
             $counter = 0;
             for($j=$i;$j<$i+$smooth;$j++){
                 if(isset($ex[$j])){
-                    $numeric = (float)$numeric+$ex[$j];
+                    $numeric = (float)$numeric+(float)$ex[$j];
                     $counter++;
                 }
             }
@@ -937,13 +937,9 @@ class GraphsController extends AppController
         ])->first();
 
 
-        /*
         preg_match("/[0-9]/",$this->request->getData("basic"),$basic);
         preg_match("/[0-9]/",$this->request->getData("display"),$display);
         $code = $basic[0].$display[0];
-        */
-        //テスト用
-        $code = 11;
 
         $clum = $this->array_graf_type[$code];
         $smooth = $SopDefaults[ 'smooth' ];
@@ -979,7 +975,6 @@ class GraphsController extends AppController
                 }
             }
         }
-
         $lists = [];
         $label = [];
         $median = 0;
@@ -1016,15 +1011,13 @@ class GraphsController extends AppController
         }
         $SopAreas[ 'label' ] = $label;
         $SopAreas[ 'lists' ] = $lists;
-        //テスト用
-        if(true || $this->request->getData( 'exflag' ) == "export"){
+        if($this->request->getData( 'exflag' ) == "export"){
             $this->tableDataExport($id,$SopAreas);
             exit();
         }
         header('Content-type: application/json');
         echo json_encode($SopAreas,JSON_UNESCAPED_UNICODE);
         exit();
-
     }
 
     public function tableDataExport($graphe_id="",$sa=""){
@@ -1083,11 +1076,12 @@ class GraphsController extends AppController
                 $sql .= " AND gdisplay.max >= ".$this->request->getData('min_x');
                 $sql .= " AND gdisplay.min <= ".$this->request->getData('max_x');
             }
+            /*
             if($this->request->getData("min_y") && $this->request->getData("max_y")){
                 $sql .= " AND gdisplay.".$clum." >= ".$this->request->getData('min_y');
                 $sql .= " AND gdisplay.".$clum." <= ".$this->request->getData('max_y');
             }
-
+*/
             $sql .= " GROUP BY gdisplay.graphe_data_id
                 ) as a
             ORDER BY a.disp ASC
