@@ -972,6 +972,7 @@ class GraphsController extends AppController
         $list = $connection->execute($sql)->fetchall('assoc');
 
 
+        /*
         $sql = "
                 SELECT
                 ";
@@ -999,7 +1000,7 @@ class GraphsController extends AppController
         ";
 
         $points = $connection->execute($sql)->fetchall('assoc');
-
+*/
         //smooth反映
         /*
         foreach($list as $key=>$value){
@@ -1025,7 +1026,7 @@ class GraphsController extends AppController
                 $lot = "lot_".$val[ 'minpoint' ]."_".$val[ 'maxpoint' ];
                 $avg = "avg_".$val[ 'minpoint' ]."_".$val[ 'maxpoint' ];
                 $lists[$key][$no][ 'lot' ] = round($value[$lot]*100,2);
-                $lists[$key][$no][ 'ave' ] = round($points[$key][$avg],2);
+              //  $lists[$key][$no][ 'ave' ] = round($points[$key][$avg],2);
                 $no++;
             }
             /*
