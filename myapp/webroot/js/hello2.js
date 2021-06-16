@@ -411,7 +411,7 @@ function createGraf(){
                 },
                 scaleLabel: {                  // 軸ラベル
                     display: true,                 // 表示の有無
-                    labelString: 'Mv('+_basic+')',     // ラベル
+                    labelString: 'Mw('+_basic+')',     // ラベル
                     fontFamily: "sans-serif",
                     fontColor: "black",             // 文字の色
                     fontFamily: "sans-serif",
