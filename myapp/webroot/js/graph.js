@@ -141,6 +141,7 @@ $.fn.tableReflect = function(ex = ""){
     var _data = {
         "basic":_basic,
         "display":_display,
+        "exflag":ex
     };
     $.ajax({
         url:"/graphs/getAreaTable/"+_id,

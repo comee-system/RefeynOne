@@ -6,6 +6,7 @@ use Cake\Event\Event;
 use Cake\Datasource\ConnectionManager;
 use Cake\Core\Configure;
 use Cake\Error\Debugger;
+use PHPExcel_IOFactory;
 /**
  * Users Controller
  *
@@ -664,7 +665,11 @@ class GraphsController extends AppController
         $implodes = [];
         foreach($pointData as $key=>$value){
             $imp[ 'cnt' ] = implode(",",$value);
-            $implode = $this->setSmooth($imp,$SopDefaults->smooth);
+            if($SopDefaults->smooth == 1){
+                $implode = $imp;
+            }else{
+                $implode = $this->setSmooth($imp,$SopDefaults->smooth);
+            }
             $implodes[$key] = explode(",",$implode);
         }
 
@@ -938,9 +943,14 @@ class GraphsController extends AppController
             "graphe_id"=>$id
         ])->first();
 
+
+        /*
         preg_match("/[0-9]/",$this->request->getData("basic"),$basic);
         preg_match("/[0-9]/",$this->request->getData("display"),$display);
         $code = $basic[0].$display[0];
+        */
+        //テスト用
+        $code = 11;
 
         $clum = $this->array_graf_type[$code];
         $smooth = $SopDefaults[ 'smooth' ];
@@ -1013,11 +1023,46 @@ class GraphsController extends AppController
         }
         $SopAreas[ 'label' ] = $label;
         $SopAreas[ 'lists' ] = $lists;
+        //テスト用
+        if(true || $this->request->getData( 'exflag' ) == "export"){
+            $this->tableDataExport($id,$SopAreas);
+            exit();
+        }
         header('Content-type: application/json');
         echo json_encode($SopAreas,JSON_UNESCAPED_UNICODE);
         exit();
 
     }
+
+    public function tableDataExport($graphe_id="",$sa=""){
+
+        // 入出力の情報設定
+        $driPath    = realpath(TMP) . "/excel/";
+        $inputPath  = $driPath . "templete.xlsx";
+        $sheetName  = "data_sheet";
+        $outputFile = "output_" . $graphe_id . ".xlsx";
+        $outputPath = $driPath . $outputFile;
+
+        // Excalファイル作成
+        $reader = PHPExcel_IOFactory::createReader('Excel2007');
+        $book  = $reader->load($inputPath);
+        $sheet  = $book->getSheetByName($sheetName);
+
+        // データを配置
+        $sheet->setCellValue("D2",$sa['areas'][0][ 'minpoint' ]);
+        $sheet->setCellValue("F2",$sa['areas'][0][ 'maxpoint' ]);
+        $sheet->setCellValue("H2",$sa['areas'][1][ 'minpoint' ]);
+        $sheet->setCellValue("J2",$sa['areas'][1][ 'maxpoint' ]);
+
+        // 保存
+        $book->setActiveSheetIndex(0);
+        $writer = PHPExcel_IOFactory::createWriter($book, 'Excel2007');
+        $writer->save($outputPath);
+
+
+        exit();
+    }
+
 
     public function createDispGraph($id = ""){
         $this->autoRender = false;
@@ -1179,11 +1224,4 @@ class GraphsController extends AppController
 
         exit();
     }
-    public function tableDataExport($graphe_id){
-        $this->autoRender = false;
-
-
-        exit();
-    }
-
 }
