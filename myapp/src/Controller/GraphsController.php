@@ -665,11 +665,7 @@ class GraphsController extends AppController
         $implodes = [];
         foreach($pointData as $key=>$value){
             $imp[ 'cnt' ] = implode(",",$value);
-            if($SopDefaults->smooth == 1){
-                $implode = $imp;
-            }else{
-                $implode = $this->setSmooth($imp,$SopDefaults->smooth);
-            }
+            $implode = $this->setSmooth($imp,$SopDefaults->smooth);
             $implodes[$key] = explode(",",$implode);
         }
 
