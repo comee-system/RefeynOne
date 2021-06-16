@@ -954,7 +954,7 @@ class GraphsController extends AppController
 
                 $sql .= " GROUP_CONCAT( CASE WHEN disp.".$clum." >= ".$value[ 'minpoint' ]." AND disp.".$clum." <".$value[ 'maxpoint' ]." THEN disp.".$clum." ELSE NULL END ) AS groupLine_".$value[ 'minpoint' ]."_".$value[ 'maxpoint' ].",";
 
-                $sql .= " SUM( CASE WHEN disp.max >= ".$value[ 'minpoint' ]." AND disp.max <= ".$value[ 'maxpoint' ]." THEN disp.counts3 ELSE 0 END ) AS lot_".$value[ 'minpoint' ]."_".$value[ 'maxpoint' ].",";
+                $sql .= " SUM( CASE WHEN disp.max > ".$value[ 'minpoint' ]." AND disp.max <= ".$value[ 'maxpoint' ]." THEN disp.counts3 ELSE 0 END ) AS lot_".$value[ 'minpoint' ]."_".$value[ 'maxpoint' ].",";
             }
         $sql .= "
 
