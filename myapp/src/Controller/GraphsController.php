@@ -342,13 +342,12 @@ class GraphsController extends AppController
         $start = 0-floor($smooth/2);
         $end = $count+floor($smooth/2)-1;
         $list = [];
-
         for($i=$start;$i<$end-1;$i++){
             $numeric=0;
             $counter = 0;
             for($j=$i;$j<$i+$smooth;$j++){
                 if(isset($ex[$j])){
-                    $numeric = $numeric+(int)$ex[$j];
+                    $numeric = (float)$numeric+$ex[$j];
                     $counter++;
                 }
             }
@@ -357,9 +356,7 @@ class GraphsController extends AppController
             }else{
                 $list[] = $numeric/$smooth;
             }
-
         }
-
         $imp = implode(",",$list);
         return $imp;
     }
@@ -654,8 +651,8 @@ class GraphsController extends AppController
         $points = [];
         $pointData = [];
         $n = 0;
-        foreach($GrapheDisplays as $key=>$value){
 
+        foreach($GrapheDisplays as $key=>$value){
             $pointData[$value->graphe_data_id][$n] = $value->$graf_type;
             $points[$value->graphe_data_id][$n][ 'min' ] = $value->min;
             $points[$value->graphe_data_id][$n][ 'max' ] = $value->max;
