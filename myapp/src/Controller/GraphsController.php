@@ -1024,7 +1024,7 @@ class GraphsController extends AppController
                 $lot = "lot_".$val[ 'minpoint' ]."_".$val[ 'maxpoint' ];
                 $avg = "avg_".$val[ 'minpoint' ]."_".$val[ 'maxpoint' ];
                 $lists[$key][$no][ 'lot' ] = round($value[$lot]*100,2);
-                $lists[$key][$no][ 'ave' ] = round($points[$key][$avg],2);
+                $lists[$key][$no][ 'ave' ] = @round($points[$key][$avg],2);
                 $no++;
             }
             /*
