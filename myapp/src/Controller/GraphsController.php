@@ -197,8 +197,8 @@ class GraphsController extends AppController
                         $max = $comp[ 'max' ];
                         $ctr = ($min+$max)/2;
                         $counts2 = $value[ $rg2 ];
-                        $counts3 = ($counts1 == 0)?0:round($counts1/$total,2);
-                        $counts4 = ($counts2 == 0)?0:round($counts2/$total2,2);
+                        $counts3 = ($counts1 == 0)?0:round($counts1/$total,5);
+                        $counts4 = ($counts2 == 0)?0:round($counts2/$total2,5);
                         $insert .= "(
                             '".$user_id."',
                             '".$graphe_id."',
@@ -351,11 +351,11 @@ class GraphsController extends AppController
                     $counter++;
                 }
             }
-            if($counter < $smooth){
-                $list[] = "-";
-            }else{
+            //if($counter < $smooth){
+            //    $list[] = "-";
+            //}else{
                 $list[] = $numeric/$smooth;
-            }
+            //}
         }
         $imp = implode(",",$list);
         return $imp;
