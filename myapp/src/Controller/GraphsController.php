@@ -340,9 +340,9 @@ class GraphsController extends AppController
         $ex = explode(",",$array[ 'cnt' ]);
         $count = count($ex);
         $start = 0-floor($smooth/2);
-        $end = $count+floor($smooth/2)-1;
+        $end = $count+floor($smooth/2);
         $list = [];
-        for($i=$start;$i<$end-1;$i++){
+        for($i=$start;$i<$end;$i++){
             $numeric=0;
             $counter = 0;
             for($j=$i;$j<$i+$smooth;$j++){
@@ -351,11 +351,11 @@ class GraphsController extends AppController
                     $counter++;
                 }
             }
-            //if($counter < $smooth){
-            //    $list[] = "-";
-            //}else{
+            if($i < 0 || $i >= $count){
+                $list[] = "-";
+            }else{
                 $list[] = $numeric/$smooth;
-            //}
+            }
         }
         $imp = implode(",",$list);
         return $imp;
@@ -679,11 +679,11 @@ class GraphsController extends AppController
                     $list[$row][] = $val['center'];
                 }
                 //$list[$row][] = $val['count'];
-                if(isset($implodes[$value->id][$no])){
+               // if(isset($implodes[$value->id][$no])){
                     $list[$row][] = $implodes[$value->id][$no];
-                }else{
-                    $list[$row][] = "-";
-                }
+               // }else{
+               //     $list[$row][] = "-";
+               // }
                 $row++;
                 $no++;
             }
