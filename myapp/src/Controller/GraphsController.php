@@ -957,7 +957,6 @@ class GraphsController extends AppController
                 $sql .= " SUM( CASE WHEN disp.max > ".$value[ 'minpoint' ]." AND disp.max <= ".$value[ 'maxpoint' ]." THEN disp.counts3 ELSE 0 END ) AS lot_".$value[ 'minpoint' ]."_".$value[ 'maxpoint' ].",";
             }
         $sql .= "
-
                 graphe_data_id,
                 data.counts as total,
                 data.label as label
@@ -972,15 +971,16 @@ class GraphsController extends AppController
         $list = $connection->execute($sql)->fetchall('assoc');
 
 
-    //    $sql = "set global group_concat_max_len = 100000;";
-    //    $connection->execute($sql)->fetchall('assoc');
+
 
         $sql = "
                 SELECT
                 ";
                 foreach($areas as $k=>$value){
                     $sql .= " a.pt_".$value[ 'minpoint' ]."_".$value[ 'maxpoint' ]."/a.c_".$value[ 'minpoint' ]."_".$value[ 'maxpoint' ]." as avg_".$value[ 'minpoint' ]."_".$value[ 'maxpoint' ].",";
+                    /*
                     $sql .= "a.line_".$value[ 'minpoint' ]."_".$value[ 'maxpoint' ]." as m_".$value[ 'minpoint' ]."_".$value[ 'maxpoint' ].",";
+                    */
                 }
         $sql .= "a.id ";
         $sql .= "
@@ -991,7 +991,10 @@ class GraphsController extends AppController
 
                         $sql .= " SUM( CASE WHEN  pointdata >= ".$value[ 'minpoint' ]." AND pointdata < ".$value[ 'maxpoint' ]." THEN 1 ELSE 0 END ) AS c_".$value[ 'minpoint' ]."_".$value[ 'maxpoint' ].",";
 
+/*
                         $sql .= " GROUP_CONCAT(CASE WHEN  pointdata >= ".$value[ 'minpoint' ]." AND pointdata < ".$value[ 'maxpoint' ]." THEN pointdata ELSE '' END) AS line_".$value[ 'minpoint' ]."_".$value[ 'maxpoint' ].",";
+*/
+
                     }
 
         $sql .= "
@@ -1005,8 +1008,66 @@ class GraphsController extends AppController
                     GROUP BY graphe_data_id
                 ) as a
         ";
+
         $points = $connection->execute($sql)->fetchall('assoc');
 
+
+        $median = [];
+        foreach($areas as $k=>$value){
+            $minpoint = $value['minpoint'];
+            $maxpoint = $value['maxpoint'];
+            $sql = "
+                    SELECT
+                        *
+                    FROM
+                        graphe_points
+                    WHERE
+                        user_id = ${user_id} AND
+                        graphe_id = ${id} AND
+                        pointdata >= ${minpoint} AND
+                        pointdata < ${maxpoint} ";
+            $medi = $connection->execute($sql)->fetchall('assoc');
+            $ex = [];
+            $pt = "m_".$value[ 'minpoint' ]."_".$value[ 'maxpoint' ];
+            foreach($medi as $ky=>$val){
+                $ex[ $pt ][$val[ 'graphe_data_id' ]][] = $val[ 'pointdata' ];
+            }
+            foreach($ex[$pt] as $ky=>$val){
+                $median[ $pt ][$ky] = $this->median($val);
+            }
+        }
+
+        $mode = [];
+        if($basic[0] == 2){
+            $clum = "counts2";
+        }else{
+            $clum = "counts1";
+        }
+        foreach($areas as $k=>$value){
+            $minpoint = $value['minpoint'];
+            $maxpoint = $value['maxpoint'];
+            $sql = "
+                    SELECT
+                        *
+                    FROM
+                        graphe_displays
+                    WHERE
+                        user_id = ${user_id} AND
+                        graphe_id = ${id} AND
+                        ${clum} >= ${minpoint} AND
+                        ${clum} < ${maxpoint} ";
+            $mod = $connection->execute($sql)->fetchall('assoc');
+            $ex = [];
+            $pt = "m_".$value[ 'minpoint' ]."_".$value[ 'maxpoint' ];
+            $center = [];
+            foreach($mod as $ky=>$val){
+                $ex[ $pt ][$val[ 'graphe_data_id' ]][] = $val[ $clum ];
+                $center[$val[ $clum ]] = $val['center'];
+            }
+            foreach($ex[$pt] as $ky=>$val){
+                $mode[ $pt ][$ky] = $center[$this->mode($val)];
+            }
+        }
         //smooth反映
         /*
         foreach($list as $key=>$value){
@@ -1020,8 +1081,6 @@ class GraphsController extends AppController
         */
         $lists = [];
         $label = [];
-        $median = 0;
-        $mode = [];
         $lot = 0;
         $ave = 0;
         foreach($list as $key=>$value){
@@ -1034,8 +1093,17 @@ class GraphsController extends AppController
                 $m = "m_".$val[ 'minpoint' ]."_".$val[ 'maxpoint' ];
                 $lists[$key][$no][ 'lot' ] = round($value[$lot]*100,2);
                 $lists[$key][$no][ 'ave' ] = round($points[$key][$avg],2);
-                $ex = explode(",",$points[$key][$m]);
-                $lists[$key][$no][ 'median' ] = round($this->median($ex),2);
+
+                if(isset($median[$m][$value[ 'graphe_data_id' ]])){
+                    $lists[$key][$no][ 'median' ] = round($median[$m][$value[ 'graphe_data_id' ]],2);
+                }else{
+                    $lists[$key][$no][ 'median' ] = "-";
+                }
+                if(isset($mode[$m][$value[ 'graphe_data_id' ]])){
+                    $lists[$key][$no][ 'mode' ] = $mode[$m][$value[ 'graphe_data_id' ]];
+                }else{
+                    $lists[$key][$no][ 'mode' ] = "-";
+                }
                 $no++;
             }
             /*
@@ -1181,13 +1249,41 @@ class GraphsController extends AppController
     /*
     * 最頻値を求める
     */
-    public function mode(array $values)
+    public function mode($list,&$count = null)
     {
-    	//最頻値を求める。それぞれの頻出回数を計算して配列に入れる。
-    	$data = array_count_values($values);
-    	$max = max($data);//配列から最大値を取得する。
-    	$result[0] = array_keys($data,$max);
-    	return $result[0];
+    	if(empty($list)){
+            $count = 0;
+            return null;
+        }
+
+        //値を集計して降順に並べる
+        $list = array_count_values($list);
+        arsort($list);
+
+        //最初のキーを取り出す
+        reset($list);
+        $before_key = key($list);
+        $before_val = array_shift($list);
+        $no1_list = array($before_key);
+
+        //2番目以降の値との比較
+        foreach ($list as $key => $val){
+            if($before_val > $val){
+                break;
+            }else{
+                // 個数が同値の場合は配列に追加する
+                array_push($no1_list,$key);
+                $before_key = $key;
+                $before_val = $val;
+            }
+        }
+        $count = $before_val;
+        if(count($no1_list) > 1){
+            //同値の場合の処理があればここに書く、今回はarray_shiftで最初に追加したkeyを返した
+            return array_shift($no1_list);
+        }else{
+            return $before_key;
+        }
     }
     /*
     *中央値を求める関数
