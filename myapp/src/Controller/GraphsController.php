@@ -926,6 +926,8 @@ class GraphsController extends AppController
         $areas= $this->SopAreas->find()->where([
             "user_id"=>$this->uAuth[ 'id' ],
             "graphe_id"=>$id,
+            "minpoint != "=>0,
+            "maxpoint != "=>0
         ])->toArray();
 
         $user_id = $this->uAuth['id'];
@@ -937,18 +939,23 @@ class GraphsController extends AppController
         ])->first();
 
 
+        $min = $SopDefaults[ 'defaultpoint' ];
+        $max = $SopDefaults[ 'dispareamax' ];
+
         preg_match("/[0-9]/",$this->request->getData("basic"),$basic);
         preg_match("/[0-9]/",$this->request->getData("display"),$display);
         $code = $basic[0].$display[0];
 
         $clum = $this->array_graf_type[$code];
         $smooth = $SopDefaults[ 'smooth' ];
-
         $sql = " SELECT ";
             foreach($areas as $k=>$value){
                 $sql .= " SUM( CASE WHEN disp.".$clum." >= ".$value[ 'minpoint' ]." AND disp.".$clum." <".$value[ 'maxpoint' ]." THEN disp.".$clum." ELSE 0 END ) AS sum_".$value[ 'minpoint' ]."_".$value[ 'maxpoint' ].",";
 
                 $sql .= " GROUP_CONCAT( CASE WHEN disp.".$clum." >= ".$value[ 'minpoint' ]." AND disp.".$clum." <".$value[ 'maxpoint' ]." THEN disp.".$clum." ELSE NULL END ) AS groupLine_".$value[ 'minpoint' ]."_".$value[ 'maxpoint' ].",";
+
+                $sql .= " SUM( CASE WHEN disp.min >= ".$value[ 'minpoint' ]." AND disp.max <= ".$value[ 'maxpoint' ]." THEN disp.counts3 ELSE 0 END ) AS lot_".$value[ 'minpoint' ]."_".$value[ 'maxpoint' ].",";
+
             }
         $sql .= "
 
@@ -963,10 +970,10 @@ class GraphsController extends AppController
                 disp.graphe_id = ${id}
                 GROUP BY disp.graphe_data_id
         ";
-
         $list = $connection->execute($sql)->fetchall('assoc');
 
         //smooth反映
+        /*
         foreach($list as $key=>$value){
             foreach($value as $k=>$val){
                 if(preg_match("/^groupLine_/",$k)){
@@ -975,6 +982,7 @@ class GraphsController extends AppController
                 }
             }
         }
+        */
         $lists = [];
         $label = [];
         $median = 0;
@@ -985,6 +993,12 @@ class GraphsController extends AppController
             $total = $value['total'];
             $label[$key]['label'] = $value[ 'label' ];
             $no = 0;
+            foreach($areas as $k=>$val){
+                $lot = "lot_".$val[ 'minpoint' ]."_".$val[ 'maxpoint' ];
+                $lists[$key][$no][ 'lot' ] = $value[$lot];
+                $no++;
+            }
+            /*
             foreach($value as $k=>$val){
                 if(preg_match("/^groupLine_/",$k)){
                     $ex = [];
@@ -992,22 +1006,20 @@ class GraphsController extends AppController
                     $median = $this->median($ex);
                     $mode = $this->mode($ex);
                 }
-                if(preg_match("/^sum_/",$k)){
-                    $lot = round($val/$total*100,2);
-                    $ave = round(($val == 0)?0:$total/$val,2);
+                // $lot = round($val/$total*100,2);
+                $ave = round(($val == 0)?0:$total/$val,2);
 
-                    $lists[$key][$no][ 'lot' ] = $lot;
-                    $lists[$key][$no][ 'ave' ] = $ave;
-                    $lists[$key][$no][ 'median' ] = $median;
-                    if(!empty($mode[0])){
-                        $lists[$key][$no][ 'mode' ] = $mode[0];
-                    }else{
-                        $lists[$key][$no][ 'mode' ] = 0;
-                    }
-                    $no++;
-
+                // $lists[$key][$no][ 'lot' ] = $lot;
+                $lists[$key][$no][ 'ave' ] = $ave;
+                $lists[$key][$no][ 'median' ] = $median;
+                if(!empty($mode[0])){
+                    $lists[$key][$no][ 'mode' ] = $mode[0];
+                }else{
+                    $lists[$key][$no][ 'mode' ] = 0;
                 }
+                $no++;
             }
+            */
         }
         $SopAreas[ 'label' ] = $label;
         $SopAreas[ 'lists' ] = $lists;
