@@ -972,12 +972,15 @@ class GraphsController extends AppController
         $list = $connection->execute($sql)->fetchall('assoc');
 
 
+    //    $sql = "set global group_concat_max_len = 100000;";
+    //    $connection->execute($sql)->fetchall('assoc');
 
         $sql = "
                 SELECT
                 ";
                 foreach($areas as $k=>$value){
-        $sql .= " a.pt_".$value[ 'minpoint' ]."_".$value[ 'maxpoint' ]."/a.c_".$value[ 'minpoint' ]."_".$value[ 'maxpoint' ]." as avg_".$value[ 'minpoint' ]."_".$value[ 'maxpoint' ].",";
+                    $sql .= " a.pt_".$value[ 'minpoint' ]."_".$value[ 'maxpoint' ]."/a.c_".$value[ 'minpoint' ]."_".$value[ 'maxpoint' ]." as avg_".$value[ 'minpoint' ]."_".$value[ 'maxpoint' ].",";
+                    $sql .= "a.line_".$value[ 'minpoint' ]."_".$value[ 'maxpoint' ]." as m_".$value[ 'minpoint' ]."_".$value[ 'maxpoint' ].",";
                 }
         $sql .= "a.id ";
         $sql .= "
@@ -987,6 +990,8 @@ class GraphsController extends AppController
                         $sql .= " SUM( CASE WHEN  pointdata >= ".$value[ 'minpoint' ]." AND pointdata < ".$value[ 'maxpoint' ]." THEN pointdata ELSE 0 END ) AS pt_".$value[ 'minpoint' ]."_".$value[ 'maxpoint' ].",";
 
                         $sql .= " SUM( CASE WHEN  pointdata >= ".$value[ 'minpoint' ]." AND pointdata < ".$value[ 'maxpoint' ]." THEN 1 ELSE 0 END ) AS c_".$value[ 'minpoint' ]."_".$value[ 'maxpoint' ].",";
+
+                        $sql .= " GROUP_CONCAT(CASE WHEN  pointdata >= ".$value[ 'minpoint' ]." AND pointdata < ".$value[ 'maxpoint' ]." THEN pointdata ELSE '' END) AS line_".$value[ 'minpoint' ]."_".$value[ 'maxpoint' ].",";
                     }
 
         $sql .= "
@@ -1000,7 +1005,6 @@ class GraphsController extends AppController
                     GROUP BY graphe_data_id
                 ) as a
         ";
-
         $points = $connection->execute($sql)->fetchall('assoc');
 
         //smooth反映
@@ -1027,8 +1031,11 @@ class GraphsController extends AppController
             foreach($areas as $k=>$val){
                 $lot = "lot_".$val[ 'minpoint' ]."_".$val[ 'maxpoint' ];
                 $avg = "avg_".$val[ 'minpoint' ]."_".$val[ 'maxpoint' ];
+                $m = "m_".$val[ 'minpoint' ]."_".$val[ 'maxpoint' ];
                 $lists[$key][$no][ 'lot' ] = round($value[$lot]*100,2);
                 $lists[$key][$no][ 'ave' ] = round($points[$key][$avg],2);
+                $ex = explode(",",$points[$key][$m]);
+                $lists[$key][$no][ 'median' ] = round($this->median($ex),2);
                 $no++;
             }
             /*
@@ -1185,8 +1192,12 @@ class GraphsController extends AppController
     /*
     *中央値を求める関数
     */
-    public function median(array $values){
+    public function median(array $val){
 
+        $values = [];
+        foreach($val as $key=>$value){
+            if($value) $values[] = $value;
+        }
 		sort($values);
 		if (count($values) % 2 == 0){
 			return (($values[(count($values)/2)-1]+$values[((count($values)/2))])/2);
