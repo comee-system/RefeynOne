@@ -1026,8 +1026,10 @@ class GraphsController extends AppController
             foreach($medi as $ky=>$val){
                 $ex[ $pt ][$val[ 'graphe_data_id' ]][] = $val[ 'pointdata' ];
             }
-            foreach($ex[$pt] as $ky=>$val){
-                $median[ $pt ][$ky] = $this->median($val);
+            if(!empty($ex[ $pt ])){
+                foreach($ex[$pt] as $ky=>$val){
+                    $median[ $pt ][$ky] = $this->median($val);
+                }
             }
         }
 
