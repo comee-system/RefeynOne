@@ -164,7 +164,7 @@
                                     ])?>
                                 </div>
                                 <div class="col-6 text-right">
-                                    <?= $this->Html->link("SOPExport",[
+                                    <?= $this->Html->link("SOP Export",[
                                         "controller"=>"graphs",
                                         "action"=>"outputSOP",
                                         $id
@@ -207,7 +207,7 @@
                         <div class="row mt-1">
                             <div class="col-12">
                                 <div class="card card-info">
-                                    <div class="card-header"><?= __("データ表示") ?></div>
+                                    <div class="card-header"><?= __("データ表示形式") ?></div>
                                     <div class="card-body">
                                         <div class="custom-control custom-radio">
                                             <input class="custom-control-input" type="radio" id="dataDisplay1" name="dataDisplay" checked >
@@ -298,7 +298,7 @@
                    <?= __("エリア毎のテーブル表示") ?>
 
                 </div>
-                <?= $this->Html->link("TableDataExport","javascript:void(0);",[
+                <?= $this->Html->link("Table Data Export","javascript:void(0);",[
                         "class"=>"btn btn-warning w-25 text-white",
                         "id"=>"tableDataExport"
                     ])?>
