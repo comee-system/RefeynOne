@@ -268,7 +268,7 @@
                         </div>
 
                         <div class="col-12">
-                            <?= $this->Html->link("グラフ表示変更",$this->request->getParam('controller')."/step3_graph/".$id,[
+                            <?= $this->Html->link("選択データ変更",$this->request->getParam('controller')."/step3_graph/".$id,[
                                 'escape'=>false,
                                 'class'=>'btn btn-primary w-100 text-white text-center'
                             ])?>
