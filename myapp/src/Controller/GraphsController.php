@@ -1098,7 +1098,7 @@ class GraphsController extends AppController
                 if(isset($median[$m][$value[ 'graphe_data_id' ]])){
                     $lists[$key][$no][ 'median' ] = round($median[$m][$value[ 'graphe_data_id' ]],2);
                 }else{
-                    $lists[$key][$no][ 'median' ] = "-";
+                    $lists[$key][$no][ 'median' ] = "0";
                 }
                 if(isset($mode[$m][$value[ 'graphe_data_id' ]])){
                     $lists[$key][$no][ 'mode' ] = $mode[$m][$value[ 'graphe_data_id' ]];
