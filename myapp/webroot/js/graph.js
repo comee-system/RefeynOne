@@ -2,6 +2,13 @@ export const write3 = function () {
 
 };
 $(function(){
+    //リセット
+    $("#dataResetButton").click(function(){
+        $("[name='min_x']").val("");
+        $("[name='max_x']").val("");
+        $("[name='min_y']").val("");
+        $("[name='max_y']").val("");
+    });
     $(this).getGraphData();
 
     //エリアごとのテーブル反映
@@ -26,6 +33,11 @@ $(function(){
     $(document).on("blur",".editlabel",function(){
         var _id = $(this).attr("id").split("-")[1];
         var _val = $(this).val();
+        $("#errtext-"+_id).hide();
+        if(_val.match(/[^0-9a-zA-Z]+/i)){
+            $("#errtext-"+_id).show();
+            return false;
+        }
         var _data = {"label":_val};
         $.ajax({
             url:"/graphs/edit/"+_id,
@@ -83,18 +95,6 @@ $(function(){
         var _val = $(this).val();
         var _name = $(this).attr("name").split("-");
         var _id = parseInt(_name[1]);
-        //値のチェック
-        /*
-        var _minpoint = $("#minpoint-"+_id).val();
-        var _maxpoint = $("#maxpoint-"+_id).val();
-        if(parseInt(_minpoint) >= parseInt(_maxpoint)){
-            alert("エリア設定の入力値に不備があります。");
-            var _id = $(this).attr("id");
-            $("#"+_id).val(_before[_id]);
-            return false;
-        }
-        */
-
         _name = _name[0];
         var _data = {
             name:_name,
@@ -111,6 +111,7 @@ $(function(){
         return false;
     });
     //グラフ表示ステータス変更
+    /*
     $(".graph_status_edit").click(function(){
         var _id = $(this).parent("li").attr("id").split("-");
         var _chk = $(this).prop("checked");
@@ -128,7 +129,7 @@ $(function(){
 
         return true;
     });
-
+    */
 });
 var ex = "";
 $.fn.tableReflect = function(ex = ""){
@@ -270,7 +271,9 @@ $.fn.getGraphData = function(){
             $.each(data, function(key, value){
                 _tbl = "<tr>";
                 _tbl += "<td>"+_num+"</td>";
-                _tbl += "<td><input type='text' class='form-control editlabel' id='label-"+value.id+"' value='"+value.label+"' /></td>";
+                _tbl += "<td><input type='text' class='form-control editlabel' maxlength=20 id='label-"+value.id+"' value='"+value.label+"' />";
+                _tbl += "<div class='text-danger text-hidden' id='errtext-"+value.id+"'>入力不可文字が含まれています。</div>";
+                _tbl += "</td>";
                 _tbl += "<td>"+value.filename+"</td>";
                 _tbl += "<td class='text-right'>"+value.counts+"</td>";
                 _tbl += "<td class='text-center'><button class='btn-sm btn-danger grapdelete' id='delete-"+value.id+"'>削除</button></td>";

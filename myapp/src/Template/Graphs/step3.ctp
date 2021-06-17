@@ -95,7 +95,7 @@
                                     <?php endfor; ?>
                                 </tr>
                                                                 <tr>
-                                    <td><?= __("下限") ?></td>
+                                    <td nowrap><?= __("エリア最小値（<=）") ?></td>
                                     <?php for($i=0;$i<=4;$i++ ):?>
                                     <td class="text-center" >
                                         <?php
@@ -115,7 +115,7 @@
                                     <?php endfor; ?>
                                 </tr>
                                 <tr>
-                                    <td><?= __("上限") ?></td>
+                                    <td nowrap><?= __("エリア最大値（>）") ?></td>
                                     <?php for($i=0;$i<=4;$i++ ):?>
                                     <td class="text-center" >
                                         <?php
@@ -259,7 +259,8 @@
                                         </div>
                                         <div class="row mt-1">
                                             <div class="col-12 text-right">
-                                                <a href="javascript:void(0);" id="dataAreaButton" class="btn-sm text-white  btn-warning">反映</a>
+                                                <a href="javascript:void(0);" id="dataResetButton" class="btn-sm  btn-gray text-black btn-secondary">リセット</a>
+                                                <a href="javascript:void(0);" id="dataAreaButton" class="btn-sm text-white  btn-primary">反映</a>
                                             </div>
                                         </div>
                                     </div>
@@ -322,9 +323,15 @@
                                     endif;
                                     ?>
 
-                                    <td><?= __("範囲最小値") ?></td>
+                                    <td>
+                                        <?= __("エリア最小値") ?><br />
+                                        <?= __("(<=)") ?>
+                                    </td>
                                     <td id="areamins-<?=$sop_id?>">-</td>
-                                    <td><?= __("範囲最大値") ?></td>
+                                    <td>
+                                        <?= __("エリア最大値") ?><br />
+                                        <?= __("(>)") ?>
+                                    </td>
                                     <td id="areamaxs-<?=$sop_id?>">-</td>
                                 <?php endfor; ?>
                             </tr>

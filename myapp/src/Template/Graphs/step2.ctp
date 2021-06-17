@@ -87,7 +87,7 @@
                                 <td>
                                     <?= $this->Form->control("binsize",[
                                             "class"=>"form-control sopText",
-                                            "type"=>"text",
+                                            "type"=>"number",
                                             "min"=>"0",
                                             "value"=>(!empty($SopDefaults->binsize))?$SopDefaults->binsize:"0",
                                             "label"=>false,
@@ -126,7 +126,7 @@
                                 <?php endfor; ?>
                             </tr>
                             <tr>
-                                <td><?= __("下限") ?></td>
+                                <td><?= __("エリア最小値（<=）") ?></td>
                                 <?php for($i=0;$i<=4;$i++ ):?>
                                 <td >
                                     <?php if(isset($SopAreas[$i][ 'minpoint' ])): ?>
@@ -136,7 +136,7 @@
                                 <?php endfor; ?>
                             </tr>
                             <tr>
-                                <td><?= __("上限") ?></td>
+                                <td><?= __("エリア最大値（>）") ?></td>
                                 <?php for($i=0;$i<=4;$i++ ):?>
                                 <td >
                                     <?php if(isset($SopAreas[$i][ 'maxpoint' ])): ?>
@@ -163,7 +163,8 @@
             </div>
             <div class="col-md-6 text-center">
                 <?= $this->Html->link("次へ(解析)","/graphs/beforeStep3/".$id,[
-                    "class"=>"btn btn-primary w-75"
+                    "class"=>"btn btn-primary w-75",
+                    "id"=>"nextStep3"
                 ])?>
             </div>
         </div>

@@ -791,38 +791,32 @@ class GraphsController extends AppController
     }
     public function edit($id = null)
     {
+        $this->autoRender=false;
         $GrapheDatas = $this->GrapheDatas->get($id, [
             'contain' => [],
         ]);
         $GrapheDatas = $this->GrapheDatas->patchEntity($GrapheDatas, $this->request->getData());
         $this->GrapheDatas->save($GrapheDatas);
     }
-    public function editDispStatus()
+    public function editDispStatus($id)
     {
         $this->autoRender = false;
+        $this->GrapheDatas->updateAll(['disp' => '0'], ['graphe_id' => $id]);
+        $sort = 1;
+        foreach($this->request->getData("graph_status") as $k=>$value){
+            if($value == "on"){
+                $GrapheDatas = $this->GrapheDatas->get($k);
+                $GrapheDatas->disp = $sort;
+                $this->GrapheDatas->save($GrapheDatas);
+                $sort++;
+            }
+        }
 
-        $id = $this->request->getData("id");
-        $chk = $this->request->getData("chk");
-        $userid = $this->uAuth['id'];
 
-        $GrapheDatas = $this->GrapheDatas->find()->where([
-            'user_id'=>$userid,
-            'id'=>$id
-        ])->first();
-        //最大値
-        $GrapheDatasMax = $this->GrapheDatas->find();
+        $this->Flash->success(__('データの更新を行いました。'));
 
-        $GrapheDatasMax = $GrapheDatasMax->select(['max_order' => $GrapheDatasMax->func()->max('disp')])
-        ->where([
-            'user_id'=>$userid,
-            'graphe_id'=>$GrapheDatas->graphe_id
-        ])->first();
-        $flag = 0;
-        if($chk === "true" ) $flag = $GrapheDatasMax[ 'max_order' ]+1;
-        $set[ 'disp' ] = $flag;
+        return $this->redirect(['controller'=>"Graphs",'action' =>'step3',$id]);
 
-        $GrapheDatas->disp = $flag;
-        $this->GrapheDatas->save($GrapheDatas);
         exit();
     }
     public function editDispSmooth($id)
@@ -1182,7 +1176,7 @@ class GraphsController extends AppController
         $sql = "
             SELECT a.* FROM (
             SELECT
-                GROUP_CONCAT( ".$clum." ) as cnt,
+                GROUP_CONCAT( ".$clum." order by gdisplay.min ) as cnt,
                 gdisplay.graphe_data_id,
                 gdata.label,
                 gdata.disp
@@ -1193,21 +1187,27 @@ class GraphsController extends AppController
                 gdisplay.user_id='${user_id}' AND
                 gdisplay.graphe_id = '${id}' AND
                 gdata.disp != 0 ";
+
             if($this->request->getData("min_x") && $this->request->getData("max_x")){
                 $sql .= " AND gdisplay.max >= ".$this->request->getData('min_x');
                 $sql .= " AND gdisplay.min <= ".$this->request->getData('max_x');
             }
-            /*
+
+/*
             if($this->request->getData("min_y") && $this->request->getData("max_y")){
                 $sql .= " AND gdisplay.".$clum." >= ".$this->request->getData('min_y');
                 $sql .= " AND gdisplay.".$clum." <= ".$this->request->getData('max_y');
             }
 */
             $sql .= " GROUP BY gdisplay.graphe_data_id
+                ORDER BY gdisplay.min asc
                 ) as a
             ORDER BY a.disp ASC
             ";
-        $display = $connection->execute($sql)->fetchall('assoc');
+
+        $display['list'] = $connection->execute($sql)->fetchall('assoc');
+
+
         header('Content-type: application/json');
         echo json_encode($display,JSON_UNESCAPED_UNICODE);
         exit();

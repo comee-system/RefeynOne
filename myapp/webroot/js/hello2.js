@@ -22,6 +22,23 @@ if($("#createGraf").length){
 
 };
 
+$("#nextStep3").click(function(){
+    //(グラフの終了値 - グラフの開始値)/ Binサイズが　３００までOKとする。
+    var _fin = $("#dispareamax").val();
+    var _start = $("#defaultpoint").val();
+    var _bin = $("#binsize").val();
+    var _result = (_fin-_start)/_bin;
+
+    if(_result > 300){
+        var _message = "(グラフの終了値 - グラフの開始値)/ Binサイズが300を超えています。\n300以下になるように再設定してください。\n\n";
+        _message += "参考\n・10,000 50 →メッシュ　200　12s\n・10,000 25 →メッシュ　400    19s";
+        alert(_message);
+        return false;
+    }
+    return true;
+
+});
+
 $("#finishbutton").click(function(){
     if(confirm("終了後、データを削除します。解析情報を残すには「取込データ出力」と「SOP設定出力」、「エリア毎の結果テーブル出力」をしてから終了してください。")){
         return true;
@@ -50,6 +67,7 @@ $('.duallistbox').bootstrapDualListbox({
 });
 
 $("#sortable").sortable({
+    /*
     update: function(){
         //console.log($('#sortable').sortable("toArray"));
         var _data = {"array":$('#sortable').sortable("toArray")};
@@ -68,6 +86,7 @@ $("#sortable").sortable({
         });
 
     },
+    */
     axis: 'y',
 });
 
@@ -168,7 +187,7 @@ function editSmooth(){
 var _defaultlabels = $("#binline").val();
 
 function createDispGraph(){
-    $("#screen").show();
+
 
     //X軸の表示範囲指定
     var _labels = _defaultlabels.split(",");
@@ -176,6 +195,17 @@ function createDispGraph(){
     var _max_x = $("input[name='max_x']").val();
     var _min_y = $("input[name='min_y']").val();
     var _max_y = $("input[name='max_y']").val();
+    if(parseFloat(_min_x) >= parseFloat(_max_x)){
+        alert("表示データ範囲に誤りがあります。");
+        return false;
+    }
+    if(parseFloat(_min_y) >= parseFloat(_max_y)){
+        alert("表示データ範囲に誤りがあります。");
+        return false;
+    }
+
+    $("#screen").show();
+
     var _bl = [];
     var _i=0;
     if(_min_x && _max_x ){
@@ -222,7 +252,8 @@ function createDispGraph(){
         var _num = 1;
         var _cnt = "";
         var _label = "";
-        $.each(data,function(key,value){
+
+        $.each(data['list'],function(key,value){
             var _hidden = "";
             _cnt = value.cnt;
             _label = value.label;
@@ -235,6 +266,8 @@ function createDispGraph(){
         $("#screen").hide();
         console.log("OK");
         creatLine();
+
+        $("#maxcountlimit").val(data['max']);
         createGraf();
 
     }).fail(function(){
@@ -265,13 +298,6 @@ function creatLine(){
 
 
 function createGraf(){
-    //var _min_y = $("[name='min_y']").val();
-    //if(!_min_y) _min_y= 0;
-   // var _fsize = "fontSize: 11";
-    var _tics_y = [];
-    _tics_y.push({fontSize:11});
-    _tics_y.push({fontColor:"black"});
-
 
     var _basic = $("[name='analyticsBasic']:checked").next().text();
     var _display = $("[name='dataDisplay']:checked").attr("id");
@@ -355,8 +381,10 @@ function createGraf(){
         };
     }
     try{
-        var _labels = $("#binline").val().split(",");
+        var _min_y = $("[name='min_y']").val();
+        var _max_y = $("[name='max_y']").val();
 
+        var _labels = $("#binline").val().split(",");
         var areaChartData = {
 
             labels  : _labels,
@@ -437,15 +465,16 @@ function createGraf(){
                     fontFamily: "sans-serif",
                     fontSize: 11,                   // フォントサイズ
                 },
+
                 ticks: {                       // 目盛り
-                 //   min: _min_y,                        // 最小値
-                //    max: 1000,                       // 最大値
-                //    stepSize: 100,                   // 軸間隔
+                 //   min: 0,                        // 最小値
+                 //   max : _mpoint,                       // 最大値
+                 //   stepSize: 100,                   // 軸間隔
                     fontColor: "black",             // 目盛りの色
                     fontSize: 11                   // フォントサイズ
-
                 }
             }]
+
             },
 
             annotation: {
@@ -472,8 +501,12 @@ function createGraf(){
             },
         }
 
-
-
+        if(_min_y){
+            areaChartOptions['scales']['yAxes']['0']['ticks']['min'] = parseInt(_min_y);
+        }
+        if(_max_y){
+            areaChartOptions['scales']['yAxes']['0']['ticks']['max'] = parseInt(_max_y);
+        }
         var canvas = $('#lineChart').get(0);
         var lineChartCanvas = canvas.getContext('2d');
 
@@ -492,8 +525,8 @@ function createGraf(){
         });
 
     }catch(e){
-       // console.log("error");
-       // console.log(e);
+        console.log("error");
+        console.log(e);
     }
 }
 
