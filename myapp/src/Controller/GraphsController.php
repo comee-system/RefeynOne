@@ -1061,8 +1061,10 @@ class GraphsController extends AppController
                     $center[$val[ $clum ]] = $val['center'];
                 }
             }
-            foreach($ex[$pt] as $ky=>$val){
-                $mode[ $pt ][$ky] = $center[$this->mode($val)];
+            if(!empty($ex[$pt])){
+                foreach($ex[$pt] as $ky=>$val){
+                    $mode[ $pt ][$ky] = $center[$this->mode($val)];
+                }
             }
         }
         //smooth反映
