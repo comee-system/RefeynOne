@@ -265,6 +265,13 @@ function creatLine(){
 
 
 function createGraf(){
+    //var _min_y = $("[name='min_y']").val();
+    //if(!_min_y) _min_y= 0;
+   // var _fsize = "fontSize: 11";
+    var _tics_y = [];
+    _tics_y.push({fontSize:11});
+    _tics_y.push({fontColor:"black"});
+
 
     var _basic = $("[name='analyticsBasic']:checked").next().text();
     var _display = $("[name='dataDisplay']:checked").attr("id");
@@ -386,8 +393,6 @@ function createGraf(){
                 _data[30], //グラフを最大30個まで準備　より必要であれば増やす
             ]
         }
-
-
         var areaChartOptions = {
             maintainAspectRatio : false,
             responsive : true,
@@ -433,14 +438,13 @@ function createGraf(){
                     fontSize: 11,                   // フォントサイズ
                 },
                 ticks: {                       // 目盛り
-                //    min: 0,                        // 最小値
+                 //   min: _min_y,                        // 最小値
                 //    max: 1000,                       // 最大値
                 //    stepSize: 100,                   // 軸間隔
                     fontColor: "black",             // 目盛りの色
-                    fontSize: 11,                   // フォントサイズ
+                    fontSize: 11                   // フォントサイズ
 
                 }
-
             }]
             },
 

@@ -948,6 +948,7 @@ class GraphsController extends AppController
 
         $clum = $this->array_graf_type[$code];
         $smooth = $SopDefaults[ 'smooth' ];
+
         $sql = " SELECT ";
             foreach($areas as $k=>$value){
                 $sql .= " SUM( CASE WHEN disp.".$clum." >= ".$value[ 'minpoint' ]." AND disp.".$clum." <".$value[ 'maxpoint' ]." THEN disp.".$clum." ELSE 0 END ) AS sum_".$value[ 'minpoint' ]."_".$value[ 'maxpoint' ].",";
@@ -978,9 +979,6 @@ class GraphsController extends AppController
                 ";
                 foreach($areas as $k=>$value){
                     $sql .= " a.pt_".$value[ 'minpoint' ]."_".$value[ 'maxpoint' ]."/a.c_".$value[ 'minpoint' ]."_".$value[ 'maxpoint' ]." as avg_".$value[ 'minpoint' ]."_".$value[ 'maxpoint' ].",";
-                    /*
-                    $sql .= "a.line_".$value[ 'minpoint' ]."_".$value[ 'maxpoint' ]." as m_".$value[ 'minpoint' ]."_".$value[ 'maxpoint' ].",";
-                    */
                 }
         $sql .= "a.id ";
         $sql .= "
@@ -990,10 +988,6 @@ class GraphsController extends AppController
                         $sql .= " SUM( CASE WHEN  pointdata >= ".$value[ 'minpoint' ]." AND pointdata < ".$value[ 'maxpoint' ]." THEN pointdata ELSE 0 END ) AS pt_".$value[ 'minpoint' ]."_".$value[ 'maxpoint' ].",";
 
                         $sql .= " SUM( CASE WHEN  pointdata >= ".$value[ 'minpoint' ]." AND pointdata < ".$value[ 'maxpoint' ]." THEN 1 ELSE 0 END ) AS c_".$value[ 'minpoint' ]."_".$value[ 'maxpoint' ].",";
-
-/*
-                        $sql .= " GROUP_CONCAT(CASE WHEN  pointdata >= ".$value[ 'minpoint' ]." AND pointdata < ".$value[ 'maxpoint' ]." THEN pointdata ELSE '' END) AS line_".$value[ 'minpoint' ]."_".$value[ 'maxpoint' ].",";
-*/
 
                     }
 
@@ -1011,7 +1005,7 @@ class GraphsController extends AppController
 
         $points = $connection->execute($sql)->fetchall('assoc');
 
-
+        //中央値の取得
         $median = [];
         foreach($areas as $k=>$value){
             $minpoint = $value['minpoint'];
@@ -1037,6 +1031,7 @@ class GraphsController extends AppController
             }
         }
 
+        //モード値の取得
         $mode = [];
         if($basic[0] == 2){
             $clum = "counts2";
@@ -1054,8 +1049,8 @@ class GraphsController extends AppController
                     WHERE
                         user_id = ${user_id} AND
                         graphe_id = ${id} AND
-                        ${clum} >= ${minpoint} AND
-                        ${clum} < ${maxpoint} ";
+                        min >= ${minpoint} AND
+                        max < ${maxpoint} ";
             $mod = $connection->execute($sql)->fetchall('assoc');
             $ex = [];
             $pt = "m_".$value[ 'minpoint' ]."_".$value[ 'maxpoint' ];
@@ -1249,41 +1244,10 @@ class GraphsController extends AppController
     /*
     * 最頻値を求める
     */
-    public function mode($list,&$count = null)
+    public function mode(array $values)
     {
-    	if(empty($list)){
-            $count = 0;
-            return null;
-        }
-
-        //値を集計して降順に並べる
-        $list = array_count_values($list);
-        arsort($list);
-
-        //最初のキーを取り出す
-        reset($list);
-        $before_key = key($list);
-        $before_val = array_shift($list);
-        $no1_list = array($before_key);
-
-        //2番目以降の値との比較
-        foreach ($list as $key => $val){
-            if($before_val > $val){
-                break;
-            }else{
-                // 個数が同値の場合は配列に追加する
-                array_push($no1_list,$key);
-                $before_key = $key;
-                $before_val = $val;
-            }
-        }
-        $count = $before_val;
-        if(count($no1_list) > 1){
-            //同値の場合の処理があればここに書く、今回はarray_shiftで最初に追加したkeyを返した
-            return array_shift($no1_list);
-        }else{
-            return $before_key;
-        }
+    	$max = max($values);//配列から最大値を取得する。
+    	return $max;
     }
     /*
     *中央値を求める関数

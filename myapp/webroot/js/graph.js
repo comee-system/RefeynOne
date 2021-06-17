@@ -132,6 +132,8 @@ $(function(){
 });
 var ex = "";
 $.fn.tableReflect = function(ex = ""){
+    $("#areaTables").html("");
+    $(".spinner").show();
     var _id = $("#id").val();
     //解析基準
     var _basic = $("[name='analyticsBasic']:checked").attr("id");
@@ -148,6 +150,7 @@ $.fn.tableReflect = function(ex = ""){
         data:_data,
         datatype: "json",
     }).done(function(data){
+        $(".spinner").hide();
         if(ex == "export"){ //tableDataExportボタンを押下
             console.log(data);
 
