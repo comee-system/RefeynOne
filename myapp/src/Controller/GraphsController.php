@@ -1057,7 +1057,9 @@ class GraphsController extends AppController
             $center = [];
             foreach($mod as $ky=>$val){
                 $ex[ $pt ][$val[ 'graphe_data_id' ]][] = $val[ $clum ];
-                $center[$val[ $clum ]] = $val['center'];
+                if(empty($center[$val[ $clum ]])){
+                    $center[$val[ $clum ]] = $val['center'];
+                }
             }
             foreach($ex[$pt] as $ky=>$val){
                 $mode[ $pt ][$ky] = $center[$this->mode($val)];
