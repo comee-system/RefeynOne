@@ -7,6 +7,7 @@ use Cake\Datasource\ConnectionManager;
 use Cake\Core\Configure;
 use Cake\Error\Debugger;
 use PHPExcel_IOFactory;
+use PHPExcel_Style_Border;
 /**
  * Users Controller
  *
@@ -965,9 +966,6 @@ class GraphsController extends AppController
         ";
         $list = $connection->execute($sql)->fetchall('assoc');
 
-
-
-
         $sql = "
                 SELECT
                 ";
@@ -1063,17 +1061,6 @@ class GraphsController extends AppController
                 }
             }
         }
-        //smooth反映
-        /*
-        foreach($list as $key=>$value){
-            foreach($value as $k=>$val){
-                if(preg_match("/^groupLine_/",$k)){
-                    $value['cnt'] = $val;
-                    $list[$key][$k] = $this->setSmooth($value,$smooth);
-                }
-            }
-        }
-        */
         $lists = [];
         $label = [];
         $lot = 0;
@@ -1101,31 +1088,10 @@ class GraphsController extends AppController
                 }
                 $no++;
             }
-            /*
-            foreach($value as $k=>$val){
-                if(preg_match("/^groupLine_/",$k)){
-                    $ex = [];
-                    $ex = explode(",",$val);
-                    $median = $this->median($ex);
-                    $mode = $this->mode($ex);
-                }
-                // $lot = round($val/$total*100,2);
-                $ave = round(($val == 0)?0:$total/$val,2);
-
-                // $lists[$key][$no][ 'lot' ] = $lot;
-                $lists[$key][$no][ 'ave' ] = $ave;
-                $lists[$key][$no][ 'median' ] = $median;
-                if(!empty($mode[0])){
-                    $lists[$key][$no][ 'mode' ] = $mode[0];
-                }else{
-                    $lists[$key][$no][ 'mode' ] = 0;
-                }
-                $no++;
-            }
-            */
         }
         $SopAreas[ 'label' ] = $label;
         $SopAreas[ 'lists' ] = $lists;
+
         if($this->request->getData( 'exflag' ) == "export"){
             $this->tableDataExport($id,$SopAreas);
             exit();
@@ -1136,11 +1102,12 @@ class GraphsController extends AppController
     }
 
     public function tableDataExport($graphe_id="",$sa=""){
-
+        $alphabet = range('A', 'Z');
         // 入出力の情報設定
         $driPath    = realpath(TMP) . "/excel/";
         $inputPath  = $driPath . "templete.xlsx";
         $sheetName  = "data_sheet";
+        $temp  = "temp";
         $outputFile = "output_" . $graphe_id . ".xlsx";
         $outputPath = $driPath . $outputFile;
 
@@ -1148,12 +1115,51 @@ class GraphsController extends AppController
         $reader = PHPExcel_IOFactory::createReader('Excel2007');
         $book  = $reader->load($inputPath);
         $sheet  = $book->getSheetByName($sheetName);
+        $tmpsheet  = $book->getSheetByName($temp);
+        $lists = $sa['lists'];
+        $label = $sa['label'];
 
         // データを配置
         $sheet->setCellValue("D2",$sa['areas'][0][ 'minpoint' ]);
         $sheet->setCellValue("F2",$sa['areas'][0][ 'maxpoint' ]);
         $sheet->setCellValue("H2",$sa['areas'][1][ 'minpoint' ]);
         $sheet->setCellValue("J2",$sa['areas'][1][ 'maxpoint' ]);
+        $row = 4;
+        $num = 1;
+        foreach($lists as $key=>$value){
+            $sheet->setCellValue("A".$row,$num);
+            $sheet->setCellValue("B".$row,$label[$key]['label']);
+            $a = 2;
+            foreach($value as $k=>$val){
+                $sheet->setCellValue($alphabet[$a++].$row,$val[ 'lot' ]);
+                $sheet->setCellValue($alphabet[$a++].$row,$val[ 'ave' ]);
+                $sheet->setCellValue($alphabet[$a++].$row,$val[ 'median' ]);
+                $sheet->setCellValue($alphabet[$a++].$row,$val[ 'mode' ]);
+            }
+
+
+            //スタイル
+            for($i=0;$i<22;$i++){
+                $sheet
+                ->getStyle($alphabet[$i].$row)
+                ->getBorders()
+                ->getAllBorders()
+                ->setBorderStyle(PHPExcel_Style_Border::BORDER_THIN);
+                // 色を指定する場合
+                $sheet
+                    ->getStyle($alphabet[$i].$row)
+                    ->applyFromArray([
+                        'borders' => [
+                            'allborders' => [
+                                'style' => PHPExcel_Style_Border::BORDER_THIN,
+                                'color' => ['rgb' => '000000'],
+                            ],
+                        ],
+                ]);
+            }
+            $row++;
+            $num++;
+        }
 
         // 保存
         $book->setActiveSheetIndex(0);
@@ -1163,7 +1169,19 @@ class GraphsController extends AppController
 
         exit();
     }
-
+    public function tabledataoutput($id=""){
+        $filepath = TMP.'excel/output_'.$id.".xlsx";
+        // リネーム後のファイル名
+        $filename = date('Ymdhis').'.xlsx';
+        // ファイルタイプを指定
+        header('Content-Type: application/force-download');
+        // ファイルサイズを取得し、ダウンロードの進捗を表示
+        header('Content-Length: '.filesize($filepath));
+        // ファイルのダウンロード、リネームを指示
+        header('Content-Disposition: attachment; filename="'.$filename.'"');
+        // ファイルを読み込みダウンロードを実行
+        readfile($filepath);
+    }
 
     public function createDispGraph($id = ""){
         $this->autoRender = false;
