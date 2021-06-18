@@ -152,9 +152,9 @@ $.fn.tableReflect = function(ex = ""){
     }).done(function(data){
         if(ex == "export"){ //tableDataExportボタンを押下
             $("#screen").hide();
-            console.log(data);
-            location.href = "/graphs/tabledataoutput/"+_id;
-            return true;
+            //console.log(data);
+            //location.href = "/graphs/tabledataoutput/"+_id;
+            return false;
         }else{
             console.log(data);
             $(".spinner").hide();
