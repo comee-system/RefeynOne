@@ -291,6 +291,16 @@ div.firstload {
 div.text-hidden {
   display: none; }
 
+body,
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh; }
+
+footer {
+  margin-top: auto;
+  background-color: #fff; }
+
 @keyframes sp-anime {
   100% {
     transform: rotate(360deg); } }

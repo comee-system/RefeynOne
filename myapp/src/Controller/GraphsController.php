@@ -1102,7 +1102,6 @@ class GraphsController extends AppController
     }
 
     public function tableDataExport($graphe_id="",$sa=""){
-        error_reporting(0);
         $alphabet = range('A', 'Z');
         // 入出力の情報設定
         $driPath    = realpath(TMP) . "/excel/";
@@ -1113,7 +1112,7 @@ class GraphsController extends AppController
         $outputPath = $driPath . $outputFile;
 
         // Excalファイル作成
-        $reader = PHPExcel_IOFactory::createReader('Excel5');
+        $reader = PHPExcel_IOFactory::createReader('Excel2007');
         $book  = $reader->load($inputPath);
         $sheet  = $book->getSheetByName($sheetName);
         $tmpsheet  = $book->getSheetByName($temp);

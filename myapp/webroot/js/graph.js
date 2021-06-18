@@ -2,13 +2,7 @@ export const write3 = function () {
 
 };
 $(function(){
-    //リセット
-    $("#dataResetButton").click(function(){
-        $("[name='min_x']").val("");
-        $("[name='max_x']").val("");
-        $("[name='min_y']").val("");
-        $("[name='max_y']").val("");
-    });
+
     $(this).getGraphData();
 
     //エリアごとのテーブル反映
@@ -137,6 +131,8 @@ $.fn.tableReflect = function(ex = ""){
     if(ex != "export"){
         $(".spinner").show();
         $("#areaTables").html("");
+    }else{
+        $("#screen").show();
     }
     var _id = $("#id").val();
     //解析基準
@@ -155,9 +151,10 @@ $.fn.tableReflect = function(ex = ""){
         datatype: "json",
     }).done(function(data){
         if(ex == "export"){ //tableDataExportボタンを押下
+            $("#screen").hide();
             console.log(data);
             location.href = "/graphs/tabledataoutput/"+_id;
-
+            return true;
         }else{
             console.log(data);
             $(".spinner").hide();

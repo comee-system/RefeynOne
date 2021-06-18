@@ -81,7 +81,7 @@
                 <tr>
                 <th style="width: 10px">#</th>
                 <th><?= __("Label") ?>
-                    <small>※<?= __("Label名は全角はNGとします") ?></small>
+                    <small>※<?= __("Label名は半角英数２０文字以内で設定できます") ?></small>
                 </th>
                 <th><?= __("取込ファイル名") ?></th>
                 <th><?= __("データ数") ?></th>

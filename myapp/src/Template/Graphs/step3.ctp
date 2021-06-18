@@ -299,11 +299,14 @@
                    <?= __("エリア毎のテーブル表示") ?>
 
                 </div>
-                <?= $this->Html->link("Table Data Export","javascript:void(0);",[
+
+                <div class="areatable">
+                    <div class="text-right">
+                    <?= $this->Html->link("Table Data Export","javascript:void(0);",[
                         "class"=>"btn btn-warning w-25 text-white",
                         "id"=>"tableDataExport"
                     ])?>
-                <div class="areatable">
+                    </div>
                     <table class="mt-3 table table-bordered bg-white" style="width:200%;">
                         <thead>
                             <tr>

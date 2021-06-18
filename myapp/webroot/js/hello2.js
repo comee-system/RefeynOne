@@ -22,6 +22,18 @@ if($("#createGraf").length){
 
 };
 
+//リセット
+$("#dataResetButton").click(function(){
+    $("[name='min_x']").val("");
+    $("[name='max_x']").val("");
+    $("[name='min_y']").val("");
+    $("[name='max_y']").val("");
+
+    $("#dataAreaButton").click();
+
+});
+
+
 $("#nextStep3").click(function(){
     //(グラフの終了値 - グラフの開始値)/ Binサイズが　３００までOKとする。
     var _fin = $("#dispareamax").val();
@@ -30,8 +42,7 @@ $("#nextStep3").click(function(){
     var _result = (_fin-_start)/_bin;
 
     if(_result > 300){
-        var _message = "(グラフの終了値 - グラフの開始値)/ Binサイズが300を超えています。\n300以下になるように再設定してください。\n\n";
-        _message += "参考\n・10,000 50 →メッシュ　200　12s\n・10,000 25 →メッシュ　400    19s";
+        var _message = "(グラフの終了値 - グラフの開始値)/ Binサイズが300を超えています。\n300以下になるように再設定してください。";
         alert(_message);
         return false;
     }
