@@ -1172,6 +1172,7 @@ class GraphsController extends AppController
         exit();
     }
     public function tabledataoutput($id=""){
+        $this->autoRender=false;
         $filepath = TMP.'excel/output_'.$id.".xlsx";
         // リネーム後のファイル名
         $filename = date('Ymdhis').'.xlsx';
@@ -1183,6 +1184,7 @@ class GraphsController extends AppController
         header('Content-Disposition: attachment; filename="'.$filename.'"');
         // ファイルを読み込みダウンロードを実行
         readfile($filepath);
+        exit();
     }
 
     public function createDispGraph($id = ""){

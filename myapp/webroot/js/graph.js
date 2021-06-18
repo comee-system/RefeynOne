@@ -153,7 +153,7 @@ $.fn.tableReflect = function(ex = ""){
         if(ex == "export"){ //tableDataExportボタンを押下
             $("#screen").hide();
             //console.log(data);
-            //location.href = "/graphs/tabledataoutput/"+_id;
+            location.href = "/graphs/tabledataoutput/"+_id;
             return false;
         }else{
             console.log(data);
