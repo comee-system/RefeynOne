@@ -63,7 +63,7 @@ try{
 
 $.fn.fileupload = function(){
     var _label = window.prompt("Label名を入力してください", "");
-    if(!(_label.match(/[^0-9a-zA-Z]+/i))){
+    if(_label.match(/[^0-9a-zA-Z]+/i)){
         alert("半角英数字のみ入力してください");
         return false;
     }else
