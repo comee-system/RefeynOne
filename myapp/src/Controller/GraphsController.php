@@ -996,7 +996,7 @@ class GraphsController extends AppController
         ";
        // $this->log($sql, LOG_DEBUG);
         $points = $connection->execute($sql)->fetchall('assoc');
-        $this->log($points, LOG_DEBUG);
+       // $this->log($points, LOG_DEBUG);
         //中央値の取得
         $median = [];
         foreach($areas as $k=>$value){
@@ -1093,7 +1093,7 @@ class GraphsController extends AppController
         $SopAreas[ 'lists' ] = $lists;
 
         if($this->request->getData( 'exflag' ) == "export"){
-            $this->tableDataExport($id,$SopAreas);
+        //    $this->tableDataExport($id,$SopAreas);
             exit();
         }
         header('Content-type: application/json');
