@@ -1120,6 +1120,7 @@ class GraphsController extends AppController
         $lists = $sa['lists'];
         $label = $sa['label'];
 
+    /*
         // データを配置
         $sheet->setCellValue("D2",$sa['areas'][0][ 'minpoint' ]);
         $sheet->setCellValue("F2",$sa['areas'][0][ 'maxpoint' ]);
@@ -1128,7 +1129,7 @@ class GraphsController extends AppController
         $row = 4;
         $num = 1;
 
-        /*
+
         foreach($lists as $key=>$value){
             $sheet->setCellValue("A".$row,$num);
             $sheet->setCellValue("B".$row,$label[$key]['label']);
