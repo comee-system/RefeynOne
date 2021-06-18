@@ -994,9 +994,9 @@ class GraphsController extends AppController
                     GROUP BY graphe_data_id
                 ) as a
         ";
-        $this->log($sql, LOG_DEBUG);
+       // $this->log($sql, LOG_DEBUG);
         $points = $connection->execute($sql)->fetchall('assoc');
-
+        $this->log($points, LOG_DEBUG);
         //中央値の取得
         $median = [];
         foreach($areas as $k=>$value){
