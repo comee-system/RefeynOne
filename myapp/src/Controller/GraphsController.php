@@ -1113,7 +1113,7 @@ class GraphsController extends AppController
         $outputPath = $driPath . $outputFile;
 
         // Excalファイル作成
-        $reader = PHPExcel_IOFactory::createReader('Excel2007');
+        $reader = PHPExcel_IOFactory::createReader('Excel5');
         $book  = $reader->load($inputPath);
         $sheet  = $book->getSheetByName($sheetName);
         $tmpsheet  = $book->getSheetByName($temp);
