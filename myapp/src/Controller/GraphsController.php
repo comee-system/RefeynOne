@@ -1103,7 +1103,6 @@ class GraphsController extends AppController
     }
 
     public function tableDataExport($graphe_id="",$sa=""){
-        ini_set( 'display_errors', 0 );
         $alphabet = range('A', 'Z');
         // 入出力の情報設定
         $driPath    = realpath(TMP) . "/excel/";
@@ -1115,7 +1114,6 @@ class GraphsController extends AppController
 
         // Excalファイル作成
         $reader = PHPExcel_IOFactory::createReader('Excel2007');
-        ob_end_clean();
         $book  = $reader->load($inputPath);
         $sheet  = $book->getSheetByName($sheetName);
         $tmpsheet  = $book->getSheetByName($temp);
@@ -1129,6 +1127,8 @@ class GraphsController extends AppController
         $sheet->setCellValue("J2",$sa['areas'][1][ 'maxpoint' ]);
         $row = 4;
         $num = 1;
+
+        /*
         foreach($lists as $key=>$value){
             $sheet->setCellValue("A".$row,$num);
             $sheet->setCellValue("B".$row,$label[$key]['label']);
@@ -1163,7 +1163,7 @@ class GraphsController extends AppController
             $row++;
             $num++;
         }
-
+*/
         // 保存
         $book->setActiveSheetIndex(0);
         $writer = PHPExcel_IOFactory::createWriter($book, 'Excel2007');
