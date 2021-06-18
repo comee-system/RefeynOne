@@ -1102,6 +1102,7 @@ class GraphsController extends AppController
     }
 
     public function tableDataExport($graphe_id="",$sa=""){
+        error_reporting(E_ALL ^ E_NOTICE ^ E_DEPRECATED);
         $alphabet = range('A', 'Z');
         // 入出力の情報設定
         $driPath    = realpath(TMP) . "/excel/";
