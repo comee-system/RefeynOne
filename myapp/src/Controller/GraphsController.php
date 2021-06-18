@@ -1113,6 +1113,7 @@ class GraphsController extends AppController
 
         // Excalファイル作成
         $reader = PHPExcel_IOFactory::createReader('Excel2007');
+        ob_end_clean();
         $book  = $reader->load($inputPath);
         $sheet  = $book->getSheetByName($sheetName);
         $tmpsheet  = $book->getSheetByName($temp);
