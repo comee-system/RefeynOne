@@ -42,7 +42,7 @@ $("#nextStep3").click(function(){
     var _result = (_fin-_start)/_bin;
 
     if(_result > 300){
-        var _message = "(グラフの終了値 - グラフの開始値)/ Binサイズが300を超えています。\n300以下になるように再設定してください。";
+        var _message = " (グラフの終了値 - グラフの開始値)/ Binサイズが0です。\n0より大きく、300以下になるように再設定してください。";
         alert(_message);
         return false;
     }
