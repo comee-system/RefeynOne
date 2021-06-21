@@ -1323,7 +1323,6 @@ class GraphsController extends AppController
         $lists[$row++][] = $smooth;
 
         $lists[$row++][] = mb_convert_encoding(' ','SJIS','UTF-8');
-        $lists[$row++][] = mb_convert_encoding('','SJIS','UTF-8');
         $lists[$row][] = mb_convert_encoding('','SJIS','UTF-8');
         $lists[$row][] = mb_convert_encoding('下限','SJIS','UTF-8');
         $lists[$row++][] = mb_convert_encoding('上限','SJIS','UTF-8');

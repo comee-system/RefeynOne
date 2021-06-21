@@ -41,7 +41,7 @@ $("#nextStep3").click(function(){
     var _bin = $("#binsize").val();
     var _result = (_fin-_start)/_bin;
 
-    if(_result > 300){
+    if(_result > 300 || _result <= 0){
         var _message = " (グラフの終了値 - グラフの開始値)/ Binサイズが0です。\n0より大きく、300以下になるように再設定してください。";
         alert(_message);
         return false;
