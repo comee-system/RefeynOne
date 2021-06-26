@@ -19,7 +19,7 @@
 
                     <div class="card ">
                         <div class="card-header bg-info">
-                            <?= __("Mesurementファイル取込") ?>
+                            <?= __("Measurementファイル取込") ?>
                             <i class="fas fa-question-circle yubi" data-toggle="modal" data-target="#modal-default2" ></i>
                         </div>
                         <div class="card-body">
@@ -94,13 +94,14 @@
         <div class="row m-3">
 
             <div class="col-md-6 ">
-                <?= $this->Html->link("Mesurementデータ出力","/graphs/outputMesurement/".$id,[
+                <?= $this->Html->link("Measurementデータ出力","/graphs/outputMesurement/".$id,[
                     "class"=>"btn btn-warning w-100"
                 ])?>
             </div>
             <div class="col-md-6">
                 <?= $this->Html->link("次へ(初期値設定)","/graphs/step2/".$id,[
-                    "class"=>"btn btn-primary w-100"
+                    "class" => "btn btn-primary w-100",
+                    "id" => "firstbutton"
                 ])?>
             </div>
         </div>

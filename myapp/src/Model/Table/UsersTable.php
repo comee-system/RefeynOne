@@ -29,6 +29,7 @@ class UsersTable extends Table
      * @return void
      */
     public $type = "";
+    public $dateStatus = "";
     public function initialize(array $config)
     {
         parent::initialize($config);
@@ -42,7 +43,17 @@ class UsersTable extends Table
 
     public function validationuserEdit(Validator $validator){
         $this->type = "edit";
+        $validator
+            ->add('datestatus','custom',[
+                'rule'=>[$this,'dateStatus'],
+            ]);
+
+
         return $this->validationDefault($validator);
+    }
+    public function dateStatus($value, $context) {
+        $this->dateStatus=$value;
+        return true;
     }
     /**
      * Default validation rules.
@@ -127,25 +138,26 @@ class UsersTable extends Table
                     'message'=>__("既に登録されているメールアドレスです。")
                     ]);
         }
-        $validator
-        ->notEmptyString('startdate',__("開始日を入力してください。"))
-        ->add("startdate", [
-            'date' => [
-                'rule' => function($value,$val){
-                    $ex = explode("-",$value);
-                    if(!checkdate($ex[1], $ex[2], $ex[0])){
-                        return false;
-                    }
-                    if($val[ 'data' ]['startdate'] > $val[ 'data' ][ 'enddate']){
-                        return false;
-                    }
-                    return true;
-                },
-                'message' => '日付に誤りがあります。',
-            ],
-        ]);
-
-
+        if($this->dateStatus != "1"){
+            $validator
+            ->notEmptyString('startdate',__("開始日を入力してください。"))
+            ->add("startdate", [
+                'date' => [
+                    'rule' => function($value,$val){
+                        if($value == "0000-00-00") return true;
+                        $ex = explode("-",$value);
+                        if(!checkdate($ex[1], $ex[2], $ex[0])){
+                            return false;
+                        }
+                        if($val[ 'data' ]['startdate'] > $val[ 'data' ][ 'enddate']){
+                            return false;
+                        }
+                        return true;
+                    },
+                    'message' => '日付に誤りがあります。',
+                ],
+            ]);
+        }
         return $validator;
     }
 

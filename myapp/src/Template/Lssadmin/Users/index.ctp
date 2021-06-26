@@ -45,7 +45,7 @@
                     <th scope="col"><?= __("企業名")?></th>
                     <th scope="col"><?= __("担当者氏名")?></th>
                     <th scope="col"><?= __("メールアドレス")?></th>
-                    <th scope="col"><?= __("利用終了日")?></th>
+                    <th scope="col"><?= __("利用期間")?></th>
                 </tr>
             </thead>
             <tbody>

@@ -137,9 +137,10 @@
                     ]) ?>
                     <label for="datestatus">単体利用</label>
                     <?php endif; ?>
+
                     <div class="row">
                         <div class="col-12">
-                            <div class="d-flex">
+                            <div class="d-flex" id="div-datestatus">
                                 <?php
                                     if($this->request->getData('start')){
                                         $start = $this->request->getData('start');
@@ -155,55 +156,58 @@
                                         $end[ 'day'     ] = sprintf("%d",(isset($ex2[2]))?$ex2[2]:0);
                                     }
                                 ?>
-                                <select name="start[year]" class="form-control <?=$type?>">
-                                <?php for($i=date('Y');$i<=date('Y')+3;$i++):
+                                <?php
+                                    if(!$this->request->getData( "datestatus" ) || !$type): ?>
+                                    <select name="start[year]" class="form-control <?=$type?>">
+                                    <?php for($i=date('Y');$i<=date('Y')+3;$i++):
+                                            $sel = "";
+                                            if($start[ 'year' ] == $i) $sel = "SELECTED";
+                                        ?>
+                                        <option value='<?=$i?>' <?=$sel?> ><?=$i?>年</option>
+                                    <?php endfor; ?>
+                                    </select>
+                                    <select name="start[month]" class="form-control <?=$type?>">
+                                    <?php for($i=1;$i<=12;$i++):
+                                            $sel = "";
+                                            if($start[ 'month' ] == $i) $sel = "SELECTED";
+                                        ?>
+                                        <option value='<?=$i?>' <?=$sel?> ><?=$i?>月</option>
+                                    <?php endfor; ?>
+                                    </select>
+                                    <select name="start[day]" class="form-control <?=$type?>">
+                                    <?php for($i=1;$i<=31;$i++):
                                         $sel = "";
-                                        if($start[ 'year' ] == $i) $sel = "SELECTED";
-                                    ?>
-                                    <option value='<?=$i?>' <?=$sel?> ><?=$i?>年</option>
-                                <?php endfor; ?>
-                                </select>
-                                <select name="start[month]" class="form-control <?=$type?>">
-                                <?php for($i=1;$i<=12;$i++):
+                                        if($start[ 'day' ] == $i) $sel = "SELECTED";
+                                        ?>
+                                        <option value='<?=$i?>' <?=$sel?>><?=$i?>日</option>
+                                    <?php endfor; ?>
+                                    </select>
+                                    <div class="p-1">～</div>
+                                    <select name="end[year]" class="form-control <?=$type?>">
+                                    <?php for($i=date('Y');$i<=date('Y')+3;$i++):
                                         $sel = "";
-                                        if($start[ 'month' ] == $i) $sel = "SELECTED";
-                                    ?>
-                                    <option value='<?=$i?>' <?=$sel?> ><?=$i?>月</option>
-                                <?php endfor; ?>
-                                </select>
-                                <select name="start[day]" class="form-control <?=$type?>">
-                                <?php for($i=1;$i<=31;$i++):
-                                    $sel = "";
-                                    if($start[ 'day' ] == $i) $sel = "SELECTED";
-                                    ?>
-                                    <option value='<?=$i?>' <?=$sel?>><?=$i?>日</option>
-                                <?php endfor; ?>
-                                </select>
-                                <div class="p-1">～</div>
-                                <select name="end[year]" class="form-control <?=$type?>">
-                                <?php for($i=date('Y');$i<=date('Y')+3;$i++):
-                                    $sel = "";
-                                    if($end[ 'year' ] == $i) $sel = "SELECTED";
-                                    ?>
-                                    <option value='<?=$i?>' <?=$sel?> ><?=$i?>年</option>
-                                <?php endfor; ?>
-                                </select>
-                                <select name="end[month]" class="form-control <?=$type?>">
-                                <?php for($i=1;$i<=12;$i++):
-                                    $sel = "";
-                                    if($end[ 'month' ] == $i) $sel = "SELECTED";
-                                    ?>
-                                    <option value='<?=$i?>' <?=$sel?> ><?=$i?>月</option>
-                                <?php endfor; ?>
-                                </select>
-                                <select name="end[day]" class="form-control <?=$type?>">
-                                <?php for($i=1;$i<=31;$i++):
-                                    $sel = "";
-                                    if($end[ 'day' ] == $i) $sel = "SELECTED";
-                                    ?>
-                                    <option value='<?=$i?>' <?=$sel?> ><?=$i?>日</option>
-                                <?php endfor; ?>
-                                </select>
+                                        if($end[ 'year' ] == $i) $sel = "SELECTED";
+                                        ?>
+                                        <option value='<?=$i?>' <?=$sel?> ><?=$i?>年</option>
+                                    <?php endfor; ?>
+                                    </select>
+                                    <select name="end[month]" class="form-control <?=$type?>">
+                                    <?php for($i=1;$i<=12;$i++):
+                                        $sel = "";
+                                        if($end[ 'month' ] == $i) $sel = "SELECTED";
+                                        ?>
+                                        <option value='<?=$i?>' <?=$sel?> ><?=$i?>月</option>
+                                    <?php endfor; ?>
+                                    </select>
+                                    <select name="end[day]" class="form-control <?=$type?>">
+                                    <?php for($i=1;$i<=31;$i++):
+                                        $sel = "";
+                                        if($end[ 'day' ] == $i) $sel = "SELECTED";
+                                        ?>
+                                        <option value='<?=$i?>' <?=$sel?> ><?=$i?>日</option>
+                                    <?php endfor; ?>
+                                    </select>
+                                <?php endif; ?>
                             </div>
                             <?php if(isset($error[ 'startdate' ]['date']) ): ?>
                             <span class="text-danger"><?= h($error[ 'startdate' ]['date']) ?></span>

@@ -145,6 +145,7 @@ $cakeDescription = 'CakePHP: the rapid development php framework';
 
 <!-- jQuery -->
 <?= $this->Html->script('/plugins/jquery/jquery.min.js') ?>
+<?= $this->Html->script('/plugins/jquery/jquery-ui.js') ?>
 
 <!-- Bootstrap 4 -->
 <?= $this->Html->script('/plugins/bootstrap/js/bootstrap.bundle.min.js') ?>

@@ -2,7 +2,15 @@ export const write3 = function () {
 
 };
 $(function(){
-
+    //次へボタン
+    $("#firstbutton").click(function(){
+        var _editlabel = $(".editlabel").length;
+        if(_editlabel < 1){
+            alert("データが設定されていません。");
+            return false;
+        }
+        return true;
+    });
     $(this).getGraphData();
 
     //エリアごとのテーブル反映

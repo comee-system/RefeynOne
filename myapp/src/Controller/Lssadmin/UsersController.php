@@ -169,7 +169,6 @@ class UsersController extends AppController
             }else{
                 $user = $this->Users->patchEntity($user, $request);
             }
-
             if($this->request->getData("conf")){
                 $error = $user->getErrors();
                 if(!$user->hasErrors()){
@@ -182,6 +181,7 @@ class UsersController extends AppController
                 }
                 $user[ 'startdate' ] = $request[ 'startdate' ];
                 $user[ 'enddate'   ] = $request[ 'enddate' ];
+                $user[ 'datestatus'   ] = $request[ 'datestatus' ];
                 $user[ 'role'      ] = 0;
                 $user[ 'last_login_at' ] = date('Y-m-d');
                 if ($userdata = $this->Users->save($user)) {

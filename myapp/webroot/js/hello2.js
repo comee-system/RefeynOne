@@ -40,8 +40,7 @@ $("#nextStep3").click(function(){
     var _start = $("#defaultpoint").val();
     var _bin = $("#binsize").val();
     var _result = (_fin-_start)/_bin;
-
-    if(_result > 300 || _result <= 0){
+    if(_result > 300 || _result <= 0 || !_result){
         var _message = " (グラフの終了値 - グラフの開始値)/ Binサイズが0です。\n0より大きく、300以下になるように再設定してください。";
         alert(_message);
         return false;
@@ -541,5 +540,14 @@ function createGraf(){
     }
 }
 
-
-
+datestatus();
+$("#datestatus").click(function(){
+    datestatus();
+});
+function datestatus(){
+    if($("#div-datestatus").length){
+        var _chk = $("#datestatus").prop("checked");
+        $("#div-datestatus").children("select").attr("disabled",_chk);
+    }
+    return false;
+}

@@ -3,19 +3,18 @@
     <!-- Left navbar links -->
     <ul class="navbar-nav">
       <li class="nav-item">
-          <a href="/">
         <?=$this->Html->image("lss-logo_1.png",[
             'url'=>[],
             'dev'=>false,
             'class'=>'__logo'
         ],
-        ); ?></a>
+        ); ?>
       </li>
 
     </ul>
     <!-- Right navbar links -->
     <ul class="navbar-nav ml-auto">
-        <?php if($uAuth): ?>
+        <?php /*if($uAuth): ?>
         <li>
             <?= $this->Html->link("グラフ一覧",
             "/users",
@@ -23,7 +22,7 @@
                 "class"=>"btn btn-outline-primary mr-2"
             ])?>
         </li>
-        <?php endif; ?>
+        <?php endif;*/ ?>
         <li>
         <?php if(!$uAuth): ?>
             <?= $this->Html->link("ログイン",

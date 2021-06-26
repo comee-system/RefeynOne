@@ -13,33 +13,23 @@
                     <div class="card-body">
                         <p>今回の解析結果を保持するため、ファイルのダウンロードをおすすめします。</p>
                         <div class="row">
-                            <div class="col-md-3">
-                                <?= $this->Form->control("取込データ出力",[
-                                    "type"=>"button",
-                                    "class"=>"btn btn-info w-100",
+                            <div class="col-md-6">
+                                <?= $this->Html->link("Measurementデータ出力","/graphs/outputMesurement/".$id,[
+                                    "class"=>"btn btn-warning w-100 text-white",
                                     "label"=>false
                                 ]) ?>
                             </div>
-                            <div class="col-md-3">
-                                <?= $this->Form->control("SOP設定出力",[
-                                    "type"=>"button",
-                                    "class"=>"btn btn-info w-100",
-                                    "label"=>false
-                                ]) ?>
-                            </div>
-                            <div class="col-md-3">
-                                <?= $this->Form->control("ヒストグラムデータ出力",[
-                                    "type"=>"button",
-                                    "class"=>"btn btn-info w-100",
-                                    "label"=>false
-                                ]) ?>
-                            </div>
-                            <div class="col-md-3">
-                                <?= $this->Form->control("エリア毎の結果テーブル出力",[
-                                    "type"=>"button",
-                                    "class"=>"btn btn-info w-100",
-                                    "label"=>false
-                                ]) ?>
+                            <div class="col-md-6">
+                                <?= $this->Html->link("SOP Export",[
+                                        "controller"=>"graphs",
+                                        "action"=>"outputSOP",
+                                        $id
+                                    ],
+                                    [
+                                        "escape"=>false,
+                                        "class"=>"btn btn-warning w-100 text-white",
+
+                                    ])?>
                             </div>
                         </div>
                     </div>
