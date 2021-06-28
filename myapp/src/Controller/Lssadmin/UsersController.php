@@ -184,11 +184,13 @@ class UsersController extends AppController
                 $user[ 'datestatus'   ] = $request[ 'datestatus' ];
                 $user[ 'role'      ] = 0;
                 $user[ 'last_login_at' ] = date('Y-m-d');
-                if ($userdata = $this->Users->save($user)) {
-                    $this->mailsend->userRegistSends($userdata);
-                    $this->Flash->success(__('会員登録が完了しました。'));
+                if(!$id){
+                    if ($userdata = $this->Users->save($user)) {
+                        $this->mailsend->userRegistSends($userdata);
+                        $this->Flash->success(__('会員登録が完了しました。'));
 
-                    return $this->redirect(['action' => 'index']);
+                        return $this->redirect(['action' => 'index']);
+                    }
                 }
             }
 
