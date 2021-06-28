@@ -155,14 +155,14 @@ class UsersController extends AppController
         if ($this->request->is(['patch', 'post', 'put'])) {
             $request = $this->request->getData();
             $request["startdate"] = sprintf("%04d-%02d-%02d"
-                                        ,$this->request->getData("start")[ 'year' ]
-                                        ,$this->request->getData("start")[ 'month' ]
-                                        ,$this->request->getData("start")[ 'day' ]
+                                        ,(!empty($this->request->getData("start")[ 'year' ]))?$this->request->getData("start")[ 'year' ]:0
+                                        ,(!empty($this->request->getData("start")[ 'month' ]))?$this->request->getData("start")[ 'month' ]:0
+                                        ,(!empty($this->request->getData("start")[ 'day' ]))?$this->request->getData("start")[ 'day' ]:0
                                         );
             $request["enddate"] = sprintf("%04d-%02d-%02d"
-                                        ,$this->request->getData("end")[ 'year' ]
-                                        ,$this->request->getData("end")[ 'month' ]
-                                        ,$this->request->getData("end")[ 'day' ]
+                                        ,(!empty($this->request->getData("end")[ 'year' ]))?$this->request->getData("end")[ 'year' ]:0
+                                        ,(!empty($this->request->getData("end")[ 'month' ]))?$this->request->getData("end")[ 'month' ]:0
+                                        ,(!empty($this->request->getData("end")[ 'day' ]))?$this->request->getData("end")[ 'day' ]:0
                                         );
             if($id > 0){
                 $user = $this->Users->patchEntity($user, $request,['validate'=>"userEdit"]);

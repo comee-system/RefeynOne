@@ -4,6 +4,8 @@ namespace App\Controller\Component;
 use Cake\Controller\Component;
 use Cake\Controller\ComponentRegistry;
 use Cake\Mailer\Email;
+use Cake\Datasource\ModelAwareTrait;
+
 /**
  * MailSend component
  */
@@ -14,6 +16,8 @@ class MailSendComponent extends Component
      *
      * @var array
      */
+    use ModelAwareTrait;
+
     protected $_defaultConfig = [];
     public function initialize(array $config)
     {
@@ -21,6 +25,14 @@ class MailSendComponent extends Component
         $this->email = new Email('default');
         //制限時間
         $this->limit = date("Y-m-d H:i:s", strtotime("+1 hour"));
+
+        //管理者情報取得
+        $this->users = $this->loadModel('Users');
+        $this->admin = $this->users->find()->where([
+            'role'=>1
+        ])->first();
+        $this->adminemail = $this->admin->email;
+
     }
     public function sends()
     {
@@ -39,8 +51,8 @@ class MailSendComponent extends Component
             ->template('userregist')
             ->emailFormat('text')
             ->to($user->email)
-            ->setBcc(D_ADMIN_MAIL)
-            ->from(D_ADMIN_MAIL)
+            ->setBcc($this->adminemail)
+            ->from($this->adminemail)
             ->subject(__("【LSS】会員登録が完了致しました"))
             ->viewVars([
                 'campany' => $user->campany,
