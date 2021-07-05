@@ -15,13 +15,13 @@
         <?= $this->Form->hidden("binline",['id'=>'binline','value'=>h($binline)])?>
         <div class="row mt-3">
             <div class="col-12 d-flex">
-                <?= $this->Form->button("pngExport",[
+                <?= $this->Form->button("png Export",[
                     "class"=>"btn btn-warning  text-white",
                     "type"=>"button",
                     "id"=>"pngExport"
                 ])?>
 
-                <?= $this->Html->link("CSVExport",[
+                <?= $this->Html->link("CSV Export",[
                 ],
                 [
                     "escape"=>false,

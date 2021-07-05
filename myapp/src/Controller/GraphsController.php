@@ -18,7 +18,7 @@ use PHPExcel_Style_Border;
 class GraphsController extends AppController
 {
 
-    const RefeynOne = "RefeynOne";
+    const RefeynOne = "Refeyn";
     const Mesurement = "Mesurement";
     const noname = "noname";
     public function beforeFilter(Event $event)
@@ -696,7 +696,7 @@ class GraphsController extends AppController
 
 
         //保存場所
-        $filename = "CSV-".date('YmdHis') . '.csv';
+        $filename = "Graph-CSV-".date('YmdHis') . '.csv';
         $file = WWW_ROOT.'csv/' .$filename;
         $f = fopen($file, 'w');
         foreach($list as $key=>$value){
@@ -744,7 +744,7 @@ class GraphsController extends AppController
 
 
         //保存場所
-        $filename = date('YmdHis') . '.csv';
+        $filename = "Measurement-".date('YmdHis') . '.csv';
         $file = WWW_ROOT.'csv/' .$filename;
         $f = fopen($file, 'w');
         foreach($list as $key=>$value){
@@ -1175,7 +1175,7 @@ class GraphsController extends AppController
         $this->autoRender=false;
         $filepath = TMP.'excel/output_'.$id.".xlsx";
         // リネーム後のファイル名
-        $filename = date('Ymdhis').'.xlsx';
+        $filename = "Table-".date('Ymdhis').'.xlsx';
         // ファイルタイプを指定
         header('Content-Type: application/force-download');
         // ファイルサイズを取得し、ダウンロードの進捗を表示

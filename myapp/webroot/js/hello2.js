@@ -106,7 +106,14 @@ $("#pngExport").on("click",function(){
     let link = document.createElement("a");
     link.href = canvas.toDataURL("image/png");
     var date = new Date() ;
-    link.download = date.getTime()+".png";
+    var _y = date.getFullYear();
+    var _m = ("0"+(date.getMonth() + 1)).slice(-2);
+    var _d = ("0"+date.getDate()).slice(-2);
+    var _h = ("0"+date.getHours()).slice(-2);
+    var _i = ("0"+date.getMinutes()).slice(-2);
+    var _s = ("0"+date.getTime()).slice(-2);
+    var _f = _y.toString()+_m.toString()+_d.toString()+_h.toString()+_i.toString()+_s.toString();
+    link.download = "Graph-Image-"+_f+".png";
     link.click();
 
     return false;

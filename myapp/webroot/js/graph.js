@@ -36,7 +36,7 @@ $(function(){
         var _id = $(this).attr("id").split("-")[1];
         var _val = $(this).val();
         $("#errtext-"+_id).hide();
-        if(_val.match(/[^0-9a-zA-Z]+/i)){
+        if(!_val.match(/^[\x20-\x7E]+$/)){
             $("#errtext-"+_id).show();
             return false;
         }

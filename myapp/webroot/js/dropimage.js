@@ -28,9 +28,11 @@ try{
 
         if(typeof files[0] !== 'undefined' && files[0].name.indexOf('.csv') !== -1 ) {
             //ファイルが正常に受け取れた際の処理
-            $("#filename").text(files[0]['name']+"を選択しました。");
-            $(this).fileupload();
+            if($(this).fileupload()){
+                $("#filename").text(files[0]['name']+"を選択しました。");
+            }else{
 
+            }
         } else {
             //ファイルが受け取れなかった際の処理
             $("#filename").text("ファイルの選択に失敗しました。");
@@ -48,9 +50,9 @@ try{
         }else
         if(typeof e.target.files[0] !== 'undefined'  && file.name.indexOf('.csv') !== -1  ) {
             // ファイルが正常に受け取れた際の処理
-            $("#filename").text(file['name']+"を選択しました。");
-
-            $(this).fileupload();
+            if($(this).fileupload()){
+                $("#filename").text(file['name']+"を選択しました。");
+            }
 
         } else {
             // ファイルが受け取れなかった際の処理
@@ -63,19 +65,26 @@ try{
 
 $.fn.fileupload = function(){
     var _label = window.prompt("Label名を入力してください", "");
-
-    if(_label.length > 20){
-        alert("20文字以内で入力してください。");
-        return false;
-    }else
-    if(_label.match(/[^0-9a-zA-Z]+/i)){
-        alert("半角英数字のみ入力してください");
+    console.log(_label);
+    if(_label == null){
         return false;
     }else
     if(!_label){
         alert("Label名が入力されていません。");
+        $(this).fileupload();
         return false;
-    }else{
+    }else
+    if(_label.length > 20){
+        alert("20文字以内で入力してください。");
+        $(this).fileupload();
+        return false;
+    }else
+    if(!_label.match(/^[\x20-\x7E]+$/)){
+        alert("半角英数字のみ入力してください");
+        $(this).fileupload();
+        return false;
+    }else
+    {
         $("#screen").show();
         let _upfile = $('input[name="uploadFile"]');
         let fd = new FormData();
@@ -83,13 +92,15 @@ $.fn.fileupload = function(){
 
         var _id = $("#id").val();
         $.ajax({
-            url:"/graphs/upload/"+_id+"/RefeynOne/"+_label,
+            url:"/graphs/upload/"+_id+"/RefeynOne/"+encodeURIComponent(_label),
             type:"post",
             data:fd,
             processData:false,
             contentType:false,
             cache:false,
         }).done(function(data){
+            console.log(data);
+
             if(data >= 1 ){
                 alert("ファイルのアップロードに失敗しました");
             }else{
@@ -97,15 +108,13 @@ $.fn.fileupload = function(){
                 alert("ファイルのアップロードを行いました。");
                 $(this).getGraphData();
             }
-            console.log(data);
 
+            return true;
         }).fail(function(){
 
         });
     }
 };
-
-
 
 //////////////////////////
 
