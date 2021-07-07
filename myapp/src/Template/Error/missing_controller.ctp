@@ -3,7 +3,7 @@ use Cake\Core\Configure;
 use Cake\Error\Debugger;
 
 
-
+$this->noNavi = true;
 ?>
 <div class="content-wrapper">
 

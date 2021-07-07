@@ -13,6 +13,7 @@
 
     </ul>
     <!-- Right navbar links -->
+    <?php if(empty($this->noNavi)): ?>
     <ul class="navbar-nav ml-auto">
         <?php /*if($uAuth): ?>
         <li>
@@ -24,7 +25,7 @@
         </li>
         <?php endif;*/ ?>
         <li>
-        <?php if(empty($uAuth)): ?>
+        <?php if(!$uAuth): ?>
             <?= $this->Html->link("ログイン",
             "/users/login",
             [
@@ -40,4 +41,5 @@
         <?php endif; ?>
         </li>
     </ul>
+    <?php endif; ?>
   </nav>
