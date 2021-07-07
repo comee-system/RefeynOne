@@ -21,7 +21,7 @@ use Cake\Error\Debugger;
           </p>
           <div class="row mt-5">
 
-              <a href="/users/login" class="btn btn-primary">ログインはこちらから</a>
+              <a href="/" class="btn btn-primary">トップページ</a>
 
           </div>
         </div>
