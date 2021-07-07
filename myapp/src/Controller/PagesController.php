@@ -33,6 +33,9 @@ class PagesController extends AppController
     {
 
         $uAuth = $this->Auth->user();
+        if($uAuth){
+            return $this->redirect(['controller'=>'graphs','action' => 'index']);
+        }
         $this->set("uAuth",$uAuth);
         $this->Auth->allow(['display']);
         $this->set("bottom","fixed-bottom");
