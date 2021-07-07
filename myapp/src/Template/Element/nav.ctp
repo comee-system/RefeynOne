@@ -24,7 +24,7 @@
         </li>
         <?php endif;*/ ?>
         <li>
-        <?php if(!$uAuth): ?>
+        <?php if(empty($uAuth)): ?>
             <?= $this->Html->link("ログイン",
             "/users/login",
             [
