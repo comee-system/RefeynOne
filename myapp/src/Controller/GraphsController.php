@@ -353,7 +353,7 @@ class GraphsController extends AppController
                 }
             }
             if($i < 0 || $i >= $count){
-                $list[] = "-";
+                $list[] = "0";
             }else{
                 $list[] = $numeric/$smooth;
             }
@@ -1085,7 +1085,7 @@ class GraphsController extends AppController
                 if(isset($mode[$m][$value[ 'graphe_data_id' ]])){
                     $lists[$key][$no][ 'mode' ] = $mode[$m][$value[ 'graphe_data_id' ]];
                 }else{
-                    $lists[$key][$no][ 'mode' ] = "-";
+                    $lists[$key][$no][ 'mode' ] = "0";
                 }
                 $no++;
             }
