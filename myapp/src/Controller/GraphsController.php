@@ -342,6 +342,7 @@ class GraphsController extends AppController
         $count = count($ex);
         $start = 0-floor($smooth/2);
         $end = $count+floor($smooth/2);
+
         $list = [];
         for($i=$start;$i<$end;$i++){
             $numeric=0;
@@ -352,13 +353,14 @@ class GraphsController extends AppController
                     $counter++;
                 }
             }
-            if($i < 0 || $i >= $count){
-                $list[] = "0";
-            }else{
+           // if($i < 0 || $i >= $count){
+            //    $list[] = "0";
+           // }else{
                 $list[] = $numeric/$smooth;
-            }
+           // }
         }
         $imp = implode(",",$list);
+
         return $imp;
     }
 
