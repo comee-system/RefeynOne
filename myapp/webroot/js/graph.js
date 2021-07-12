@@ -135,7 +135,6 @@ $(function(){
 });
 var ex = "";
 $.fn.tableReflect = function(ex = ""){
-
     if(ex != "export"){
         $(".spinner").show();
         $("#areaTables").html("");

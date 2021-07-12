@@ -360,7 +360,6 @@ class GraphsController extends AppController
            // }
         }
         $imp = implode(",",$list);
-
         return $imp;
     }
 
@@ -1193,9 +1192,17 @@ class GraphsController extends AppController
         $this->autoRender = false;
         $connection = ConnectionManager::get('default');
         $user_id = $this->uAuth['id'];
+
         preg_match("/[0-9]/",$this->request->getData("basic"),$basic);
         preg_match("/[0-9]/",$this->request->getData("display"),$display);
         $code = $basic[0].$display[0];
+
+
+        $SopDefaults = $this->SopDefaults->find()->where([
+            "user_id"=>$this->uAuth['id'],
+            "graphe_id"=>$id
+        ])->first();
+
         $clum = $this->array_graf_type[$code];
         $sql = "
             SELECT a.* FROM (
@@ -1229,7 +1236,13 @@ class GraphsController extends AppController
             ORDER BY a.disp ASC
             ";
 
-        $display['list'] = $connection->execute($sql)->fetchall('assoc');
+        $list = $connection->execute($sql)->fetchall('assoc');
+        $smooth = $SopDefaults[ 'smooth' ];
+        foreach($list as $key=>$value){
+            $list[$key][ 'cnt' ] = $this->setSmooth($value,$smooth);
+        }
+        $display['list'] = $list;
+
 
 
         header('Content-type: application/json');
