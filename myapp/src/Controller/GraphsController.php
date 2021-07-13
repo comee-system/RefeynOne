@@ -1193,10 +1193,17 @@ class GraphsController extends AppController
         $connection = ConnectionManager::get('default');
         $user_id = $this->uAuth['id'];
 
+
         preg_match("/[0-9]/",$this->request->getData("basic"),$basic);
         preg_match("/[0-9]/",$this->request->getData("display"),$display);
         $code = $basic[0].$display[0];
 
+/*
+        $areas= $this->SopAreas->find()->where([
+            "user_id"=>$this->uAuth[ 'id' ],
+            "graphe_id"=>$id
+        ])->toArray();
+*/
 
         $SopDefaults = $this->SopDefaults->find()->where([
             "user_id"=>$this->uAuth['id'],
@@ -1207,7 +1214,9 @@ class GraphsController extends AppController
         $sql = "
             SELECT a.* FROM (
             SELECT
-                GROUP_CONCAT( ".$clum." order by gdisplay.min ) as cnt,
+            ";
+               // GROUP_CONCAT( ".$clum." order by gdisplay.min ) as cnt,
+        $sql .= "
                 gdisplay.graphe_data_id,
                 gdata.label,
                 gdata.disp
@@ -1219,28 +1228,50 @@ class GraphsController extends AppController
                 gdisplay.graphe_id = '${id}' AND
                 gdata.disp != 0 ";
 
-            if($this->request->getData("min_x") && $this->request->getData("max_x")){
-                $sql .= " AND gdisplay.max >= ".$this->request->getData('min_x');
-                $sql .= " AND gdisplay.min <= ".$this->request->getData('max_x');
-            }
 
-/*
-            if($this->request->getData("min_y") && $this->request->getData("max_y")){
-                $sql .= " AND gdisplay.".$clum." >= ".$this->request->getData('min_y');
-                $sql .= " AND gdisplay.".$clum." <= ".$this->request->getData('max_y');
-            }
-*/
+
+
             $sql .= " GROUP BY gdisplay.graphe_data_id
                 ORDER BY gdisplay.min asc
                 ) as a
             ORDER BY a.disp ASC
             ";
 
-        $list = $connection->execute($sql)->fetchall('assoc');
+        $lists = $connection->execute($sql)->fetchall('assoc');
+        $list = [];
+        foreach($lists as $value){
+            $list[$value[ 'graphe_data_id' ]] = $value;
+        }
+
+
+        $sql = "
+            SELECT ".$clum." as cnt ,graphe_data_id FROM graphe_displays  WHERE user_id='${user_id}' AND  graphe_id = '${id}'
+        ";
+        if($this->request->getData("min_x") && $this->request->getData("max_x")){
+            $sql .= " AND max >= ".$this->request->getData('min_x');
+            $sql .= " AND min <= ".$this->request->getData('max_x');
+        }
+        $disp = $connection->execute($sql)->fetchall('assoc');
+
+        $lines = [];
+        $line = [];
+        foreach($disp as $key=>$value){
+            $lines[$value[ 'graphe_data_id' ]][] = $value[ 'cnt' ];
+        }
+        foreach($lines as $key=>$value){
+            $line[$key] = implode(",",$value);
+        }
+        foreach($list as $key=>$value){
+            $list[$key][ 'cnt' ] = $line[$key];
+        }
+
         $smooth = $SopDefaults[ 'smooth' ];
+
+
         foreach($list as $key=>$value){
             $list[$key][ 'cnt' ] = $this->setSmooth($value,$smooth);
         }
+
         $display['list'] = $list;
 
 

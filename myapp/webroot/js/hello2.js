@@ -372,6 +372,7 @@ function createGraf(){
     var _pt = 0;
     var _line = [];
     var _count = $(".graphe_point").length;
+    console.log(_count);
     for(var _i=1;_i<=_count;_i++){
         _line[_i] = $("#line"+_i).val().split(",");
     }
