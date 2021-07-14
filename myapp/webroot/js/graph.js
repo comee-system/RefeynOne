@@ -2,6 +2,14 @@ export const write3 = function () {
 
 };
 $(function(){
+    $("#graph_decide").click(function(){
+        var cnt_checked = $('.graph_status_edit:checkbox:checked').length;
+        if(cnt_checked > 10){
+            alert("グラフに表示できるデータ数を超えています。\nグラフ表示できるデータは10個以下です。\n選択しているデータ数を減らして下さい。");
+            return false;
+        }
+        return true;
+    });
     //次へボタン
     $("#firstbutton").click(function(){
         var _editlabel = $(".editlabel").length;

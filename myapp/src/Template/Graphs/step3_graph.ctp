@@ -61,7 +61,8 @@
                 </div>
                 <div class="col-md-6 ">
                     <?= $this->Form->submit("決定",[
-                            "class"=>"btn btn-primary w-100"
+                            "class"=>"btn btn-primary w-100 ",
+                            "id"=>"graph_decide"
                         ])?>
                 </div>
             </div>

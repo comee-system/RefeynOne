@@ -46,6 +46,7 @@ class GraphsController extends AppController
     }
 
     public function index($id = ""){
+
         //IDが無いときは初期データの為新規登録を行う
         if(!$id){
             $this->add();

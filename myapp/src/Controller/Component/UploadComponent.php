@@ -102,6 +102,29 @@ class UploadComponent extends Component
                 $connection->execute($query);
             }
 
+            //ならび順変更
+
+            $sql = " SELECT
+                id,
+                label
+                FROM graphe_datas WHERE
+                    graphe_id = '${graphe_id}'
+                ORDER BY id ASC
+            ";
+            $graphe_data = $connection->execute($sql)->fetchall('assoc');
+            $this->GrapheDatas->updateAll(['disp' => '0'], ['graphe_id' => $graphe_id]);
+            $sort = 1;
+            foreach($graphe_data as $key=>$value){
+                $k = $value['id'];
+                $GrapheDatas = $this->GrapheDatas->get($k);
+                $GrapheDatas->disp = $sort;
+                $this->GrapheDatas->save($GrapheDatas);
+                $sort++;
+                if($sort > 10){
+                    break;
+                }
+            }
+
 
             fclose($fp);
             $connection->commit();
