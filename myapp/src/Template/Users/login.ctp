@@ -70,7 +70,7 @@
 </div>
 <!-- /.login-box -->
 <div class="mt-5 mb-5">
-    <div class="col-sm-8 mx-auto  mb-5">
+    <div class="col-md-6 mx-auto  mb-5">
         <h5>推奨OS・推奨ブラウザ</h5>
         <hr />
         <p>
