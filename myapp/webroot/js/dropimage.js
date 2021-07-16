@@ -19,7 +19,6 @@ try{
     fileArea.addEventListener('drop', function(e){
         e.preventDefault();
         fileArea.classList.remove('dragover');
-
         // ドロップしたファイルの取得
         var files = e.dataTransfer.files;
 
@@ -34,8 +33,9 @@ try{
 
             }
         } else {
+            alert("ファイルがcsv形式ではありません");
             //ファイルが受け取れなかった際の処理
-            $("#filename").text("ファイルの選択に失敗しました。");
+            $("#filename").text("ファイルがcsv形式ではありません");
 
         }
     });
@@ -55,8 +55,10 @@ try{
             }
 
         } else {
+            alert("ファイルがcsv形式ではありません");
+
             // ファイルが受け取れなかった際の処理
-            $("#filename").text("ファイルの選択に失敗しました。");
+            $("#filename").text("ファイルがcsv形式ではありません");
 
         }
     }, false);
@@ -146,13 +148,14 @@ try{
         // 取得したファイルをinput[type=file]へ
         fileInput2.files = files;
 
-        if(typeof files[0] !== 'undefined') {
+        if(typeof files[0] !== 'undefined' && files[0].name.indexOf('.csv') !== -1  ) {
             //ファイルが正常に受け取れた際の処理
             $("#filename2").text(files[0]['name']+"を選択しました。");
             $(this).fileupload2();
         } else {
             //ファイルが受け取れなかった際の処理
-            $("#filename2").text("ファイルの選択に失敗しました。");
+            alert("ファイルがcsv形式ではありません");
+            $("#filename2").text("ファイルがcsv形式ではありません");
 
         }
     });
@@ -162,14 +165,14 @@ try{
     fileInput2.addEventListener('change', function(e){
         var file = e.target.files[0];
 
-        if(typeof e.target.files[0] !== 'undefined') {
+        if(typeof e.target.files[0] !== 'undefined' && e.target.files[0].name.indexOf('.csv') !== -1 ) {
             // ファイルが正常に受け取れた際の処理
             $("#filename2").text(file['name']+"を選択しました。");
             $(this).fileupload2();
         } else {
             // ファイルが受け取れなかった際の処理
-            $("#filename2").text("ファイルの選択に失敗しました。");
-
+            alert("ファイルがcsv形式ではありません");
+            $("#filename2").text("ファイルがcsv形式ではありません");
         }
     }, false);
 }catch(e){}
@@ -243,7 +246,8 @@ try{
 
         } else {
             //ファイルが受け取れなかった際の処理
-            $("#filename3").text("ファイルの選択に失敗しました。");
+            alert("ファイルがcsv形式ではありません");
+            $("#filename3").text("ファイルがcsv形式ではありません。");
 
         }
     });
@@ -261,7 +265,8 @@ try{
 
         } else {
             // ファイルが受け取れなかった際の処理
-            $("#filename3").text("ファイルの選択に失敗しました。");
+            alert("ファイルがcsv形式ではありません");
+            $("#filename3").text("ファイルがcsv形式ではありません");
 
         }
     }, false);

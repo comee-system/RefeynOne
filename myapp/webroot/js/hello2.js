@@ -321,6 +321,29 @@ function createGraf(){
     if(_display == "dataDisplay1") _display = "counts";
     if(_display == "dataDisplay2") _display = "signal ratio";
 
+    var _xTxt = "";
+    var _analyticsBasic1 = $("#analyticsBasic1:checked").val();
+    var _analyticsBasic2 = $("#analyticsBasic2:checked").val();
+    var _dataDisplay1 = $("#dataDisplay1:checked").val();
+    var _dataDisplay2 = $("#dataDisplay2:checked").val();
+    if(_analyticsBasic1 == "on" && _dataDisplay1 == "on"){
+        _display = "Counts";
+        _xTxt = "Mw-Number (kDa)";
+    }
+    if(_analyticsBasic2 == "on" && _dataDisplay1 == "on"){
+        _display = "Counts・Mass";
+        _xTxt = "Mw-Mass (kDa)";
+    }
+    if(_analyticsBasic1 == "on" && _dataDisplay2 == "on"){
+        _display = "Signal Ratio";
+        _xTxt = "Mw-Number (kDa)";
+    }
+    if(_analyticsBasic2 == "on" && _dataDisplay2 == "on"){
+        _display = "Signal Ratio";
+        _xTxt = "Mw-Mass (kDa) Ratio";
+    }
+
+
     //-------------
     //- LINE CHART -
     //--------------
@@ -462,7 +485,7 @@ function createGraf(){
                 },
                 scaleLabel: {                  // 軸ラベル
                     display: true,                 // 表示の有無
-                    labelString: 'Mw('+_basic+')',     // ラベル
+                    labelString: _xTxt,     // ラベル
                     fontFamily: "sans-serif",
                     fontColor: "black",             // 文字の色
                     fontFamily: "sans-serif",

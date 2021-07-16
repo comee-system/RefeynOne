@@ -607,10 +607,10 @@ class GraphsController extends AppController
         $list[$row++][] = $array_display[$display[0]];
         $list[$row++][] = "";
         $list[$row++][] = mb_convert_encoding('度数分布表','SJIS','UTF-8');
-        $list[$row][] = mb_convert_encoding('階級','SJIS','UTF-8');
-        $list[$row][] = mb_convert_encoding('階級最小値','SJIS','UTF-8');
-        $list[$row][] = mb_convert_encoding('階級最大値','SJIS','UTF-8');
-        $list[$row][] = mb_convert_encoding('階級中央値','SJIS','UTF-8');
+        $list[$row][] = mb_convert_encoding('階級(kDa)','SJIS','UTF-8');
+        $list[$row][] = mb_convert_encoding('階級最小値(kDa)','SJIS','UTF-8');
+        $list[$row][] = mb_convert_encoding('階級最大値(kDa)','SJIS','UTF-8');
+        $list[$row][] = mb_convert_encoding('階級中央値(kDa)','SJIS','UTF-8');
         foreach($graphe_datas as $key=>$value){
             $list[$row][] = $value->label;
         }
@@ -1127,6 +1127,12 @@ class GraphsController extends AppController
         $sheet->setCellValue("F2",$sa['areas'][0][ 'maxpoint' ]);
         $sheet->setCellValue("H2",$sa['areas'][1][ 'minpoint' ]);
         $sheet->setCellValue("J2",$sa['areas'][1][ 'maxpoint' ]);
+        $sheet->setCellValue("L2",$sa['areas'][2][ 'minpoint' ]);
+        $sheet->setCellValue("N2",$sa['areas'][2][ 'maxpoint' ]);
+        $sheet->setCellValue("P2",$sa['areas'][3][ 'minpoint' ]);
+        $sheet->setCellValue("R2",$sa['areas'][3][ 'maxpoint' ]);
+        $sheet->setCellValue("T2",$sa['areas'][4][ 'minpoint' ]);
+        $sheet->setCellValue("V2",$sa['areas'][4][ 'maxpoint' ]);
         $row = 4;
         $num = 1;
 

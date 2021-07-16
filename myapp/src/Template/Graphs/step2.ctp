@@ -67,32 +67,47 @@
                             <tr>
                                 <td><?= __("値") ?></td>
                                 <td>
-                                    <?= $this->Form->control("defaultpoint",[
-                                            "class"=>"form-control sopText",
-                                            "type"=>"number",
-                                            "value"=>(!empty($SopDefaults->defaultpoint))?$SopDefaults->defaultpoint:"0",
-                                            "label"=>false,
-                                            "min"=>"0",
-                                        ]) ?>
+                                    <div class="d-flex">
+                                        <div>
+                                            <?= $this->Form->control("defaultpoint",[
+                                                "class"=>"form-control sopText",
+                                                "type"=>"number",
+                                                "value"=>(!empty($SopDefaults->defaultpoint))?$SopDefaults->defaultpoint:"0",
+                                                "label"=>false,
+                                                "min"=>"0",
+                                            ]) ?>
+                                        </div>
+                                        <div class="mt-2 ml-2"><?=__("kDa") ?></div>
+                                    </div>
                                 </td>
                                 <td>
-                                    <?= $this->Form->control("dispareamax",[
-                                            "class"=>"form-control sopText",
-                                            "type"=>"number",
-                                            "value"=>(!empty($SopDefaults->dispareamax))?$SopDefaults->dispareamax:"0",
-                                            "label"=>false,
-                                            "min"=>"0",
-                                        ]) ?>
+                                    <div class="d-flex">
+                                        <div>
+                                            <?= $this->Form->control("dispareamax",[
+                                                    "class"=>"form-control sopText",
+                                                    "type"=>"number",
+                                                    "value"=>(!empty($SopDefaults->dispareamax))?$SopDefaults->dispareamax:"0",
+                                                    "label"=>false,
+                                                    "min"=>"0",
+                                                ]) ?>
+                                        </div>
+                                        <div class="mt-2 ml-2"><?=__("kDa") ?></div>
+                                    </div>
                                 </td>
                                 <td>
-                                    <?= $this->Form->control("binsize",[
-                                            "class"=>"form-control sopText",
-                                            "type"=>"number",
-                                            "min"=>"0",
-                                            "value"=>(!empty($SopDefaults->binsize))?$SopDefaults->binsize:"0",
-                                            "label"=>false,
+                                    <div class="d-flex">
+                                        <div>
+                                            <?= $this->Form->control("binsize",[
+                                                    "class"=>"form-control sopText",
+                                                    "type"=>"number",
+                                                    "min"=>"0",
+                                                    "value"=>(!empty($SopDefaults->binsize))?$SopDefaults->binsize:"0",
+                                                    "label"=>false,
 
-                                        ]) ?>
+                                                ]) ?>
+                                            </div>
+                                        <div class="mt-2 ml-2"><?=__("kDa") ?></div>
+                                    </div>
                                 </td>
                                 <td>
                                     <?= $this->Form->select("smooth",$array_smooth,[
@@ -131,6 +146,7 @@
                                 <td >
                                     <?php if(isset($SopAreas[$i][ 'minpoint' ])): ?>
                                     <?= h(number_format($SopAreas[$i][ 'minpoint' ])) ?>
+                                    <?= __("kDa")?>
                                     <?php endif; ?>
                                 </td>
                                 <?php endfor; ?>
@@ -141,6 +157,7 @@
                                 <td >
                                     <?php if(isset($SopAreas[$i][ 'maxpoint' ])): ?>
                                     <?= h(number_format($SopAreas[$i][ 'maxpoint' ])) ?>
+                                    <?= __("kDa")?>
                                     <?php endif; ?>
                                 </td>
                                 <?php endfor; ?>

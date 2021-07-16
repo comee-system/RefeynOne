@@ -103,27 +103,7 @@ class UploadComponent extends Component
             }
 
             //ならび順変更
-
-            $sql = " SELECT
-                id,
-                label
-                FROM graphe_datas WHERE
-                    graphe_id = '${graphe_id}'
-                ORDER BY id ASC
-            ";
-            $graphe_data = $connection->execute($sql)->fetchall('assoc');
-            $this->GrapheDatas->updateAll(['disp' => '0'], ['graphe_id' => $graphe_id]);
-            $sort = 1;
-            foreach($graphe_data as $key=>$value){
-                $k = $value['id'];
-                $GrapheDatas = $this->GrapheDatas->get($k);
-                $GrapheDatas->disp = $sort;
-                $this->GrapheDatas->save($GrapheDatas);
-                $sort++;
-                if($sort > 10){
-                    break;
-                }
-            }
+            $this->editDispSort($connection,$graphe_id);
 
 
             fclose($fp);
@@ -135,6 +115,31 @@ class UploadComponent extends Component
         }
     }
 
+    //並び順の変更
+    public function editDispSort($connection,$graphe_id){
+
+        $sql = " SELECT
+            id,
+            label
+            FROM graphe_datas WHERE
+                graphe_id = '${graphe_id}'
+            ORDER BY id ASC
+        ";
+        $graphe_data = $connection->execute($sql)->fetchall('assoc');
+        $this->GrapheDatas->updateAll(['disp' => '0'], ['graphe_id' => $graphe_id]);
+        $sort = 1;
+        foreach($graphe_data as $key=>$value){
+            $k = $value['id'];
+            $GrapheDatas = $this->GrapheDatas->get($k);
+            $GrapheDatas->disp = $sort;
+            $this->GrapheDatas->save($GrapheDatas);
+            $sort++;
+            if($sort > 10){
+                break;
+            }
+        }
+
+    }
 
     //Mesurementファイルは、すべてのデータを取り込みます
     public function fileUploadMesurement($graphe_id,$filename){
@@ -222,6 +227,9 @@ class UploadComponent extends Component
                 $query = $sql.$sql2;
                 $connection->execute($query);
             }
+
+            //ならび順変更
+            $this->editDispSort($connection,$graphe_id);
 
             fclose($fp);
             $connection->commit();

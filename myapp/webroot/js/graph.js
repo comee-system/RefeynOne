@@ -100,6 +100,12 @@ $(function(){
         });
     }
 
+    $(".sopArea").on("keyup",function(event){
+        //ラジオボタンが選択されていれば解除
+        var _key = $(this).attr("id").split("-");
+        $("#reflect-graf-"+_key[1]).prop("checked",false);
+
+    });
     //SOPエリアの設定
     $(".sopArea").on("blur",function(event){
         var _val = $(this).val();
@@ -179,8 +185,8 @@ $.fn.tableReflect = function(ex = ""){
             $.each(_areas,function(key,value){
                 var _areamins = "#areamins-"+value[ 'id' ];
                 var _areamaxs = "#areamaxs-"+value[ 'id' ];
-                $(_areamins).html(value['minpoint']);
-                $(_areamaxs).html(value['maxpoint']);
+                $(_areamins).html(value['minpoint']+"kDa");
+                $(_areamaxs).html(value['maxpoint']+"kDa");
             });
             var _label = data.label;
             var _lists = data.lists;

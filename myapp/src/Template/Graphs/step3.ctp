@@ -98,19 +98,24 @@
                                     <td nowrap><?= __("エリア最小値（<=）") ?></td>
                                     <?php for($i=0;$i<=4;$i++ ):?>
                                     <td class="text-center" >
-                                        <?php
-                                            $text = "";
-                                            $sop_id = "";
-                                            if(isset($SopAreas[$i][ 'id' ])):
-                                                $sop_id = $SopAreas[$i][ 'id' ];
-                                                $text = $SopAreas[$i][ 'minpoint' ];
-                                            endif;
-                                        ?>
-                                        <?= $this->Form->input("minpoint-".$sop_id,[
-                                            'class'=>'form-control sopArea',
-                                            'label'=>false,
-                                            'value'=>$text
-                                        ])?>
+                                        <div class="d-flex">
+                                            <div>
+                                                <?php
+                                                    $text = "";
+                                                    $sop_id = "";
+                                                    if(isset($SopAreas[$i][ 'id' ])):
+                                                        $sop_id = $SopAreas[$i][ 'id' ];
+                                                        $text = $SopAreas[$i][ 'minpoint' ];
+                                                    endif;
+                                                ?>
+                                                <?= $this->Form->input("minpoint-".$sop_id,[
+                                                    'class'=>'form-control sopArea',
+                                                    'label'=>false,
+                                                    'value'=>$text
+                                                ])?>
+                                            </div>
+                                            <div class="mt-2 ml-2"><?= __("kDa") ?></div>
+                                        </div>
                                     </td>
                                     <?php endfor; ?>
                                 </tr>
@@ -118,19 +123,24 @@
                                     <td nowrap><?= __("エリア最大値（>）") ?></td>
                                     <?php for($i=0;$i<=4;$i++ ):?>
                                     <td class="text-center" >
-                                        <?php
-                                            $text = "";
-                                            $sop_id = "";
-                                            if(isset($SopAreas[$i][ 'id' ])):
-                                                $sop_id = $SopAreas[$i][ 'id' ];
-                                                $text = $SopAreas[$i][ 'maxpoint' ];
-                                            endif;
-                                        ?>
-                                        <?= $this->Form->input("maxpoint-".$sop_id,[
-                                            'class'=>'form-control sopArea',
-                                            'label'=>false,
-                                            'value'=>$text
-                                        ])?>
+                                        <div class="d-flex">
+                                            <div>
+                                                <?php
+                                                    $text = "";
+                                                    $sop_id = "";
+                                                    if(isset($SopAreas[$i][ 'id' ])):
+                                                        $sop_id = $SopAreas[$i][ 'id' ];
+                                                        $text = $SopAreas[$i][ 'maxpoint' ];
+                                                    endif;
+                                                ?>
+                                                <?= $this->Form->input("maxpoint-".$sop_id,[
+                                                    'class'=>'form-control sopArea',
+                                                    'label'=>false,
+                                                    'value'=>$text
+                                                ])?>
+                                            </div>
+                                            <div class="mt-2 ml-2"><?= __("kDa") ?></div>
+                                        </div>
                                     </td>
                                     <?php endfor; ?>
                                 </tr>
@@ -299,15 +309,14 @@
                    <?= __("エリア毎のテーブル表示") ?>
 
                 </div>
-
-                <div class="areatable">
-                    <div class="text-right">
-
+                <div class="div-tableDataExport" >
                     <?= $this->Html->link("Table Data Export","javascript:void(0);",[
-                        "class"=>"btn btn-warning w-25 text-white",
+                        "class"=>"btn btn-warning  text-white ",
                         "id"=>"tableDataExport"
                     ])?>
-                    </div>
+                </div>
+                <div class="areatable">
+
                     <table class="mt-3 table table-bordered bg-white" style="width:200%;">
                         <thead>
                             <tr>
@@ -342,10 +351,10 @@
                             <tr>
                                 <td>&nbsp;</td>
                                 <?php for($i=1;$i<=5;$i++): ?>
-                                    <td><?= __("割合%") ?></td>
-                                    <td><?= __("平均値") ?></td>
-                                    <td><?= __("中間値") ?></td>
-                                    <td><?= __("モード値") ?></td>
+                                    <td><?= __("割合(%)") ?></td>
+                                    <td><?= __("平均値(kDa)") ?></td>
+                                    <td><?= __("中間値(kDa)") ?></td>
+                                    <td><?= __("モード値(kDa)") ?></td>
                                 <?php endfor; ?>
                             </tr>
                         </thead>

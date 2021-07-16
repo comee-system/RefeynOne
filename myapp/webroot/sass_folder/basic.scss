@@ -365,6 +365,21 @@ footer {
   background-color: #fff;
 }
 
+div{
+    &.div-tableDataExport{
+        height:40px;
+        width:100%;
+        position:relative;
+        text-align: right;
+
+        #tableDataExport{
+            position:absolute;
+            left:auto;
+            right:0;
+            width:25%;
+        }
+    }
+}
 
   @keyframes sp-anime {
     100% {
