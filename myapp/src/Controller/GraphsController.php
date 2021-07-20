@@ -948,11 +948,15 @@ class GraphsController extends AppController
 
         $sql = " SELECT ";
             foreach($areas as $k=>$value){
+                /*
                 $sql .= " SUM( CASE WHEN disp.".$clum." >= ".$value[ 'minpoint' ]." AND disp.".$clum." <".$value[ 'maxpoint' ]." THEN disp.".$clum." ELSE 0 END ) AS sum_".$value[ 'id' ]."_".$value[ 'minpoint' ]."_".$value[ 'maxpoint' ].",";
-
+                */
+                /*
                 $sql .= " GROUP_CONCAT( CASE WHEN disp.".$clum." >= ".$value[ 'minpoint' ]." AND disp.".$clum." <".$value[ 'maxpoint' ]." THEN disp.".$clum." ELSE NULL END ) AS groupLine_".$value[ 'id' ]."_".$value[ 'minpoint' ]."_".$value[ 'maxpoint' ].",";
+*/
+                $sql .= " SUM( CASE WHEN disp.min > ".$value[ 'minpoint' ]." AND disp.max <= ".$value[ 'maxpoint' ]." THEN disp.".$clum." ELSE 0 END ) AS lot_".$value[ 'id' ]."_".$value[ 'minpoint' ]."_".$value[ 'maxpoint' ].",";
 
-                $sql .= " SUM( CASE WHEN disp.max > ".$value[ 'minpoint' ]." AND disp.max <= ".$value[ 'maxpoint' ]." THEN disp.counts3 ELSE 0 END ) AS lot_".$value[ 'id' ]."_".$value[ 'minpoint' ]."_".$value[ 'maxpoint' ].",";
+                $sql .= " SUM(  disp.".$clum."  ) AS total_".$value[ 'id' ]."_".$value[ 'minpoint' ]."_".$value[ 'maxpoint' ].",";
             }
         $sql .= "
                 graphe_data_id,
@@ -965,6 +969,7 @@ class GraphsController extends AppController
                 disp.user_id = ${user_id} AND
                 disp.graphe_id = ${id}
                 GROUP BY disp.graphe_data_id
+                ORDER BY data.disp ASC
         ";
 
         $list = $connection->execute($sql)->fetchall('assoc');
@@ -980,21 +985,23 @@ class GraphsController extends AppController
                 FROM (
                 SELECT ";
                    foreach($areas as $k=>$value){
-                        $sql .= " SUM( CASE WHEN  pointdata >= ".$value[ 'minpoint' ]." AND pointdata < ".$value[ 'maxpoint' ]." THEN pointdata ELSE 0 END ) AS pt_".$value[ 'id' ]."_".$value[ 'minpoint' ]."_".$value[ 'maxpoint' ].",";
+                        $sql .= " SUM( CASE WHEN  pt.pointdata >= ".$value[ 'minpoint' ]." AND pt.pointdata < ".$value[ 'maxpoint' ]." THEN pt.pointdata ELSE 0 END ) AS pt_".$value[ 'id' ]."_".$value[ 'minpoint' ]."_".$value[ 'maxpoint' ].",";
 
-                        $sql .= " SUM( CASE WHEN  pointdata >= ".$value[ 'minpoint' ]." AND pointdata < ".$value[ 'maxpoint' ]." THEN 1 ELSE 0 END ) AS c_".$value[ 'id' ]."_".$value[ 'minpoint' ]."_".$value[ 'maxpoint' ].",";
+                        $sql .= " SUM( CASE WHEN  pt.pointdata >= ".$value[ 'minpoint' ]." AND pt.pointdata < ".$value[ 'maxpoint' ]." THEN 1 ELSE 0 END ) AS c_".$value[ 'id' ]."_".$value[ 'minpoint' ]."_".$value[ 'maxpoint' ].",";
 
                     }
 
         $sql .= "
-                id
+                pt.id
                 FROM
-                    graphe_points
+                    graphe_points as pt
+                    LEFT JOIN graphe_datas as data ON data.id  = pt.graphe_data_id
                 WHERE
-                    user_id = ${user_id} AND
-                    graphe_id = ${id}
+                    pt.user_id = ${user_id} AND
+                    pt.graphe_id = ${id}
 
-                    GROUP BY graphe_data_id
+                    GROUP BY pt.graphe_data_id
+                    ORDER BY data.disp ASC
                 ) as a
         ";
        // $this->log($sql, LOG_DEBUG);
@@ -1035,6 +1042,7 @@ class GraphsController extends AppController
         }else{
             $clum = "counts1";
         }
+
         foreach($areas as $k=>$value){
             $minpoint = $value['minpoint'];
             $maxpoint = $value['maxpoint'];
@@ -1048,19 +1056,21 @@ class GraphsController extends AppController
                         graphe_id = ${id} AND
                         min >= ${minpoint} AND
                         max < ${maxpoint} ";
+
             $mod = $connection->execute($sql)->fetchall('assoc');
             $ex = [];
             $pt = "m_".$value[ 'id' ]."_".$value[ 'minpoint' ]."_".$value[ 'maxpoint' ];
             $center = [];
             foreach($mod as $ky=>$val){
                 $ex[ $pt ][$val[ 'graphe_data_id' ]][] = $val[ $clum ];
-                if(empty($center[$val[ $clum ]])){
-                    $center[$val[ $clum ]] = $val['center'];
+                if(empty($center[$val[ 'graphe_data_id' ]][$val[ $clum ]])){
+                    $center[$val[ 'graphe_data_id' ]][$val[ $clum ]] = $val['center'];
                 }
             }
+
             if(!empty($ex[$pt])){
                 foreach($ex[$pt] as $ky=>$val){
-                    $mode[ $pt ][$ky] = $center[$this->mode($val)];
+                    $mode[ $pt ][$ky] = $center[$ky][$this->mode($val)];
                 }
             }
         }
@@ -1075,8 +1085,9 @@ class GraphsController extends AppController
             foreach($areas as $k=>$val){
                 $lot = "lot_".$val[ 'id' ]."_".$val[ 'minpoint' ]."_".$val[ 'maxpoint' ];
                 $avg = "avg_".$val[ 'id' ]."_".$val[ 'minpoint' ]."_".$val[ 'maxpoint' ];
+                $tl = "total_".$val[ 'id' ]."_".$val[ 'minpoint' ]."_".$val[ 'maxpoint' ];
                 $m = "m_".$val[ 'id' ]."_".$val[ 'minpoint' ]."_".$val[ 'maxpoint' ];
-                $lists[$key][$no][ 'lot' ] = round($value[$lot]*100,2);
+                $lists[$key][$no][ 'lot' ] = round(($value[$lot]/$value[$tl])*100,2);
                 $lists[$key][$no][ 'ave' ] = round($points[$key][$avg],2);
 
                 if(isset($median[$m][$value[ 'graphe_data_id' ]])){

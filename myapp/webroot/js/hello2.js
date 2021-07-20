@@ -340,7 +340,7 @@ function createGraf(){
     }
     if(_analyticsBasic2 == "on" && _dataDisplay2 == "on"){
         _display = "Signal Ratio";
-        _xTxt = "Mw-Mass (kDa) Ratio";
+        _xTxt = "Mw-Mass (kDa)";
     }
 
 
