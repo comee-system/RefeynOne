@@ -212,6 +212,7 @@ Configure::write("array_role", [
     0=>"一般会員",
     1=>"管理者",
     2=>"デモ",
+    99=>"開発用",
 ]);
 Configure::write("array_smooth", [
     1=>1,
