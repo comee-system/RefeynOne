@@ -4,6 +4,7 @@ namespace App\Controller\Lssadmin;
 
 use Cake\Event\Event;
 use Cake\Routing\Router;
+use Cake\Core\Configure;
 
 /**
  * Users Controller
@@ -21,10 +22,12 @@ class UsersController extends AppController
         $this->pan[0]['link' ] = Router::url(['controller' => '/'], true);
         $this->mailsend = $this->loadComponent('MailSend');
         $this->sessions = $this->loadModel("Sessions");
+        $this->array_role = Configure::read("array_role");
         parent::beforeFilter($event);
         $this->Auth->allow(['add', 'hoge']);
         $this->set("pan",$this->pan);
         $this->set("type",[]);
+        $this->set("array_role",$this->array_role );
 
     }
 
@@ -64,7 +67,7 @@ class UsersController extends AppController
         $title = "会員一覧";
         $this->pan[1]['title'] = $title;
         $this->pan[1]['link' ] = "";
-        $user = $this->Users->find()->where(['role'=>0]);
+        $user = $this->Users->find();
         $users = $this->paginate($user);
 
         $this->set(compact('users'));
@@ -183,16 +186,17 @@ class UsersController extends AppController
                 $user[ 'startdate' ] = $request[ 'startdate' ];
                 $user[ 'enddate'   ] = $request[ 'enddate' ];
                 $user[ 'datestatus'   ] = $request[ 'datestatus' ];
-                $user[ 'role'      ] = 0;
+                $user[ 'role'      ] = $request[ 'role' ];
                 $user[ 'last_login_at' ] = date('Y-m-d');
-                if(!$id){
-                    if ($userdata = $this->Users->save($user)) {
-                        $this->mailsend->userRegistSends($userdata);
-                        $this->Flash->success(__('会員登録が完了しました。'));
 
-                        return $this->redirect(['action' => 'index']);
-                    }
+
+                if ($userdata = $this->Users->save($user)) {
+                    $this->mailsend->userRegistSends($userdata);
+                    $this->Flash->success(__('会員登録が完了しました。'));
+
+                    return $this->redirect(['action' => 'index']);
                 }
+
             }
 
         }

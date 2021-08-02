@@ -122,6 +122,19 @@
                 </div>
             </div>
             <div class="row mt-3">
+                <div class="col-4"><?= __("会員種別") ?>
+                <span class="right badge badge-danger">必須</span>
+                </div>
+                <div class="col-8">
+                    <?php if($type == "conf"): ?>
+                        <?=$array_role[$this->request->getData('role')]?>
+                        <?= $this->Form->hidden("role")?>
+                    <?php else:?>
+                        <?= $this->Form->select("role",$array_role,['class'=>'form-control'])?>
+                    <?php endif; ?>
+                </div>
+            </div>
+            <div class="row mt-3">
                 <div class="col-4"><?= __("利用期間") ?>
                 </div>
                 <div class="col-8">

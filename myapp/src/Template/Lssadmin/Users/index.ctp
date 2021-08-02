@@ -45,6 +45,7 @@
                     <th scope="col"><?= __("企業名")?></th>
                     <th scope="col"><?= __("担当者氏名")?></th>
                     <th scope="col"><?= __("メールアドレス")?></th>
+                    <th scope="col"><?= __("会員種別")?></th>
                     <th scope="col"><?= __("利用期間")?></th>
                 </tr>
             </thead>
@@ -68,6 +69,7 @@
                     <td><?= h($user->campany) ?></td>
                     <td><?= h($user->sei) ?><?= h($user->mei) ?></td>
                     <td><?= h($user->email) ?></td>
+                    <td><?= $array_role[$user->role] ?></td>
                     <td>
                         <?php if($user->datestatus == 1): ?>
                             期限なし

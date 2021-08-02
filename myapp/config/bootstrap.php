@@ -211,6 +211,7 @@ define("D_ADMIN_MAIL","chiba@se-sendai.co.jp");
 Configure::write("array_role", [
     0=>"一般会員",
     1=>"管理者",
+    2=>"デモ",
 ]);
 Configure::write("array_smooth", [
     1=>1,
