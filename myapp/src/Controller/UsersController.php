@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use Cake\Event\Event;
 use Cake\Datasource\ConnectionManager;
+use Cake\Core\Configure;
 /**
  * Users Controller
  *
@@ -18,6 +19,8 @@ class UsersController extends AppController
         parent::beforeFilter($event);
         $this->connection = ConnectionManager::get('default');
         $this->mailsend = $this->loadComponent('MailSend');
+        $this->sessions = $this->loadModel("Sessions");
+        $this->array_login_type = Configure::read('array_login_type');
         $this->Auth->allow(['add', 'hoge']);
         $this->uAuth = $this->Auth->user();
         $this->set("uAuth",$this->uAuth);
@@ -34,13 +37,48 @@ class UsersController extends AppController
             return $this->redirect("/");
         }
         if ($this->request->is('post')) {
-        $user = $this->Auth->identify();
-        if ($user) {
-          $this->Auth->setUser($user);
+            $user = $this->Auth->identify();
+            if ($user) {
+                //ログイン成功時にsessionキーの有無の判定を行い、
+                //作成時間が30分以内の場合はログイン不可とする(エラーメッセージ)
+                //30分以上の場合は既存セッションキーの削除を行う
+                $where = [];
+                $where[ 'user_id' ] = $user[ 'id' ];
+                $sessions = $this->sessions->find()
+                    ->where($where)
+                    ->last();
+                $filename = "";
+                if(isset($sessions->session_key)){
+                    $filename = TMP."sessions/sess_".$sessions->session_key;
+                }
+                if(file_exists($filename) && $filename){
+                    $after30 = strtotime(date("Y-m-d H:i:s", filemtime($filename)))+D_LIMIT*60;
+                    $nowTime = time();
+                    if( $after30 < $nowTime ){
+                        //セッションキーの削除
+                        unlink($filename);
+                    }else{
+                        $this->Flash->error(__('
+                        同時ログインエラー
+                        只今同じセッションでログイン中です。
+                        ログアウトするか、30秒程待ってログインしてください'
+                        ));
+                        return $this->redirect("/users/login");
+                    }
+                }
 
-          return $this->redirect("/graphs/");
-//          return $this->redirect($this->Auth->redirectUrl());
-        }
+                $this->Auth->setUser($user);
+                //ログイン成功時にsessionsテーブルにデータの登録を行う
+                $entities = $this->sessions->newEntity();
+                $entities->user_id = $user[ 'id' ];
+                $entities->session_key = session_id();
+                $entities->brauz = $_SERVER['HTTP_USER_AGENT'];
+                $entities->ip = $_SERVER[ "REMOTE_ADDR" ];
+                $entities->action = $this->array_login_type[1];
+                $this->sessions->save($entities);
+                return $this->redirect("/graphs/");
+
+            }
         $this->Flash->error(__('ユーザ名もしくはパスワードが間違っています'));
       }
     }
@@ -51,6 +89,15 @@ class UsersController extends AppController
      */
     public function logout()
     {
+
+        //ログイン成功時にsessionsテーブルにデータの登録を行う
+        $entities = $this->sessions->newEntity();
+        $entities->user_id = $this->uAuth[ 'id' ];
+        $entities->session_key = session_id();
+        $entities->brauz = $_SERVER['HTTP_USER_AGENT'];
+        $entities->ip = $_SERVER[ "REMOTE_ADDR" ];
+        $entities->action = $this->array_login_type[2];
+        $this->sessions->save($entities);
       return $this->redirect($this->Auth->logout());
     }
 

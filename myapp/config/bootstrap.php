@@ -98,8 +98,8 @@ if (Configure::read('debug')) {
  * Set the default server timezone. Using UTC makes time calculations / conversions easier.
  * Check http://php.net/manual/en/timezones.php for list of valid timezone strings.
  */
-date_default_timezone_set(Configure::read('App.defaultTimezone'));
-
+//date_default_timezone_set(Configure::read('App.defaultTimezone'));
+date_default_timezone_set('Asia/Tokyo');
 /*
  * Configure the mbstring extension to use the correct encoding.
  */
@@ -231,4 +231,14 @@ Configure::write("array_graf_type",[
     12=>"counts3",
     22=>"counts4",
 ]);
+//セッションの保存ばしょ指定
+session_save_path(TMP."sessions/");
+
+define("D_LIMIT",30);
+
+Configure::write("array_login_type",[
+    1=>"ログイン",
+    2=>"ログアウト",
+]);
+
 

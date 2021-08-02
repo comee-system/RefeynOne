@@ -1,6 +1,6 @@
 <?php
 if (!isset($params['escape']) || $params['escape'] !== false) {
-    $message = h($message);
+    $message = nl2br($message);
 }
 ?>
 <div class="col-6 mx-auto mt-3">

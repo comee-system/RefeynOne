@@ -103,6 +103,17 @@ $cakeDescription = 'CakePHP: the rapid development php framework';
                     <?php
                         $url = $this->Url->build([
                             "controller" => "users",
+                            "action" => "logpage",
+                        ]);?>
+                    <a href="<?= h($url) ?>" class="nav-link">
+                    <i class="nav-icon fas fa-circle nav-icon"></i>
+                    <p>ログ確認</p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <?php
+                        $url = $this->Url->build([
+                            "controller" => "users",
                             "action" => "admin",
                         ]);?>
                     <a href="<?= h($url) ?>" class="nav-link">

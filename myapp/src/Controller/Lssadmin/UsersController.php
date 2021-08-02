@@ -20,6 +20,7 @@ class UsersController extends AppController
         $this->pan[0]['title'] = "Home";
         $this->pan[0]['link' ] = Router::url(['controller' => '/'], true);
         $this->mailsend = $this->loadComponent('MailSend');
+        $this->sessions = $this->loadModel("Sessions");
         parent::beforeFilter($event);
         $this->Auth->allow(['add', 'hoge']);
         $this->set("pan",$this->pan);
@@ -221,8 +222,18 @@ class UsersController extends AppController
 
         return $this->redirect(['action' => 'index']);
     }
+    public function logpage(){
 
 
+        $title = "ログ確認";
+        $this->pan[1]['title'] = $title;
+        $this->pan[1]['link' ] = "";
+        $session = $this->sessions->find()->contain(['Users']);
+        $sessions = $this->paginate($session);
+        $this->set(compact('sessions'));
+        $this->set("title",$title);
+        $this->set("pan",$this->pan);
 
+    }
 
 }
