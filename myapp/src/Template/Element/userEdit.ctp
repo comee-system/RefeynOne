@@ -40,7 +40,7 @@
                             "label"=>false,
                             "required"=>false,
                         ];
-                        if($id > 0){
+                        if($id > 0 && empty($this->request->data("password"))){
                             $op += [
                                 "value"=>"",
                                 "placeholder"=>"変更しない場合は未入力"
