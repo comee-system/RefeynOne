@@ -52,7 +52,7 @@ class UsersController extends AppController
                     $filename = TMP."sessions/sess_".$sessions->session_key;
                 }
                 if(file_exists($filename) && $filename){
-                    $after30 = strtotime(date("Y-m-d H:i:s", filemtime($filename)))+D_LIMIT*60;
+                    $after30 = strtotime(date("Y-m-d H:i:s", filemtime($filename)))+D_LIMIT;
                     $nowTime = time();
                     if( $after30 < $nowTime ){
                         //セッションキーの削除
