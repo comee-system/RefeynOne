@@ -386,3 +386,6 @@ div{
       transform: rotate(360deg);
     }
   }
+  .table-striped.blue-stripe tbody tr:nth-of-type(odd){
+      background-color: #ccffff !important;
+  }

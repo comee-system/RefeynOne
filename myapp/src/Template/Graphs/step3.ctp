@@ -85,13 +85,19 @@
                                 <tr>
                                     <td>&nbsp;</td>
                                     <?php for($i=0;$i<=4;$i++ ):
-                                        $num = $i+1;
                                         $sop_id = "";
                                         if(isset($SopAreas[$i][ 'id' ])):
                                             $sop_id = $SopAreas[$i][ 'id' ];
                                         endif;
                                         ?>
-                                    <td class="text-center" id="areaname-<?= $sop_id ?>"><?= __("エリア".$num) ?></td>
+                                    <td class="text-center" id="areaname-<?= $sop_id ?>">
+                                        <?php if($i == 0): ?>
+                                            <?= __("全範囲") ?>
+                                        <?php else: ?>
+                                            <?= __("エリア".$i) ?>
+                                        <?php endif; ?>
+
+                                    </td>
                                     <?php endfor; ?>
                                 </tr>
                                                                 <tr>
@@ -108,11 +114,18 @@
                                                         $text = $SopAreas[$i][ 'minpoint' ];
                                                     endif;
                                                 ?>
+                                                <?php if($i == 0): ?>
+                                                <?php $diable = true;?>
+                                                <?php else: ?>
+                                                <?php $diable = false;?>
+                                                <?php endif;?>
                                                 <?= $this->Form->input("minpoint-".$sop_id,[
                                                     'class'=>'form-control sopArea',
                                                     'label'=>false,
-                                                    'value'=>$text
+                                                    'value'=>$text,
+                                                    'readonly'=>$diable
                                                 ])?>
+
                                             </div>
                                             <div class="mt-2 ml-2"><?= __("kDa") ?></div>
                                         </div>
@@ -122,6 +135,11 @@
                                 <tr>
                                     <td nowrap><?= __("エリア最大値（>）") ?></td>
                                     <?php for($i=0;$i<=4;$i++ ):?>
+                                    <?php if($i == 0): ?>
+                                    <?php $diable = true;?>
+                                    <?php else: ?>
+                                    <?php $diable = false;?>
+                                    <?php endif;?>
                                     <td class="text-center" >
                                         <div class="d-flex">
                                             <div>
@@ -136,7 +154,8 @@
                                                 <?= $this->Form->input("maxpoint-".$sop_id,[
                                                     'class'=>'form-control sopArea',
                                                     'label'=>false,
-                                                    'value'=>$text
+                                                    'value'=>$text,
+                                                    'readonly'=>$diable
                                                 ])?>
                                             </div>
                                             <div class="mt-2 ml-2"><?= __("kDa") ?></div>
@@ -155,11 +174,13 @@
                                         endif;
                                     ?>
                                     <td class="text-center">
+                                        <?php if($i > 0): ?>
                                         <?= $this->Form->radio('reflect_graf',
                                         [$sop_id=>'text'],
                                         [
                                             'label'=>false
                                         ]);?>
+                                        <?php endif; ?>
                                     </td>
                                     <?php endfor; ?>
                                 </tr>
@@ -317,13 +338,21 @@
                 </div>
                 <div class="areatable">
 
-                    <table class="mt-3 table table-bordered bg-white" style="width:200%;">
+                    <table class="mt-3 table table-bordered bg-white lead table-striped blue-stripe" style="width:200%;">
                         <thead>
                             <tr>
                                 <td>&nbsp;</td>
                                 <td>&nbsp;</td>
                                 <?php for($i=1;$i<=5;$i++): ?>
-                                <td colspan=4 ><?= __("エリア".$i) ?></td>
+                                <td colspan=5 >
+                                    <?php if($i == 1):?>
+                                        <?= __("全範囲") ?>
+                                    <?php else:
+                                        $num = $i-1;
+                                        ?>
+                                        <?= __("エリア".$num) ?>
+                                    <?php endif; ?>
+                                </td>
                                 <?php endfor; ?>
                             </tr>
                             <tr>
@@ -335,7 +364,7 @@
                                         $sop_id = $SopAreas[$i][ 'id' ];
                                     endif;
                                     ?>
-
+                                    <td rowspan=2><?= __("範囲内データ数") ?></td>
                                     <td>
                                         <?= __("エリア最小値") ?><br />
                                         <?= __("(<=)") ?>
@@ -351,6 +380,7 @@
                             <tr>
                                 <td>&nbsp;</td>
                                 <?php for($i=1;$i<=5;$i++): ?>
+
                                     <td><?= __("割合(%)") ?></td>
                                     <td><?= __("平均値(kDa)") ?></td>
                                     <td><?= __("中間値(kDa)") ?></td>

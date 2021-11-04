@@ -200,6 +200,7 @@ $.fn.tableReflect = function(ex = ""){
                 var _detail = _lists[_key];
                 console.log(_detail);
                 $.each(_detail,function(_k,_val){
+                    _table += "<td>"+_val.bunshi+"</td>";
                     _table += "<td>"+_val.lot+"%</td>";
                     _table += "<td>"+_val.ave+"</td>";
                     _table += "<td>"+_val.median+"</td>";

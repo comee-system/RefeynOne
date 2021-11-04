@@ -98,7 +98,7 @@ class GraphsController extends AppController
 
     public function beforeStep3($graphe_id){
 
-        if( $this->request->is('ajax')){
+        if($this->request->is('ajax')){
             $this->autoRender=false;
 
 
@@ -281,6 +281,16 @@ class GraphsController extends AppController
         $dispareamax  = $sopDefaults[ 'dispareamax' ];
         $binsize      = $sopDefaults[ 'binsize' ];
         $smooth       = $sopDefaults[ 'smooth' ];
+        //初期全範囲を入れる
+        $sopareas = $this->SopAreas->find()->where([
+            "user_id"=>$user_id,
+            "graphe_id"=>$graphe_id
+            ])->first();
+        $set[ 'minpoint' ] = $sopDefaults[ 'defaultpoint' ];
+        $set[ 'maxpoint'  ] = $sopDefaults[ 'dispareamax' ];
+        $sopareas = $this->SopAreas->patchEntity($sopareas, $set,['validate'=>false]);
+        $this->SopAreas->save($sopareas);
+
 
         $line = [];
         $compares = [];
@@ -1089,6 +1099,7 @@ class GraphsController extends AppController
                 $m = "m_".$val[ 'id' ]."_".$val[ 'minpoint' ]."_".$val[ 'maxpoint' ];
                 $lists[$key][$no][ 'lot' ] = round(($value[$lot]/$value[$tl])*100,2);
                 $lists[$key][$no][ 'ave' ] = round($points[$key][$avg],2);
+                $lists[$key][$no][ 'bunshi' ] = $value[$lot];
 
                 if(isset($median[$m][$value[ 'graphe_data_id' ]])){
                     $lists[$key][$no][ 'median' ] = round($median[$m][$value[ 'graphe_data_id' ]],2);

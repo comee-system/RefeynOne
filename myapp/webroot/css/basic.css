@@ -315,5 +315,7 @@ div.div-tableDataExport {
 @keyframes sp-anime {
   100% {
     transform: rotate(360deg); } }
+.table-striped.blue-stripe tbody tr:nth-of-type(odd) {
+  background-color: #ccffff !important; }
 
 /*# sourceMappingURL=basic.css.map */
