@@ -125,7 +125,6 @@
                                                     'value'=>$text,
                                                     'readonly'=>$diable
                                                 ])?>
-
                                             </div>
                                             <div class="mt-2 ml-2"><?= __("kDa") ?></div>
                                         </div>
@@ -338,7 +337,7 @@
                 </div>
                 <div class="areatable">
 
-                    <table class="mt-3 table table-bordered bg-white lead table-striped blue-stripe" style="width:200%;">
+                    <table class="mt-3 table table-bordered bg-white  table-striped blue-stripe" style="width:200%;">
                         <thead>
                             <tr>
                                 <td>&nbsp;</td>

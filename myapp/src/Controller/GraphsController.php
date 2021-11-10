@@ -250,12 +250,6 @@ class GraphsController extends AppController
 
     public function step3($graphe_id){
 
-        $SopAreas = $this->SopAreas->find()->where([
-            "user_id"=>$this->uAuth[ 'id' ],
-            "graphe_id"=>$graphe_id,
-        ])->toArray();
-        $this->set(compact('SopAreas'));
-
         $connection = ConnectionManager::get('default');
         $user_id = $this->uAuth['id'];
 
@@ -290,6 +284,12 @@ class GraphsController extends AppController
         $set[ 'maxpoint'  ] = $sopDefaults[ 'dispareamax' ];
         $sopareas = $this->SopAreas->patchEntity($sopareas, $set,['validate'=>false]);
         $this->SopAreas->save($sopareas);
+
+        $SopAreas = $this->SopAreas->find()->where([
+            "user_id"=>$this->uAuth[ 'id' ],
+            "graphe_id"=>$graphe_id,
+        ])->toArray();
+        $this->set(compact('SopAreas'));
 
 
         $line = [];
@@ -1133,7 +1133,7 @@ class GraphsController extends AppController
         $inputPath  = $driPath . "templete.xlsx";
         $sheetName  = "data_sheet";
         $temp  = "temp";
-        $outputFile = "output_" . $graphe_id . ".xlsx";
+        $outputFile = "output_".rand()."-" . $graphe_id . ".xlsx";
         $outputPath = $driPath . $outputFile;
 
         // Excalファイル作成
@@ -1145,16 +1145,16 @@ class GraphsController extends AppController
         $label = $sa['label'];
 
         // データを配置
-        $sheet->setCellValue("D2",$sa['areas'][0][ 'minpoint' ]);
-        $sheet->setCellValue("F2",$sa['areas'][0][ 'maxpoint' ]);
-        $sheet->setCellValue("H2",$sa['areas'][1][ 'minpoint' ]);
-        $sheet->setCellValue("J2",$sa['areas'][1][ 'maxpoint' ]);
-        $sheet->setCellValue("L2",$sa['areas'][2][ 'minpoint' ]);
-        $sheet->setCellValue("N2",$sa['areas'][2][ 'maxpoint' ]);
-        $sheet->setCellValue("P2",$sa['areas'][3][ 'minpoint' ]);
-        $sheet->setCellValue("R2",$sa['areas'][3][ 'maxpoint' ]);
-        $sheet->setCellValue("T2",$sa['areas'][4][ 'minpoint' ]);
-        $sheet->setCellValue("V2",$sa['areas'][4][ 'maxpoint' ]);
+        $sheet->setCellValue("E2",$sa['areas'][0][ 'minpoint' ]);
+        $sheet->setCellValue("G2",$sa['areas'][0][ 'maxpoint' ]);
+        $sheet->setCellValue("J2",$sa['areas'][1][ 'minpoint' ]);
+        $sheet->setCellValue("L2",$sa['areas'][1][ 'maxpoint' ]);
+        $sheet->setCellValue("O2",$sa['areas'][2][ 'minpoint' ]);
+        $sheet->setCellValue("Q2",$sa['areas'][2][ 'maxpoint' ]);
+        $sheet->setCellValue("T2",$sa['areas'][3][ 'minpoint' ]);
+        $sheet->setCellValue("V2",$sa['areas'][3][ 'maxpoint' ]);
+        $sheet->setCellValue("Y2",$sa['areas'][4][ 'minpoint' ]);
+        $sheet->setCellValue("AA2",$sa['areas'][4][ 'maxpoint' ]);
         $row = 4;
         $num = 1;
 
@@ -1163,6 +1163,7 @@ class GraphsController extends AppController
             $sheet->setCellValue("B".$row,$label[$key]['label']);
             $a = 2;
             foreach($value as $k=>$val){
+                $sheet->setCellValue($alphabet[$a++].$row,$val[ 'bunshi' ]);
                 $sheet->setCellValue($alphabet[$a++].$row,$val[ 'lot' ]);
                 $sheet->setCellValue($alphabet[$a++].$row,$val[ 'ave' ]);
                 $sheet->setCellValue($alphabet[$a++].$row,$val[ 'median' ]);
@@ -1403,8 +1404,12 @@ class GraphsController extends AppController
         $lists[$row++][] = mb_convert_encoding('上限','SJIS','UTF-8');
 
         $no=0;
-        for($i=1;$i<=4;$i++){
-            $lists[$row][] = mb_convert_encoding('エリア'.$i,'SJIS','UTF-8');
+        for($i=0;$i<=4;$i++){
+            if($i == 0){
+                $lists[$row][] = mb_convert_encoding('全範囲','SJIS','UTF-8');
+            }else{
+                $lists[$row][] = mb_convert_encoding('エリア'.$i,'SJIS','UTF-8');
+            }
             $lists[$row][] = $SopAreas[$no][ 'minpoint' ];
             $lists[$row++][] = $SopAreas[$no][ 'maxpoint' ];
             $no++;

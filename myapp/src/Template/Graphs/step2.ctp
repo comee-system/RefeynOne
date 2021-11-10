@@ -137,7 +137,11 @@
                             <tr>
                                 <td>&nbsp;</td>
                                 <?php for($i=1;$i<=5;$i++ ):?>
-                                <td><?= __("エリア".$i) ?></td>
+                                <?php if($i == 1): ?>
+                                <td>全範囲</td>
+                                <?php else: ?>
+                                <td><?= __("エリア") ?><?=$i-1?></td>
+                                <?php endif;?>
                                 <?php endfor; ?>
                             </tr>
                             <tr>
