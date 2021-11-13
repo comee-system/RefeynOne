@@ -1126,14 +1126,16 @@ class GraphsController extends AppController
         exit();
     }
 
-    public function tableDataExport($graphe_id="",$sa=""){
-        $alphabet = range('A', 'Z');
+    public function tableDataExport($graphe_id="",$sa=[]){
+        $alphabet = [
+            'A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z','AA','AB','AC','AD','AE','AF','AG','AH','AI','AJ','AK','AL','AM','AN','AO','AP','AQ','AR','AS','AT','AU','AV','AW','AX','AY','AZ'
+        ];
         // 入出力の情報設定
         $driPath    = realpath(TMP) . "/excel/";
-        $inputPath  = $driPath . "templete.xlsx";
+        $inputPath  = $driPath . "templete2.xlsx";
         $sheetName  = "data_sheet";
         $temp  = "temp";
-        $outputFile = "output_".rand()."-" . $graphe_id . ".xlsx";
+        $outputFile = "output_" . $graphe_id . ".xlsx";
         $outputPath = $driPath . $outputFile;
 
         // Excalファイル作成
@@ -1172,7 +1174,7 @@ class GraphsController extends AppController
 
 
             //スタイル
-            for($i=0;$i<22;$i++){
+            for($i=0;$i<27;$i++){
                 $sheet
                 ->getStyle($alphabet[$i].$row)
                 ->getBorders()
@@ -1226,6 +1228,7 @@ class GraphsController extends AppController
 
         preg_match("/[0-9]/",$this->request->getData("basic"),$basic);
         preg_match("/[0-9]/",$this->request->getData("display"),$display);
+
         $code = $basic[0].$display[0];
 
 /*
