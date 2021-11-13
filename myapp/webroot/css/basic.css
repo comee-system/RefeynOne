@@ -260,7 +260,6 @@ div.areatable table td:first-child {
 
 div.areatable table td {
   white-space: nowrap;
-  min-width: 120px;
   text-align: center; }
 
 .spinner {

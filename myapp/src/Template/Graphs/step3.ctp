@@ -337,7 +337,7 @@
                 </div>
                 <div class="areatable">
 
-                    <table class="mt-3 table table-bordered bg-white  table-striped blue-stripe" style="width:200%;">
+                    <table class="mt-3 table table-bordered bg-white  table-striped blue-stripe" style="max-width:800px !important;font-size:11px !important;">
                         <thead>
                             <tr>
                                 <td>&nbsp;</td>
