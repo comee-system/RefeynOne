@@ -1097,7 +1097,7 @@ class GraphsController extends AppController
                 $avg = "avg_".$val[ 'id' ]."_".$val[ 'minpoint' ]."_".$val[ 'maxpoint' ];
                 $tl = "total_".$val[ 'id' ]."_".$val[ 'minpoint' ]."_".$val[ 'maxpoint' ];
                 $m = "m_".$val[ 'id' ]."_".$val[ 'minpoint' ]."_".$val[ 'maxpoint' ];
-                if($value[$lot] > $value[$tl]){
+                if($value[$lot] < $value[$tl]){
                     $cals = 1;
                 }else{
                     $cals = $value[$lot]/$value[$tl];
