@@ -1097,7 +1097,12 @@ class GraphsController extends AppController
                 $avg = "avg_".$val[ 'id' ]."_".$val[ 'minpoint' ]."_".$val[ 'maxpoint' ];
                 $tl = "total_".$val[ 'id' ]."_".$val[ 'minpoint' ]."_".$val[ 'maxpoint' ];
                 $m = "m_".$val[ 'id' ]."_".$val[ 'minpoint' ]."_".$val[ 'maxpoint' ];
-                $lists[$key][$no][ 'lot' ] = round(($value[$lot]/$value[$tl])*100,2);
+                if($value[$lot] > $value[$tl]){
+                    $cals = 1;
+                }else{
+                    $cals = $value[$lot]/$value[$tl];
+                }
+                $lists[$key][$no][ 'lot' ] = round(($cals)*100,2);
                 $lists[$key][$no][ 'ave' ] = round($points[$key][$avg],2);
                 $lists[$key][$no][ 'bunshi' ] = $value[$lot];
 
