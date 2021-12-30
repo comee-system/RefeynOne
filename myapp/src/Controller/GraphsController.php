@@ -951,8 +951,7 @@ class GraphsController extends AppController
 
         preg_match("/[0-9]/",$this->request->getData("basic"),$basic);
         preg_match("/[0-9]/",$this->request->getData("display"),$display);
-        //$code = $basic[0].$display[0];
-        $code = 11;
+        $code = $basic[0].$display[0];
         $clum = $this->array_graf_type[$code];
         $smooth = $SopDefaults[ 'smooth' ];
 
