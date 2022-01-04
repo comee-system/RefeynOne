@@ -959,7 +959,7 @@ class GraphsController extends AppController
             SELECT a.* FROM (
             SELECT ";
             foreach($areas as $k=>$value){
-                $sql .= " SUM( CASE WHEN disp.min >= ".$value[ 'minpoint' ]." AND disp.min <= ".$value[ 'maxpoint' ]." THEN disp.".$clum." ELSE 0 END ) AS lot_".$value[ 'id' ]."_".$value[ 'minpoint' ]."_".$value[ 'maxpoint' ].",";
+                $sql .= " SUM( CASE WHEN disp.min > ".$value[ 'minpoint' ]." AND disp.min < ".$value[ 'maxpoint' ]." THEN disp.".$clum." ELSE 0 END ) AS lot_".$value[ 'id' ]."_".$value[ 'minpoint' ]."_".$value[ 'maxpoint' ].",";
 
                 $sql .= " SUM(  disp.".$clum."  ) AS total_".$value[ 'id' ]."_".$value[ 'minpoint' ]."_".$value[ 'maxpoint' ].",";
             }
