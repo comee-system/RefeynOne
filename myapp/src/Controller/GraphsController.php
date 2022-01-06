@@ -951,6 +951,7 @@ class GraphsController extends AppController
 
         preg_match("/[0-9]/",$this->request->getData("basic"),$basic);
         preg_match("/[0-9]/",$this->request->getData("display"),$display);
+
         $code = $basic[0].$display[0];
         $clum = $this->array_graf_type[$code];
         $smooth = $SopDefaults[ 'smooth' ];
@@ -959,7 +960,7 @@ class GraphsController extends AppController
             SELECT a.* FROM (
             SELECT ";
             foreach($areas as $k=>$value){
-                $sql .= " SUM( CASE WHEN disp.min > ".$value[ 'minpoint' ]." AND disp.min < ".$value[ 'maxpoint' ]." THEN disp.".$clum." ELSE 0 END ) AS lot_".$value[ 'id' ]."_".$value[ 'minpoint' ]."_".$value[ 'maxpoint' ].",";
+                $sql .= " SUM( CASE WHEN disp.min >= ".$value[ 'minpoint' ]." AND disp.min < ".$value[ 'maxpoint' ]." THEN disp.".$clum." ELSE 0 END ) AS lot_".$value[ 'id' ]."_".$value[ 'minpoint' ]."_".$value[ 'maxpoint' ].",";
 
                 $sql .= " SUM(  disp.".$clum."  ) AS total_".$value[ 'id' ]."_".$value[ 'minpoint' ]."_".$value[ 'maxpoint' ].",";
             }
